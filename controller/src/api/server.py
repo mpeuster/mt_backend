@@ -11,7 +11,7 @@ class APIServer(object):
 
     def __init__(self, params):
         self.params = params
-        self.model = model.SystemModel.get_instance()
+        self.model = model.get_instance()
 
     def run(self):
         self.setup_application()

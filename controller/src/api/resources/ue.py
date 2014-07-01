@@ -14,7 +14,7 @@ class UEList(restful.Resource):
     ENDPOINT_URL = ""
 
     def __init__(self):
-        self.model = model.SystemModel.get_instance()
+        self.model = model.get_instance()
 
     def get(self):
         l = ["%s/%s" % (UEList.ENDPOINT_URL, k) for k in self.model.get_ue_dict().iterkeys()]

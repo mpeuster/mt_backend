@@ -2,6 +2,9 @@ import logging
 import model.ue
 from api.errors import *
 
+def get_instance():
+	return SystemModel.get_instance()
+
 class SystemModel(object):
 	_INSTANCE = None
 
