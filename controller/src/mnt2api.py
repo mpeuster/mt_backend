@@ -20,6 +20,7 @@
 import logging
 import argparse
 from daemon import DaemonBase
+from api.server import APIServer
 
 
 class MNT2Daemon(DaemonBase):  # inherits from DaemonBase to build a Unix daemon
@@ -28,7 +29,7 @@ class MNT2Daemon(DaemonBase):  # inherits from DaemonBase to build a Unix daemon
         '''
         Constructor
         '''
-        super(MNT2Daemon, self).__init__("/tmp/mnt2d.pid")
+        super(MNT2Daemon, self).__init__("/tmp/mnt2api.pid")
 
     def setupLogging(self, params):
         '''
@@ -44,11 +45,11 @@ class MNT2Daemon(DaemonBase):  # inherits from DaemonBase to build a Unix daemon
         if params.verbose:
             logfile = None
         else:
-            logfile = "/tmp/mnt2d.log"
+            logfile = "/tmp/mnt2api.log"
         # setup logging
         logging.basicConfig(filename=logfile, filemode="w", level=loglevel,
                             format="%(asctime)s [%(levelname)-8s] %(message)s")
-        logging.debug("MNT2 logging enabled with loglevel: DEBUG")
+        logging.debug("MNT2 API server logging enabled with loglevel: DEBUG")
 
     def start(self, params, daemonize=True):
         '''
@@ -61,10 +62,10 @@ class MNT2Daemon(DaemonBase):  # inherits from DaemonBase to build a Unix daemon
         '''
         Sets up the daemon and go into infinity loop.
         '''
-        logging.info('MNT2 daemon running with PID: %s' % str(self.pid))
-        # TODO Run real code
-        #p = Pager(params)
-        #p.run()
+        logging.info('MNT2 API server daemon running with PID: %s' % str(self.pid))
+        # Run API server instance
+        apisrv = APIServer(params)
+        apisrv.run()
 
 
 def parse_arguments():
