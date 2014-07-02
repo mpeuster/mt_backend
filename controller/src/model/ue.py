@@ -1,6 +1,7 @@
 import logging
 import uuid
 
+
 class UE(object):
 
     def __init__(self, json_data):
@@ -14,4 +15,3 @@ class UE(object):
 
         if "device_id" in json_data:
             self.device_id = json_data["device_id"]
-

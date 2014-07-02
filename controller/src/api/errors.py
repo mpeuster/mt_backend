@@ -16,11 +16,14 @@ error_messages = {
     },
 }
 
+
 class JsonRequestParsingError(Exception):
     pass
 
+
 class ResourceAlreadyExistsError(Exception):
     pass
+
 
 class ResourceNotFoundError(Exception):
     pass

@@ -22,7 +22,7 @@ import argparse
 from daemon import DaemonBase
 
 
-class MNT2Daemon(DaemonBase):  # inherits from DaemonBase to build a Unix daemon
+class MNT2Daemon(DaemonBase):  # inherit DaemonBase to build a Unix daemon
 
     def __init__(self):
         '''
@@ -63,8 +63,8 @@ class MNT2Daemon(DaemonBase):  # inherits from DaemonBase to build a Unix daemon
         '''
         logging.info('MNT2 daemon running with PID: %s' % str(self.pid))
         # TODO Run real code
-        #p = Pager(params)
-        #p.run()
+        # p = Pager(params)
+        # p.run()
 
 
 def parse_arguments():
@@ -75,12 +75,14 @@ def parse_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument("-v", "--verbose", dest="verbose",
                         action="store_true",
-                        help="Runs the daemon directly in the shell. Logs are printed to screen. Loglevel is always: DEBUG.")
+                        help="Runs the daemon directly in the shell. Logs are"
+                        "printed to screen. Loglevel is always: DEBUG.")
     parser.add_argument("-d", "--dummy", dest="dummy",
                         action="store_true",
                         help="Triggers dummy mode.")
     parser.add_argument("-l", "--loglevel", dest="loglevel",
-                        choices=['debug', 'info'], help="Defines the used logging level.")
+                        choices=['debug', 'info'],
+                        help="Defines the used logging level.")
     parser.add_argument("-a", "--action", dest="action",
                         choices=['start', 'stop', 'restart', 'status'],
                         help="Action which should be performed on daemon.")

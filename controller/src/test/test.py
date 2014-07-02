@@ -5,7 +5,7 @@ import requests
 """
 Test ideas:
 - make test create ue helper
-- create several ue 
+- create several ue
 - create duplicated ue
 - create ue with wrong data
 
@@ -31,34 +31,33 @@ class UE_InterfaceTest(unittest.TestCase):
     def test_get_initial_list(self):
         r = requests.get(API_BASE_URL + "/api/ue")
         data = json.loads(r.json())
-        
+
         self.assertEqual(r.status_code, 200)
         self.assertIsInstance(data, list)
         self.assertGreaterEqual(len(data), 0)
 
     def test_post_ue(self):
-        r = requests.post(API_BASE_URL + "/api/ue", data=json.dumps(self.request_data))
+        r = requests.post(API_BASE_URL + "/api/ue",
+                          data=json.dumps(self.request_data))
         data = json.loads(r.json())
-        
+
         self.assertEqual(r.status_code, 201)
         self.assertIsInstance(data, list)
         self.assertEqual(len(data), 1)
 
         self._get_specific_ue(data[0])
-        
 
     def _get_specific_ue(self, url):
         r = requests.get(API_BASE_URL + url)
         data = json.loads(r.json())
-        
+
         self.assertEqual(r.status_code, 200)
         self.assertIsInstance(data, dict)
-        #self.assertTrue("uuid" in data)
-        #self.assertTrue("device_id" in data)
+        # self.assertTrue("uuid" in data)
+        # self.assertTrue("device_id" in data)
 
         return data
 
-    
 
 if __name__ == '__main__':
     unittest.main()

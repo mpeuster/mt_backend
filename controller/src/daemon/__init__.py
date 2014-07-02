@@ -23,12 +23,14 @@ import time
 import atexit
 from signal import SIGTERM
 
+
 class DaemonBase(object):
     '''
     Base class for creating an UNIX daemon process.
     '''
 
-    def __init__(self, pidfile, stdin=os.devnull, stdout=os.devnull, stderr=os.devnull):
+    def __init__(self, pidfile,
+                 stdin=os.devnull, stdout=os.devnull, stderr=os.devnull):
         '''
         Init input values
         '''
@@ -61,7 +63,7 @@ class DaemonBase(object):
         except OSError, e:
             sys.stderr.write("fork failed: %d (%s)\n" % (e.errno, e.strerror))
             sys.exit(1)
-        #redirect standard file descriptors
+        # redirect standard file descriptors
         sys.stdout.flush()
         sys.stderr.flush()
         si = file(self.stdin, 'r')
@@ -70,7 +72,7 @@ class DaemonBase(object):
         os.dup2(si.fileno(), sys.stdin.fileno())
         os.dup2(so.fileno(), sys.stdout.fileno())
         os.dup2(se.fileno(), sys.stderr.fileno())
-        #create pidfile
+        # create pidfile
         atexit.register(self.delpid)
         atexit.register(self.shutdownlogger)
         pid = str(os.getpid())
@@ -121,7 +123,7 @@ class DaemonBase(object):
         if not pid:
             sys.stderr.write("Stop failed. Daemon not running?\n")
             return
-        #kill daemon process
+        # kill daemon process
         print "Stopping daemon..."
         try:
             while 1:
