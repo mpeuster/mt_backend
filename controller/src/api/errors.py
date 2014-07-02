@@ -6,6 +6,11 @@ error_messages = {
         'status': 400,
         'extra': "Check your JSON syntax.",
     },
+    'RequestDataError': {
+        'message': "Error during request data parsing.",
+        'status': 400,
+        'extra': "Check for missing data fields.",
+    },
     'UeAlreadyExistsError': {
         'message': "A resource with that UUID already exists.",
         'status': 409,
@@ -18,6 +23,10 @@ error_messages = {
 
 
 class JsonRequestParsingError(Exception):
+    pass
+
+
+class RequestDataError(Exception):
     pass
 
 

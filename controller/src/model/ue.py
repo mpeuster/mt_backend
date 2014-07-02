@@ -1,5 +1,6 @@
 import logging
 import uuid
+from api.errors import RequestDataError
 
 
 class UE(object):
@@ -13,5 +14,16 @@ class UE(object):
         self.display_state = 0
         self.active_application = None
 
-        if "device_id" in json_data:
+        self.update(json_data)
+
+    def update(self, json_data):
+        # TODO: can this be done automatically?
+        try:
             self.device_id = json_data["device_id"]
+            self.location_service_id = json_data["location_service_id"]
+            self.position_x = json_data["position_x"]
+            self.position_y = json_data["position_y"]
+            self.display_state = json_data["display_state"]
+            self.active_application = json_data["active_application"]
+        except:
+            raise RequestDataError("UE model data update error")

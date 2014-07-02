@@ -42,4 +42,4 @@ class APIServer(object):
                               "/api/ue", endpoint="ue_list")
         resources.ue.UE.ENDPOINT_URL = "/api/ue/"
         self.api.add_resource(resources.ue.UE,
-                              "/api/ue/<string:ue_id>", endpoint="ue")
+                              "/api/ue/<string:uuid>", endpoint="ue")
