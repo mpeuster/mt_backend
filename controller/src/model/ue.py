@@ -17,13 +17,10 @@ class UE(object):
         self.update(json_data)
 
     def update(self, json_data):
-        # TODO: can this be done automatically?
         try:
-            self.device_id = json_data["device_id"]
-            self.location_service_id = json_data["location_service_id"]
-            self.position_x = json_data["position_x"]
-            self.position_y = json_data["position_y"]
-            self.display_state = json_data["display_state"]
-            self.active_application = json_data["active_application"]
+            for k, v in json_data.items():
+                if k not in self.__dict__:
+                    raise RequestDataError("Wrong request data key")
+                self.__dict__[k] = v
         except:
             raise RequestDataError("UE model data update error")

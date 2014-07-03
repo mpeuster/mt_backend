@@ -11,7 +11,7 @@ error_messages = {
         'status': 400,
         'extra': "Check for missing data fields.",
     },
-    'UeAlreadyExistsError': {
+    'ResourceAlreadyExistsError': {
         'message': "A resource with that UUID already exists.",
         'status': 409,
     },

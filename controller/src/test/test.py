@@ -9,7 +9,7 @@ Test ideas:
 - check ue result data: ok
 - check PUT function: ok
 - check DELETE function: ok
-- create duplicated ue
+- create duplicated ue: ok
 - create ue with wrong data
 
 """
@@ -104,7 +104,10 @@ class UE_InterfaceTest(unittest.TestCase):
         self._helper_delete_ue(url)
 
     def test_insert_duplicated_ue(self):
-        pass
+        r = self._helper_create_new_ue("test_duplicate")
+        self.assertEqual(r.status_code, 201)
+        r = self._helper_create_new_ue("test_duplicate")
+        self.assertEqual(r.status_code, 409)
 
     """
     Helper functions:

@@ -29,6 +29,9 @@ class SystemModel(object):
         new_ue = model.ue.UE(json_data)
         if new_ue.uuid in self._ue_dict:
             raise ResourceAlreadyExistsError("UE already exists in model.")
+        if new_ue.device_id in [ue.device_id for ue in
+                                self._ue_dict.itervalues()]:
+            raise ResourceAlreadyExistsError("UE with this device_id exists.")
         self._ue_dict[new_ue.uuid] = new_ue
         return new_ue
 
