@@ -53,21 +53,20 @@ class UE(restful.Resource):
 
     def get(self, uuid):
         ue = self.model.get_ue(uuid)
-        json_string = json.dumps(marshal(ue, UE_RESOURCE_FIELDS))
+        json_string = json.dumps(marshal(ue.get_response(),
+                                         UE_RESOURCE_FIELDS))
         logging.debug("GET response body: %s", json_string)
         return json_string
 
     def put(self, uuid):
-        ue = self.model.get_ue(uuid)
         try:
             json_data = request.get_json(force=True)
         except:
             raise JsonRequestParsingError("Request parsing error")
         logging.debug("PUT request body: %s" % str(json_data))
-        ue.update(json_data)
+        self.model.update_ue(uuid, json_data)
         return None, 204
 
     def delete(self, uuid):
-        if self.model.get_ue(uuid):
-            del self.model.get_ue_dict()[uuid]
+        self.model.delete_ue(uuid)
         return None, 204
