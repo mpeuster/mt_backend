@@ -1,6 +1,7 @@
 import json
 import unittest
 import requests
+import subprocess
 
 """
 Test ideas:
@@ -225,4 +226,6 @@ def helper_get_ue_list():
 
 
 if __name__ == '__main__':
-    unittest.main()
+    if subprocess.call(
+            ["python", "../mnt2api.py", "-l", "debug", "-a", "restart"]) == 0:
+        unittest.main()
