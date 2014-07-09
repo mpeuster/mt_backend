@@ -11,6 +11,10 @@ error_messages = {
         'status': 400,
         'extra': "Check for missing data fields.",
     },
+    'RequestError': {
+        'message': "Error during request execution.",
+        'status': 400,
+    },
     'ResourceAlreadyExistsError': {
         'message': "A resource with that UUID already exists.",
         'status': 409,
@@ -27,6 +31,10 @@ class JsonRequestParsingError(Exception):
 
 
 class RequestDataError(Exception):
+    pass
+
+
+class RequestError(Exception):
     pass
 
 

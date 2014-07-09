@@ -2,6 +2,7 @@ import logging
 from flask import Flask
 from flask.ext import restful
 import resources.ue
+import resources.location
 import model
 import errors
 
@@ -10,7 +11,7 @@ class APIServer(object):
 
     def __init__(self, params):
         self.params = params
-        self.model = model.get_instance()
+        model.coonect_db()
 
     def run(self):
         self.setup_application()
@@ -37,9 +38,24 @@ class APIServer(object):
         self.api = restful.Api(self.app, errors=errors.error_messages)
 
     def setup_api(self):
+        # UE
         resources.ue.UEList.ENDPOINT_URL = "/api/ue"
         self.api.add_resource(resources.ue.UEList,
                               "/api/ue", endpoint="ue_list")
         resources.ue.UE.ENDPOINT_URL = "/api/ue/"
         self.api.add_resource(resources.ue.UE,
                               "/api/ue/<string:uuid>", endpoint="ue")
+        # UE contexts
+        resources.ue.ContextList.ENDPOINT_URL = "/api/ue"
+        self.api.add_resource(resources.ue.ContextList,
+                              "/api/ue/<string:uuid>/context",
+                              endpoint="context_list")
+        resources.ue.Context.ENDPOINT_URL = "/api/ue/"
+        self.api.add_resource(resources.ue.Context,
+                              "/api/ue/<string:uuid>/context/<int:cid>",
+                              endpoint="context")
+        # location
+        resources.location.Location.ENDPOINT_URL = "/api/location/"
+        self.api.add_resource(resources.location.Location,
+                              "/api/location", endpoint="location")
+        # access points

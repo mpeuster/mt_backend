@@ -1,35 +1,18 @@
 import json
 import logging
-import time
-import threading
 from flask import request
 from flask.ext import restful
-from flask.ext.restful import fields, marshal
 import model
 from api.errors import JsonRequestParsingError
-
-
-UE_RESOURCE_FIELDS = {
-    'uuid': fields.String,
-    'device_id': fields.String,
-    'location_service_id': fields.String,
-    'position_x': fields.Integer,
-    'position_y': fields.Integer,
-    'display_state': fields.Integer,
-    'active_application': fields.String,
-}
 
 
 class UEList(restful.Resource):
 
     ENDPOINT_URL = ""
 
-    def __init__(self):
-        self.model = model.get_instance()
-
     def get(self):
-        l = ["%s/%s" % (UEList.ENDPOINT_URL, k)
-             for k in self.model.get_ue_dict().iterkeys()]
+        l = ["%s/%s" % (UEList.ENDPOINT_URL, ue.uuid)
+             for ue in model.UE.objects]
         return json.dumps(l)
 
     def post(self):
@@ -37,9 +20,9 @@ class UEList(restful.Resource):
             json_data = request.get_json(force=True)
         except:
             raise JsonRequestParsingError("Request parsing error")
-        logging.debug("POST request body: %s" % str(json_data))
+        logging.debug("POST UE request body: %s" % str(json_data))
         # create UE in model
-        new_ue = self.model.create_ue(json_data)
+        new_ue = model.UE.create(json_data)
         # return URL of new UE with HTTP code 201: Created
         return json.dumps(["%s/%s" % (UEList.ENDPOINT_URL, new_ue.uuid)]), 201
 
@@ -48,14 +31,10 @@ class UE(restful.Resource):
 
     ENDPOINT_URL = ""
 
-    def __init__(self):
-        self.model = model.get_instance()
-
     def get(self, uuid):
-        ue = self.model.get_ue(uuid)
-        json_string = json.dumps(marshal(ue.get_response(),
-                                         UE_RESOURCE_FIELDS))
-        logging.debug("GET response body: %s", json_string)
+        ue = model.UE.get(uuid)
+        json_string = json.dumps(ue.marshal())
+        logging.debug("GET UE response body: %s", json_string)
         return json_string
 
     def put(self, uuid):
@@ -63,10 +42,36 @@ class UE(restful.Resource):
             json_data = request.get_json(force=True)
         except:
             raise JsonRequestParsingError("Request parsing error")
-        logging.debug("PUT request body: %s" % str(json_data))
-        self.model.update_ue(uuid, json_data)
+        logging.debug("PUT UE request body: %s" % str(json_data))
+        ue = model.UE.get(uuid)
+        ue.update(json_data)
+        ue.add_context(json_data)
+        ue.save()
         return None, 204
 
     def delete(self, uuid):
-        self.model.delete_ue(uuid)
+        model.UE.get(uuid).delete()
         return None, 204
+
+
+class ContextList(restful.Resource):
+
+    ENDPOINT_URL = ""
+
+    def get(self, uuid):
+        ue = model.UE.get(uuid)
+        l = ["%s/%s/context/%s" %
+             (ContextList.ENDPOINT_URL, uuid, ue.context_list.index(context))
+             for context in ue.context_list]
+        return json.dumps(l)
+
+
+class Context(restful.Resource):
+
+    ENDPOINT_URL = ""
+
+    def get(self, uuid, cid):
+        ue = model.UE.get(uuid)
+        json_string = json.dumps(ue.marshal(cid))
+        logging.debug("GET UE/context response body: %s", json_string)
+        return json_string
