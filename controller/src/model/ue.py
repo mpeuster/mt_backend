@@ -64,7 +64,7 @@ class UE(Document):
 
     def update(self, json_data):
         try:
-            # TODO: Field key validation
+            # TODO: Field key validation move to API
             self.device_id = json_data["device_id"]
             self.location_service_id = json_data["location_service_id"]
 
@@ -112,7 +112,6 @@ class UE(Document):
         If cid = -1 the latest context is returned.
         """
         res = {}
-        logging.debug(str(self.__dict__))
         for k, v in self.__dict__["_data"].items():
             res[k] = v
             context = self.context_list[cid]

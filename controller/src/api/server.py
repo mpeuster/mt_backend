@@ -3,7 +3,9 @@ from flask import Flask
 from flask.ext import restful
 import resources.ue
 import resources.location
+import resources.accesspoint
 import model
+import model.config
 import errors
 
 
@@ -11,7 +13,12 @@ class APIServer(object):
 
     def __init__(self, params):
         self.params = params
+        # load configuration
+        model.load_config(params.config, basepath=params.path)
+        # connect to database
         model.coonect_db()
+        # load access point definitions from configuration file
+        model.AccessPoint.load_from_config(model.CONFIG["accesspoints"])
 
     def run(self):
         self.setup_application()
@@ -59,3 +66,10 @@ class APIServer(object):
         self.api.add_resource(resources.location.Location,
                               "/api/location", endpoint="location")
         # access points
+        resources.accesspoint.APList.ENDPOINT_URL = "/api/accesspoint"
+        self.api.add_resource(resources.accesspoint.APList,
+                              "/api/accesspoint", endpoint="accesspoint_list")
+        resources.accesspoint.AP.ENDPOINT_URL = "/api/accesspoint/"
+        self.api.add_resource(resources.accesspoint.AP,
+                              "/api/accesspoint/<string:uuid>",
+                              endpoint="accesspoint")

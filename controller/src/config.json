@@ -1,0 +1,32 @@
+{
+	"database": {
+		"host": "127.0.0.1",
+		"port": 1234,
+		"user": "test",
+		"password": "test",
+		"db": "test"
+	},
+	"accesspoints": [
+		{
+			"device_id": "AP1",
+			"position_x": 100,
+			"position_y": 100
+		},
+		{
+			"device_id": "AP2",
+			"position_x": 800,
+			"position_y": 100
+		},
+		{
+			"device_id": "AP3",
+			"position_x": 100,
+			"position_y": 800
+		},
+		{
+			"device_id": "AP4",
+			"position_x": 800,
+			"position_y": 800
+		}
+	]
+
+}

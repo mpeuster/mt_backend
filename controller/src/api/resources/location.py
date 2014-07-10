@@ -10,9 +10,6 @@ class Location(restful.Resource):
 
     ENDPOINT_URL = ""
 
-    def __init__(self):
-        pass
-
     def post(self):
         try:
             json_data = request.get_json(force=True)

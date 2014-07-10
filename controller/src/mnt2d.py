@@ -62,7 +62,6 @@ class MNT2Daemon(DaemonBase):  # inherit DaemonBase to build a Unix daemon
         Sets up the daemon and go into infinity loop.
         '''
         logging.info('MNT2 daemon running with PID: %s' % str(self.pid))
-        # TODO Run real code
         # p = Pager(params)
         # p.run()
 

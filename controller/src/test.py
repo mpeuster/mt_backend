@@ -188,6 +188,25 @@ class Location_InterfaceTest(unittest.TestCase):
         self.assertEqual(ue["position_x"], 200.01)
         self.assertEqual(ue["position_y"], 100.99)
 
+
+class AccessPoint_InterfaceTest(unittest.TestCase):
+    """
+    Tests:
+    """
+    def test_get_accesspoints(self):
+        # get list
+        r = requests.get(API_BASE_URL + "/api/accesspoint")
+        data = json.loads(r.json())
+        self.assertEqual(r.status_code, 200)
+        self.assertIsInstance(data, list)
+        for url in data:
+            r = requests.get(API_BASE_URL + url)
+            ap = json.loads(r.json())
+            self.assertEqual(r.status_code, 200)
+            self.assertIsInstance(ap, dict)
+            self.assertTrue("device_id" in ap)
+            print ap
+
 """
 Global Helper
 """
