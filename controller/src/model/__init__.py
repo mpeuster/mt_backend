@@ -32,8 +32,14 @@ Database
 
 def coonect_db():
     # connect to mongodb
-    # TODO: Extended DB setup and logging
-    mongoengine.connect(CONFIG["database"]["db"])
+    # TODO: logging + exception
+    mongoengine.connect(
+        CONFIG["database"]["db"],
+        host=CONFIG["database"]["host"],
+        port=CONFIG["database"]["port"],
+        username=CONFIG["database"]["user"],
+        password=CONFIG["database"]["password"]
+        )
     # clear db
     UE.drop_collection()
     Location.drop_collection()

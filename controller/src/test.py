@@ -2,6 +2,7 @@ import json
 import unittest
 import requests
 import subprocess
+import time
 
 """
 Test ideas:
@@ -205,7 +206,6 @@ class AccessPoint_InterfaceTest(unittest.TestCase):
             self.assertEqual(r.status_code, 200)
             self.assertIsInstance(ap, dict)
             self.assertTrue("device_id" in ap)
-            print ap
 
 """
 Global Helper
@@ -247,4 +247,6 @@ def helper_get_ue_list():
 if __name__ == '__main__':
     if subprocess.call(
             ["python", "mnt2api.py", "-l", "debug", "-a", "restart"]) == 0:
+        print "Waiting 1s to start tests..."
+        time.sleep(1)  # wait to start process
         unittest.main()
