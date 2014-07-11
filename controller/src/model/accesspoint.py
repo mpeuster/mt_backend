@@ -9,7 +9,7 @@ AP_RESOURCE_FIELDS = {
     'uuid': fields.String,
     'device_id': fields.String,
     'registered_at': fields.DateTime,
-    'SSID': fields.String,
+    'ssid': fields.String,
     'position_x': fields.Float,
     'position_y': fields.Float,
     'power_state': fields.Integer,
@@ -22,6 +22,7 @@ class AccessPoint(Document):
     uuid = StringField(required=True, unique=True, primary_key=True)
     device_id = StringField(required=True, unique=True)
     registered_at = DateTimeField(default=datetime.datetime.now)
+    ssid = StringField(default=None)
     position_x = FloatField(default=0)
     position_y = FloatField(default=0)
     power_state = IntField(default=0)
@@ -31,13 +32,18 @@ class AccessPoint(Document):
         try:
             ap = AccessPoint(uuid=uuid.uuid1().hex,
                              device_id=json_data['device_id'])
+            ap.ssid = json_data['ssid']
             ap.position_x = json_data['position_x']
             ap.position_y = json_data['position_y']
             ap.save()
-            logging.info("Registered AccessPoint: %s at %d/%d with UUID: %s" %
-                         (ap.device_id, ap.position_x, ap.position_y, ap.uuid))
+            logging.info("Registered AccessPoint: %s at %d/%d with SSID: %s" %
+                         (ap.device_id, ap.position_x, ap.position_y, ap.ssid))
         except NotUniqueError:
             raise ResourceAlreadyExistsError("AP with this device_id exists.")
+        except:
+            logging.exception("Could not read AP config.")
+            logging.info("Could not load config. Stopping daemon.")
+            exit(1)
         return ap
 
     @staticmethod
