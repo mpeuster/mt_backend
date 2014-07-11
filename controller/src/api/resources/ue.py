@@ -2,8 +2,19 @@ import json
 import logging
 from flask import request
 from flask.ext import restful
+import api
 import model
 from api.errors import JsonRequestParsingError
+
+
+REQUIRED_FIELDS = [
+    "device_id",
+    "location_service_id",
+    "position_x",
+    "position_y",
+    "display_state",
+    "active_application"
+]
 
 
 class UEList(restful.Resource):
@@ -19,6 +30,8 @@ class UEList(restful.Resource):
         except:
             raise JsonRequestParsingError("Request parsing error")
         logging.debug("POST UE request body: %s" % str(json_data))
+        # validate data
+        api.check_required_fields(json_data, REQUIRED_FIELDS)
         # create UE in model
         new_ue = model.ue.UE.create(json_data)
         # return URL of new UE with HTTP code 201: Created
@@ -39,6 +52,9 @@ class UE(restful.Resource):
         except:
             raise JsonRequestParsingError("Request parsing error")
         logging.debug("PUT UE request body: %s" % str(json_data))
+        # validate data
+        api.check_required_fields(json_data, REQUIRED_FIELDS)
+        # update model
         ue = model.ue.UE.get(uuid)
         ue.update(json_data)
         ue.add_context(json_data)

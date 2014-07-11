@@ -13,6 +13,8 @@ Test ideas:
 - check DELETE function: ok
 - create duplicated ue: ok
 - create ue with wrong data
+- test assignments (in ue / in ap)
+- test assignment decisions
 
 """
 
@@ -252,7 +254,7 @@ def helper_get_ue(url):
     # check response
     assert(r.status_code == 200)
     assert(type(data) is dict)
-    # print data
+    print data
     return data
 
 

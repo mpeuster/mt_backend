@@ -1,9 +1,17 @@
 import json
 import logging
+import api
 from flask import request
 from flask.ext import restful
 import model
 from api.errors import *
+
+
+REQUIRED_FIELDS = [
+    "location_service_id",
+    "position_x",
+    "position_y"
+]
 
 
 class Location(restful.Resource):
@@ -15,13 +23,7 @@ class Location(restful.Resource):
             raise JsonRequestParsingError("Request parsing error")
         logging.debug("POST location request body: %s" % str(json_data))
         # validate data
-        # #TODO: create validation function (arg: List of required fields)
-        if "location_service_id" not in json_data:
-            raise RequestDataError("Missing: location_service_id")
-        if "position_x" not in json_data:
-            raise RequestDataError("Missing: position_x")
-        if "position_y" not in json_data:
-            raise RequestDataError("Missing: position_y")
+        api.check_required_fields(json_data, REQUIRED_FIELDS)
         # update location entry in db
         (loc, _) = model.location.Location.objects.get_or_create(
             location_service_id=json_data["location_service_id"])

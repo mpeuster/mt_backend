@@ -80,12 +80,8 @@ class UE(Document):
 
     def update(self, json_data):
         try:
-            # TODO: Field key validation move to API
             self.device_id = json_data["device_id"]
             self.location_service_id = json_data["location_service_id"]
-
-        except KeyError:
-            raise RequestDataError("Field not found")
         except:
             raise RequestError("Error during update.")
 
@@ -97,8 +93,6 @@ class UE(Document):
             new_c.display_state = json_data["display_state"]
             new_c.active_application = json_data["active_application"]
             self.context_list.append(new_c)
-        except KeyError:
-            raise RequestDataError("Field not found")
         except:
             raise RequestError("Error during update.")
         self.pull_external_location()
