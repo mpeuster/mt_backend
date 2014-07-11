@@ -7,20 +7,16 @@ import model
 
 class APList(restful.Resource):
 
-    ENDPOINT_URL = ""
-
     def get(self):
-        l = ["%s/%s" % (APList.ENDPOINT_URL, ap.uuid)
-             for ap in model.AccessPoint.objects]
+        l = ["%s" % ap.uri
+             for ap in model.accesspoint.AccessPoint.objects]
         return json.dumps(l)
 
 
 class AP(restful.Resource):
 
-    ENDPOINT_URL = ""
-
     def get(self, uuid):
-        ap = model.AccessPoint.get(uuid)
+        ap = model.accesspoint.AccessPoint.get(uuid)
         json_string = json.dumps(ap.marshal())
         logging.debug("GET AP response body: %s", json_string)
         return json_string

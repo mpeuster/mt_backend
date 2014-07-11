@@ -1,10 +1,9 @@
 import json
 import logging
 import mongoengine
-from ue import UE
-from location import Location
-from accesspoint import AccessPoint
-
+import location
+import accesspoint
+import ue
 
 """
 Configuration
@@ -22,7 +21,7 @@ def load_config(filename, basepath=""):
     except:
         logging.exception(
             "Can not load config file: %s%s. " % (basepath, filename))
-        logging.info("Stopping daemon.")
+        logging.info("Could not load config. Stopping daemon.")
         exit(1)
 
 """
@@ -32,15 +31,22 @@ Database
 
 def coonect_db():
     # connect to mongodb
-    # TODO: logging + exception
-    mongoengine.connect(
-        CONFIG["database"]["db"],
-        host=CONFIG["database"]["host"],
-        port=CONFIG["database"]["port"],
-        username=CONFIG["database"]["user"],
-        password=CONFIG["database"]["password"]
-        )
-    # clear db
-    UE.drop_collection()
-    Location.drop_collection()
-    AccessPoint.drop_collection()
+    try:
+        mongoengine.connect(
+            CONFIG["database"]["db"],
+            host=CONFIG["database"]["host"],
+            port=CONFIG["database"]["port"],
+            username=CONFIG["database"]["user"],
+            password=CONFIG["database"]["password"]
+            )
+        # clear db
+        ue.UE.drop_collection()
+        location.Location.drop_collection()
+        accesspoint.AccessPoint.drop_collection()
+        logging.info("Connected to MongoDB: %s@%s:%d"
+                     % (CONFIG["database"]["db"],
+                        CONFIG["database"]["host"],
+                        CONFIG["database"]["port"]))
+    except:
+        logging.exception("Could not connect to database")
+        logging.info("Database connection failed. Stopping daemon.")

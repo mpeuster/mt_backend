@@ -1,10 +1,10 @@
 import logging
 import datetime
 import uuid
+import model
 from mongoengine import *
 from api.errors import *
 from flask.ext.restful import fields, marshal
-from location import Location
 
 UE_RESOURCE_FIELDS = {
     'uuid': fields.String,
@@ -16,7 +16,8 @@ UE_RESOURCE_FIELDS = {
     'position_y': fields.Float,
     'display_state': fields.Integer,
     'active_application': fields.String,
-    'assigned_accesspoint': fields.String
+    'assigned_accesspoint': fields.String,
+    'uri': fields.String
 }
 
 
@@ -29,6 +30,17 @@ class Context(EmbeddedDocument):
     display_state = IntField(default=0)
     active_application = StringField(default=None)
 
+    def get_parent_ue(self):
+        for ue in UE.objects:
+            if self in ue.context_list:
+                return ue
+
+    @property
+    def uri(self):
+        ue = self.get_parent_ue()
+        return "%s/%s/context/%s" % ("/api/ue",
+                                     ue.uuid, ue.context_list.index(self))
+
 
 class UE(Document):
     # system fields
@@ -39,6 +51,8 @@ class UE(Document):
     location_service_id = StringField(default=None)
     # references
     context_list = SortedListField(EmbeddedDocumentField(Context))
+    assigned_accesspoint = ReferenceField(
+        model.accesspoint.AccessPoint, default=None)
 
     @staticmethod
     def create(json_data):
@@ -50,6 +64,8 @@ class UE(Document):
             ue.save()
         except NotUniqueError:
             raise ResourceAlreadyExistsError("UE with this device_id exists.")
+        # TODO: Remove this test operation
+        ue.assign_accesspoint(model.accesspoint.AccessPoint.objects[0])
         return ue
 
     @staticmethod
@@ -95,7 +111,7 @@ class UE(Document):
         """
         if self.location_service_id is not None and len(self.context_list) > 0:
             try:
-                loc = Location.objects.get(
+                loc = model.location.Location.objects.get(
                     location_service_id=self.location_service_id)
             except:
                 loc = None
@@ -106,15 +122,30 @@ class UE(Document):
                 logging.debug("External location inserted into UE: %s"
                               % str(self.device_id))
 
+    @property
+    def uri(self):
+        return "%s/%s" % ("/api/ue", self.uuid)
+
     def marshal(self, cid=-1):
         """
         Builds the json representation of a UE with the selected context.
         If cid = -1 the latest context is returned.
         """
         res = {}
+        context = self.context_list[cid]
         for k, v in self.__dict__["_data"].items():
             res[k] = v
-            context = self.context_list[cid]
         for k, v in context.__dict__["_data"].items():
             res[k] = v
+        res['uri'] = self.uri
+        # rewrite assigned_accesspoint to URI
+        res["assigned_accesspoint"] = self.assigned_accesspoint.uri
         return marshal(res, UE_RESOURCE_FIELDS)
+
+    def assign_accesspoint(self, ap):
+        self.assigned_accesspoint = ap
+        self.save()
+
+    def remove_accesspoint(self):
+        self.assigned_accesspoint = None
+        self.save()

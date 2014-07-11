@@ -18,7 +18,8 @@ class APIServer(object):
         # connect to database
         model.coonect_db()
         # load access point definitions from configuration file
-        model.AccessPoint.load_from_config(model.CONFIG["accesspoints"])
+        model.accesspoint.AccessPoint.load_from_config(
+            model.CONFIG["accesspoints"])
 
     def run(self):
         self.setup_application()
@@ -46,30 +47,23 @@ class APIServer(object):
 
     def setup_api(self):
         # UE
-        resources.ue.UEList.ENDPOINT_URL = "/api/ue"
         self.api.add_resource(resources.ue.UEList,
                               "/api/ue", endpoint="ue_list")
-        resources.ue.UE.ENDPOINT_URL = "/api/ue/"
         self.api.add_resource(resources.ue.UE,
                               "/api/ue/<string:uuid>", endpoint="ue")
         # UE contexts
-        resources.ue.ContextList.ENDPOINT_URL = "/api/ue"
         self.api.add_resource(resources.ue.ContextList,
                               "/api/ue/<string:uuid>/context",
                               endpoint="context_list")
-        resources.ue.Context.ENDPOINT_URL = "/api/ue/"
         self.api.add_resource(resources.ue.Context,
                               "/api/ue/<string:uuid>/context/<int:cid>",
                               endpoint="context")
         # location
-        resources.location.Location.ENDPOINT_URL = "/api/location/"
         self.api.add_resource(resources.location.Location,
                               "/api/location", endpoint="location")
         # access points
-        resources.accesspoint.APList.ENDPOINT_URL = "/api/accesspoint"
         self.api.add_resource(resources.accesspoint.APList,
                               "/api/accesspoint", endpoint="accesspoint_list")
-        resources.accesspoint.AP.ENDPOINT_URL = "/api/accesspoint/"
         self.api.add_resource(resources.accesspoint.AP,
                               "/api/accesspoint/<string:uuid>",
                               endpoint="accesspoint")

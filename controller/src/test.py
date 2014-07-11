@@ -192,6 +192,24 @@ class Location_InterfaceTest(unittest.TestCase):
 
 class AccessPoint_InterfaceTest(unittest.TestCase):
     """
+    Test setup and tear down:
+    """
+    def setUp(self):
+        """
+        Creates some user equipment (UE) resources.
+        """
+        for i in range(0, 3):
+            helper_create_ue("ue%d" % i)
+
+    def tearDown(self):
+        """
+        Deletes all existing UEs.
+        """
+        for url in helper_get_ue_list():
+            helper_delete_ue(url)
+        self.assertEqual(len(helper_get_ue_list()), 0)
+
+    """
     Tests:
     """
     def test_get_accesspoints(self):
@@ -206,6 +224,7 @@ class AccessPoint_InterfaceTest(unittest.TestCase):
             self.assertEqual(r.status_code, 200)
             self.assertIsInstance(ap, dict)
             self.assertTrue("device_id" in ap)
+            print ap
 
 """
 Global Helper
@@ -233,6 +252,7 @@ def helper_get_ue(url):
     # check response
     assert(r.status_code == 200)
     assert(type(data) is dict)
+    # print data
     return data
 
 
