@@ -29,7 +29,7 @@ Database
 """
 
 
-def coonect_db():
+def connect_db():
     # connect to mongodb
     try:
         mongoengine.connect(

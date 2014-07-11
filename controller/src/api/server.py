@@ -5,7 +5,7 @@ import resources.ue
 import resources.location
 import resources.accesspoint
 import model
-import model.config
+import api
 import errors
 
 
@@ -16,7 +16,9 @@ class APIServer(object):
         # load configuration
         model.load_config(params.config, basepath=params.path)
         # connect to database
-        model.coonect_db()
+        model.connect_db()
+        # setup zero mq sender
+        api.setup_zmq()
         # load access point definitions from configuration file
         model.accesspoint.AccessPoint.load_from_config(
             model.CONFIG["accesspoints"])

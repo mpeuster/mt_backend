@@ -34,6 +34,8 @@ class UEList(restful.Resource):
         api.check_required_fields(json_data, REQUIRED_FIELDS)
         # create UE in model
         new_ue = model.ue.UE.create(json_data)
+        # send update signal
+        api.zmq_send(json.dumps({"action": "post", "ue": new_ue.uuid}))
         # return URL of new UE with HTTP code 201: Created
         return json.dumps(["%s" % new_ue.uri]), 201
 
@@ -59,10 +61,14 @@ class UE(restful.Resource):
         ue.update(json_data)
         ue.add_context(json_data)
         ue.save()
+        # send update signal
+        api.zmq_send(json.dumps({"action": "put", "ue": ue.uuid}))
         return None, 204
 
     def delete(self, uuid):
         model.ue.UE.get(uuid).delete()
+        # send update signal
+        api.zmq_send(json.dumps({"action": "delete", "ue": uuid}))
         return None, 204
 
 

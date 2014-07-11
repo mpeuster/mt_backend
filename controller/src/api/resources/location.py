@@ -35,4 +35,6 @@ class Location(restful.Resource):
                 location_service_id=loc.location_service_id):
             ue.pull_external_location()
             ue.save()
+            # send update signal
+            api.zmq_send(json.dumps({"action": "put", "ue": ue.uuid}))
         return None, 201
