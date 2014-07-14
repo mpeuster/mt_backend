@@ -226,7 +226,7 @@ class AccessPoint_InterfaceTest(unittest.TestCase):
             self.assertEqual(r.status_code, 200)
             self.assertIsInstance(ap, dict)
             self.assertTrue("device_id" in ap)
-            print ap
+            print json.dumps(ap, indent=4)
 
 """
 Global Helper
@@ -254,7 +254,7 @@ def helper_get_ue(url):
     # check response
     assert(r.status_code == 200)
     assert(type(data) is dict)
-    print data
+    print json.dumps(data, indent=4)
     return data
 
 

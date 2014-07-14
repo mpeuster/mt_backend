@@ -22,7 +22,7 @@ import argparse
 import os
 import sys
 from daemon import DaemonBase
-from api.server import APIServer
+import api
 
 
 class MNT2Daemon(DaemonBase):  # inherit DaemonBase to build a Unix daemon
@@ -67,7 +67,7 @@ class MNT2Daemon(DaemonBase):  # inherit DaemonBase to build a Unix daemon
         logging.info('MNT2 API server daemon running with PID: %s'
                      % str(self.pid))
         # Run API server instance
-        apisrv = APIServer(params)
+        apisrv = api.APIServer(params)
         apisrv.run()
 
 
