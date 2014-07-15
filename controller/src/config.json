@@ -6,6 +6,10 @@
 		"password": "NMT2secret1234",
 		"db": "nmt2db"
 	},
+	"zmq": {
+		"host": "localhost",
+		"port": 5557
+	},
 	"accesspoints": [
 		{
 			"device_id": "AP1",

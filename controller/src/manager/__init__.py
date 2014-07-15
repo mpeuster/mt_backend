@@ -18,7 +18,10 @@ class NetworkManager(object):
     def setup_zmq(self):
         context = zmq.Context()
         self.zmqreceiver = context.socket(zmq.PULL)
-        self.zmqreceiver.bind("tcp://*:5557")
+        constr = "tcp://%s:%d" % (model.CONFIG["zmq"]["host"],
+                                  model.CONFIG["zmq"]["port"])
+        self.zmqreceiver.bind(constr)
+        logging.info("Create ZMQ receiver: %s" % constr)
 
     def run(self):
         logging.info("Running NetworkManager instance...")

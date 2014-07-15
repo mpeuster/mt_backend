@@ -23,8 +23,10 @@ ZMQ_SENDER = None
 def setup_zmq():
     context = zmq.Context()
     api.ZMQ_SENDER = context.socket(zmq.PUSH)
-    api.ZMQ_SENDER.connect("tcp://localhost:5557")
-    logging.info("Create ZMQ sender: %s" % "tcp://localhost:5557")
+    constr = "tcp://%s:%d" % (model.CONFIG["zmq"]["host"],
+                              model.CONFIG["zmq"]["port"])
+    api.ZMQ_SENDER.connect(constr)
+    logging.info("Create ZMQ sender: %s" % constr)
 
 
 def zmq_send(data):
