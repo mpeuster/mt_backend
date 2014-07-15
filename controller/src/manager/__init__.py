@@ -1,7 +1,12 @@
 import logging
 import zmq
 import time
+import json
 import model
+import plugin
+
+
+UPDATE_ACTIONS = ["post", "put", "delete"]
 
 
 class NetworkManager(object):
@@ -18,8 +23,7 @@ class NetworkManager(object):
     def setup_zmq(self):
         context = zmq.Context()
         self.zmqreceiver = context.socket(zmq.PULL)
-        constr = "tcp://%s:%d" % (model.CONFIG["zmq"]["host"],
-                                  model.CONFIG["zmq"]["port"])
+        constr = "tcp://*:%d" % (model.CONFIG["zmq"]["port"])
         self.zmqreceiver.bind(constr)
         logging.info("Create ZMQ receiver: %s" % constr)
 
@@ -27,8 +31,13 @@ class NetworkManager(object):
         logging.info("Running NetworkManager instance...")
 
         while True:
-            s = self.zmqreceiver.recv()
-            logging.info("Received: %s" % str(s))
-            logging.info("Starting work ... ")
-            time.sleep(0.01)
-            logging.info("... finished!")
+            r = self.zmqreceiver.recv()
+            data = json.loads(r)
+            logging.debug("Received: %s" % str(data))
+            if "action" in data:
+                pass
+                if data["action"] in UPDATE_ACTIONS:
+                    self.dispatch_update_notification(data)
+
+    def dispatch_update_notification(self, data):
+        plugin.algorithm.compute()

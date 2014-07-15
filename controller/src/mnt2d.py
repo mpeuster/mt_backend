@@ -68,7 +68,10 @@ class MNT2Daemon(DaemonBase):  # inherit DaemonBase to build a Unix daemon
                      % str(self.pid))
         # Run manager instance
         mng = manager.NetworkManager(params)
-        mng.run()
+        try:
+            mng.run()
+        except:
+            logging.exception("Exception in manager daemon:")
 
 
 def parse_arguments():

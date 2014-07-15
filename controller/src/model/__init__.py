@@ -39,10 +39,6 @@ def connect_db():
             username=CONFIG["database"]["user"],
             password=CONFIG["database"]["password"]
             )
-        # clear db
-        ue.UE.drop_collection()
-        location.Location.drop_collection()
-        accesspoint.AccessPoint.drop_collection()
         logging.info("Connected to MongoDB: %s@%s:%d"
                      % (CONFIG["database"]["db"],
                         CONFIG["database"]["host"],

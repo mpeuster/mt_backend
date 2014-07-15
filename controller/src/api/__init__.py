@@ -43,6 +43,10 @@ class APIServer(object):
         model.load_config(params.config, basepath=params.path)
         # connect to database
         model.connect_db()
+        # clear db
+        model.ue.UE.drop_collection()
+        model.location.Location.drop_collection()
+        model.accesspoint.AccessPoint.drop_collection()
         # setup zero mq sender
         api.setup_zmq()
         # load access point definitions from configuration file

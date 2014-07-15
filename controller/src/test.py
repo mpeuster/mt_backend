@@ -268,7 +268,13 @@ def helper_get_ue_list():
 
 if __name__ == '__main__':
     if subprocess.call(
-            ["python", "mnt2api.py", "-l", "debug", "-a", "restart"]) == 0:
-        print "Waiting 1s to start tests..."
-        time.sleep(1)  # wait to start process
-        unittest.main()
+            ["python", "mnt2api.py", "-l", "debug", "-a", "restart"]) != 0:
+        print "mnt2api.py restart failed! stopping tests."
+        exit(1)
+    if subprocess.call(
+            ["python", "mnt2d.py", "-l", "debug", "-a", "restart"]) != 0:
+        print "mnt2d.py restart failed! stopping tests."
+        exit(1)
+    print "Waiting 1s to start tests..."
+    time.sleep(1)  # wait to start process
+    unittest.main()

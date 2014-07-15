@@ -68,7 +68,10 @@ class MNT2Daemon(DaemonBase):  # inherit DaemonBase to build a Unix daemon
                      % str(self.pid))
         # Run API server instance
         apisrv = api.APIServer(params)
-        apisrv.run()
+        try:
+            apisrv.run()
+        except:
+            logging.exception("Exception in API:")
 
 
 def parse_arguments():
