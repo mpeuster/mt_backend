@@ -40,4 +40,13 @@ class NetworkManager(object):
                     self.dispatch_update_notification(data)
 
     def dispatch_update_notification(self, data):
-        plugin.algorithm.compute()
+        # fetch data from DB
+        ue_list = [ue.marshal() for ue in model.ue.UE.objects]
+        ap_list = [ap.marshal()
+                   for ap in model.accesspoint.AccessPoint.objects]
+        # run algorithm
+        plugin.algorithm.compute(ue_list, ap_list, data["ue"])
+
+        # store results
+        # trigger AP power control
+        # trigger UE update notification

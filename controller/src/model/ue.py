@@ -133,7 +133,8 @@ class UE(Document):
             res[k] = v
         res['uri'] = self.uri
         # rewrite assigned_accesspoint to URI
-        res["assigned_accesspoint"] = self.assigned_accesspoint.uri
+        res["assigned_accesspoint"] = self.assigned_accesspoint.uri if \
+            self.assigned_accesspoint is not None else None
         return marshal(res, UE_RESOURCE_FIELDS)
 
     def assign_accesspoint(self, ap):
