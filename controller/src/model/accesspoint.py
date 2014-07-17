@@ -9,6 +9,7 @@ from flask.ext.restful import fields, marshal
 AP_RESOURCE_FIELDS = {
     'uuid': fields.String,
     'device_id': fields.String,
+    'location_service_id': fields.String,
     'registered_at': fields.DateTime,
     'ssid': fields.String,
     'position_x': fields.Float,
@@ -22,6 +23,7 @@ AP_RESOURCE_FIELDS = {
 class AccessPoint(Document):
     uuid = StringField(required=True, unique=True, primary_key=True)
     device_id = StringField(required=True, unique=True)
+    location_service_id = StringField(required=True)
     registered_at = DateTimeField(default=datetime.datetime.now)
     ssid = StringField(default=None)
     position_x = FloatField(default=0)
@@ -31,8 +33,10 @@ class AccessPoint(Document):
     @staticmethod
     def create(json_data):
         try:
-            ap = AccessPoint(uuid=uuid.uuid1().hex,
-                             device_id=json_data['device_id'])
+            ap = AccessPoint(
+                uuid=uuid.uuid1().hex,
+                device_id=json_data['device_id'],
+                location_service_id=json_data['location_service_id'])
             ap.ssid = json_data['ssid']
             ap.position_x = json_data['position_x']
             ap.position_y = json_data['position_y']

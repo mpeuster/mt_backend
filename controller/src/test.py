@@ -169,7 +169,7 @@ class Location_InterfaceTest(unittest.TestCase):
     """
     Tests:
     """
-    def test_set_location(self):
+    def test_set_location_ue(self):
         # data definition
         data = {
             "location_service_id": "loc_node1",
@@ -190,6 +190,37 @@ class Location_InterfaceTest(unittest.TestCase):
         ue = helper_get_ue(self.ue_url)
         self.assertEqual(ue["position_x"], 200.01)
         self.assertEqual(ue["position_y"], 100.99)
+
+    def test_set_location_ap(self):
+        data = {
+            "location_service_id": "loc_ap1",
+            "position_x": 100.00,
+            "position_y": 200.00
+        }
+        # first (create) request
+        r = requests.post(API_BASE_URL + "/api/location",
+                          data=json.dumps(data))
+        self.assertEqual(r.status_code, 201)
+        # second (update) request
+        data["position_x"] = 200.01
+        data["position_y"] = 100.99
+        r = requests.post(API_BASE_URL + "/api/location",
+                          data=json.dumps(data))
+        self.assertEqual(r.status_code, 201)
+        # get access points and check location
+        r = requests.get(API_BASE_URL + "/api/accesspoint")
+        data = json.loads(r.json())
+        self.assertEqual(r.status_code, 200)
+        self.assertIsInstance(data, list)
+        for url in data:
+            r = requests.get(API_BASE_URL + url)
+            ap = json.loads(r.json())
+            self.assertEqual(r.status_code, 200)
+            self.assertIsInstance(ap, dict)
+            self.assertTrue("device_id" in ap)
+            if ap["location_service_id"] == "loc_ap1":
+                self.assertEqual(ap["position_x"], 200.01)
+                self.assertEqual(ap["position_y"], 100.99)
 
 
 class AccessPoint_InterfaceTest(unittest.TestCase):

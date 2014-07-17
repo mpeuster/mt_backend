@@ -37,4 +37,11 @@ class Location(restful.Resource):
             ue.save()
             # send update signal
             api.zmq_send(json.dumps({"action": "put", "ue": ue.uuid}))
+        # trigger location update in all matching AP model entries
+        for ap in model.accesspoint.AccessPoint.objects(
+                location_service_id=loc.location_service_id):
+            ap.position_x = loc.position_x
+            ap.position_y = loc.position_y
+            ap.save()
+            logging.debug("Updated location of AP: %s" % str(ap.device_id))
         return None, 201

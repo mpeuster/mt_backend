@@ -13,24 +13,28 @@
 	"accesspoints": [
 		{
 			"device_id": "AP1",
+			"location_service_id": "loc_ap1",
 			"ssid": "WLAN1",
 			"position_x": 100,
 			"position_y": 100
 		},
 		{
 			"device_id": "AP2",
+			"location_service_id": "loc_ap2",
 			"ssid": "WLAN2",
 			"position_x": 800,
 			"position_y": 100
 		},
 		{
 			"device_id": "AP3",
+			"location_service_id": "loc_ap3",
 			"ssid": "WLAN3",
 			"position_x": 100,
 			"position_y": 800
 		},
 		{
 			"device_id": "AP4",
+			"location_service_id": "loc_ap4",
 			"ssid": "WLAN4",
 			"position_x": 800,
 			"position_y": 800
