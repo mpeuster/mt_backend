@@ -44,9 +44,42 @@ class NetworkManager(object):
         ue_list = [ue.marshal().copy() for ue in model.ue.UE.objects]
         ap_list = [ap.marshal().copy()
                    for ap in model.accesspoint.AccessPoint.objects]
-        # run algorithm
-        plugin.algorithm.compute(ue_list, ap_list, data["ue"])
 
-        # store results
-        # trigger AP power control
-        # trigger UE update notification
+        #######################################################################
+        # run algorithm
+        result = plugin.algorithm.compute(ue_list, ap_list, data["ue"])
+        assert(len(result) > 1)
+        logging.info("Algorithm result:")
+        logging.info("=" * 40)
+        logging.info("Power control: %s" % str(result[0]))
+        logging.info("Assignment: %s" % str(result[1]))
+        logging.info("=" * 40)
+        #######################################################################
+
+        # update model with results and store them into DB
+        for uuid, state in result[0].items():  # iterate all power states
+            try:
+                power_state = 1 if state else 0
+                model.accesspoint.AccessPoint.objects(uuid=uuid).update_one(
+                    set__power_state=power_state)
+            except:
+                raise ResourceNotFoundError("Atomic update failed.")
+
+        for ue_uuid, ap_uuid in result[1].items():  # iterate all assignments
+            try:
+                ue = model.ue.UE.objects.get(uuid=ue_uuid)
+                if ap_uuid is None:
+                    ue.remove_accesspoint()
+                else:
+                    try:
+                        ap = model.accesspoint.AccessPoint.objects.get(
+                            uuid=ap_uuid)
+                        ue.assign_accesspoint(ap)
+                    except:
+                        raise ResourceNotFoundError("Atomic update failed.")
+            except:
+                logging.exception("Bad algorithm result. UE not found: %s"
+                                  % str(ue_uuid))
+
+        # TODO: trigger AP power control
+        # TODO: trigger UE update notification

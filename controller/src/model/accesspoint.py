@@ -28,7 +28,7 @@ class AccessPoint(Document):
     ssid = StringField(default=None)
     position_x = FloatField(default=0)
     position_y = FloatField(default=0)
-    power_state = IntField(default=0)
+    power_state = IntField(default=0)  # 0=off, 1=on
 
     @staticmethod
     def create(json_data):

@@ -64,8 +64,6 @@ class UE(Document):
             ue.save()
         except NotUniqueError:
             raise ResourceAlreadyExistsError("UE with this device_id exists.")
-        # TODO: Remove this test operation
-        ue.assign_accesspoint(model.accesspoint.AccessPoint.objects[0])
         return ue
 
     @staticmethod
@@ -126,11 +124,14 @@ class UE(Document):
         If cid = -1 the latest context is returned.
         """
         res = {}
-        context = self.context_list[cid]
         for k, v in self.__dict__["_data"].items():
             res[k] = v
-        for k, v in context.__dict__["_data"].items():
-            res[k] = v
+        if len(self.context_list) > 0:
+            context = self.context_list[cid]
+            for k, v in context.__dict__["_data"].items():
+                res[k] = v
+        else:
+            logging.error("UE without context marshaled")
         res['uri'] = self.uri
         # rewrite assigned_accesspoint to URI
         res["assigned_accesspoint"] = self.assigned_accesspoint.uri if \
@@ -138,9 +139,27 @@ class UE(Document):
         return marshal(res, UE_RESOURCE_FIELDS)
 
     def assign_accesspoint(self, ap):
-        self.assigned_accesspoint = ap
-        self.save()
+        """
+        ATTENTION: Updates have to be atomic,
+        to avoid record re-creation after previous delete.
+        """
+        try:
+            self.objects(uuid=self.uuid).update_one(
+                set__assigned_accesspoint=ap)
+        except:
+            raise ResourceNotFoundError("Atomic update failed.")
+        self.reload()
+        assert(self.assigned_accesspoint == ap)
 
     def remove_accesspoint(self):
-        self.assigned_accesspoint = None
-        self.save()
+        """
+        ATTENTION: Updates have to be atomic,
+        to avoid record re-creation after previous delete.
+        """
+        try:
+            self.objects(uuid=self.uuid).update_one(
+                set__assigned_accesspoint=None)
+        except:
+            raise ResourceNotFoundError("Atomic update failed.")
+        self.reload()
+        assert(self.assigned_accesspoint is None)

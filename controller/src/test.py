@@ -277,6 +277,7 @@ def helper_create_ue(device_id=None, location_service_id=None):
 def helper_delete_ue(url):
         r = requests.delete(API_BASE_URL + url)
         assert(r.status_code == 204)
+        #time.sleep(1)  # slow down, to give manage some time
 
 
 def helper_get_ue(url):
