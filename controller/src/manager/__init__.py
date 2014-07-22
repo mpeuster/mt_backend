@@ -4,6 +4,7 @@ import time
 import json
 import model
 import plugin
+from api.errors import *
 
 
 UPDATE_ACTIONS = ["post", "put", "delete"]
@@ -49,10 +50,9 @@ class NetworkManager(object):
         # run algorithm
         result = plugin.algorithm.compute(ue_list, ap_list, data["ue"])
         assert(len(result) > 1)
-        logging.info("Algorithm result:")
         logging.info("=" * 40)
-        logging.info("Power control: %s" % str(result[0]))
-        logging.info("Assignment: %s" % str(result[1]))
+        logging.info("Result: power control: %s" % str(result[0]))
+        logging.info("Result: Assignment: %s" % str(result[1]))
         logging.info("=" * 40)
         #######################################################################
 
@@ -63,7 +63,8 @@ class NetworkManager(object):
                 model.accesspoint.AccessPoint.objects(uuid=uuid).update_one(
                     set__power_state=power_state)
             except:
-                raise ResourceNotFoundError("Atomic update failed.")
+                # can fail if access point was deleted
+                logging.warning("Power state update failed.")
 
         for ue_uuid, ap_uuid in result[1].items():  # iterate all assignments
             try:
@@ -76,10 +77,11 @@ class NetworkManager(object):
                             uuid=ap_uuid)
                         ue.assign_accesspoint(ap)
                     except:
-                        raise ResourceNotFoundError("Atomic update failed.")
+                        # can fail if ue was deleted
+                        logging.warning("Assignment update failed.")
             except:
-                logging.exception("Bad algorithm result. UE not found: %s"
-                                  % str(ue_uuid))
+                # can fail if ue was deleted
+                logging.warning("Assignment update failed.")
 
         # TODO: trigger AP power control
         # TODO: trigger UE update notification

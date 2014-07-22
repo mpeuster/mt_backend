@@ -133,6 +133,29 @@ class UE_InterfaceTest(unittest.TestCase):
             for k, v in self.request_data2.items():
                 self.assertTrue(k in data)
 
+    def test_ue_assignment(self):
+        """
+        Test if new UE is assigned to an existing
+        access point resource.
+        """
+        # create test ue
+        r = helper_create_ue()
+        url = json.loads(r.json())[0]
+        # give the algorithm some time to assign
+        time.sleep(2)
+        # get new ue
+        ue_data = helper_get_ue(url)
+        # check if assigned field is present
+        self.assertTrue("assigned_accesspoint" in ue_data)
+        ap_url = str(ue_data["assigned_accesspoint"])
+        self.assertTrue(ue_data["assigned_accesspoint"] is not None)
+        # get ap which is assigned
+        r = requests.get(API_BASE_URL + ap_url)
+        ap = json.loads(r.json())
+        self.assertEqual(r.status_code, 200)
+        self.assertIsInstance(ap, dict)
+        self.assertTrue("device_id" in ap)
+
     """
     Helper functions:
     """
@@ -257,7 +280,7 @@ class AccessPoint_InterfaceTest(unittest.TestCase):
             self.assertEqual(r.status_code, 200)
             self.assertIsInstance(ap, dict)
             self.assertTrue("device_id" in ap)
-            print json.dumps(ap, indent=4)
+            #print json.dumps(ap, indent=4)
 
 """
 Global Helper
@@ -277,7 +300,6 @@ def helper_create_ue(device_id=None, location_service_id=None):
 def helper_delete_ue(url):
         r = requests.delete(API_BASE_URL + url)
         assert(r.status_code == 204)
-        #time.sleep(1)  # slow down, to give manage some time
 
 
 def helper_get_ue(url):
@@ -286,7 +308,7 @@ def helper_get_ue(url):
     # check response
     assert(r.status_code == 200)
     assert(type(data) is dict)
-    print json.dumps(data, indent=4)
+    #print json.dumps(data, indent=4)
     return data
 
 

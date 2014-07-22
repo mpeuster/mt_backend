@@ -144,12 +144,13 @@ class UE(Document):
         to avoid record re-creation after previous delete.
         """
         try:
-            self.objects(uuid=self.uuid).update_one(
+            UE.objects(uuid=self.uuid).update_one(
                 set__assigned_accesspoint=ap)
+            self.reload()
+            assert(self.assigned_accesspoint == ap)
         except:
-            raise ResourceNotFoundError("Atomic update failed.")
-        self.reload()
-        assert(self.assigned_accesspoint == ap)
+            # can fail if ue was deleted
+            logging.warning("Assignment update failed.")
 
     def remove_accesspoint(self):
         """
@@ -157,9 +158,10 @@ class UE(Document):
         to avoid record re-creation after previous delete.
         """
         try:
-            self.objects(uuid=self.uuid).update_one(
+            UE.objects(uuid=self.uuid).update_one(
                 set__assigned_accesspoint=None)
+            self.reload()
+            assert(self.assigned_accesspoint is None)
         except:
-            raise ResourceNotFoundError("Atomic update failed.")
-        self.reload()
-        assert(self.assigned_accesspoint is None)
+            # can fail if ue was deleted
+            logging.warning("Assignment update failed.")
