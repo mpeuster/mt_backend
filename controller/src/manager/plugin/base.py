@@ -3,6 +3,13 @@ import logging
 
 class BaseAlgorithm(object):
 
+    def __init__(self):
+        """
+        ATTENTION: Logging messages here break the logging environment.
+        (Executed before logging setup)
+        """
+        pass
+
     def compute(self, ue_list, ap_list, requesting_ue):
         """
         Computes the assignment of UE to APs and power state for the APs.

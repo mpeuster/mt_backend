@@ -4,13 +4,20 @@ import logging
 
 class SimpleNearestApAlgorithm(base.BaseAlgorithm):
 
+    def __init__(self):
+        """
+        ATTENTION: Logging messages here break the logging environment.
+        (Executed before logging setup)
+        """
+        pass
+
     def compute(self, ue_list, ap_list, requesting_ue):
         """
         Computes the assignment of UE to APs and power state for the APs.
 
         Input:
-            - list of UE dicts (structured like REST API return)
-            - list of AP dicts (structured like REST API return)
+            - list of UE dicts (structured like REST API JSON response)
+            - list of AP dicts (structured like REST API JSON response)
             - uuid of UE which has triggered this algorithm run
 
         Result:
