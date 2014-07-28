@@ -13,7 +13,8 @@ REQUIRED_FIELDS = [
     "position_x",
     "position_y",
     "display_state",
-    "active_application"
+    "active_application",
+    "wifi_mac"
 ]
 
 

@@ -17,7 +17,8 @@ UE_RESOURCE_FIELDS = {
     'display_state': fields.Integer,
     'active_application': fields.String,
     'assigned_accesspoint': fields.String,
-    'uri': fields.String
+    'uri': fields.String,
+    'wifi_mac': fields.String
 }
 
 
@@ -49,6 +50,7 @@ class UE(Document):
     # user fields
     device_id = StringField(required=True, unique=True)
     location_service_id = StringField(default=None)
+    wifi_mac = StringField(default=None)
     # references
     context_list = SortedListField(EmbeddedDocumentField(Context))
     assigned_accesspoint = ReferenceField(
@@ -80,6 +82,7 @@ class UE(Document):
         try:
             self.device_id = json_data["device_id"]
             self.location_service_id = json_data["location_service_id"]
+            self.wifi_mac = json_data["wifi_mac"]
         except:
             raise RequestError("Error during update.")
 

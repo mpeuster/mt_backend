@@ -26,7 +26,8 @@ REQUEST_DATA_1 = {
     "position_x": 0,
     "position_y": 0,
     "display_state": 0,
-    "active_application": "com.android.browser"
+    "active_application": "com.android.browser",
+    "wifi_mac": "00:8a:32:ce:fd:7e"
 }
 
 REQUEST_DATA_2 = {
@@ -35,7 +36,8 @@ REQUEST_DATA_2 = {
     "position_x": 999.001,
     "position_y": -999.999,
     "display_state": 1,
-    "active_application": "com.google.youtube"
+    "active_application": "com.google.youtube",
+    "wifi_mac": "aa:8a:32:ce:fd:22"
 }
 
 
