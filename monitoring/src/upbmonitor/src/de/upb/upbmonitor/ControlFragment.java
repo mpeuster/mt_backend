@@ -16,6 +16,9 @@ public class ControlFragment extends Fragment
 {
 	private static final String LTAG = "ControlFragment";
 
+	// singelton instance
+	private static ControlFragment INSTANCE = null;
+
 	private View rootView;
 	private Switch switchMonitoringService;
 	private Switch switchDualNetworking;
@@ -23,10 +26,11 @@ public class ControlFragment extends Fragment
 	/**
 	 * Returns a new instance of this fragment for the given section number.
 	 */
-	public static ControlFragment newInstance()
+	public static ControlFragment getInstance()
 	{
-		ControlFragment fragment = new ControlFragment();
-		return fragment;
+		if (INSTANCE == null)
+			INSTANCE = new ControlFragment();
+		return INSTANCE;
 	}
 
 	public ControlFragment()
@@ -45,7 +49,9 @@ public class ControlFragment extends Fragment
 		this.switchDualNetworking = (Switch) rootView
 				.findViewById(R.id.switch_dualnetworking);
 
-		// TODO set switch states based on system state
+		// set switch states based on service state
+		this.switchMonitoringService
+				.setChecked(MonitoringService.SERVICE_EXISTS);
 
 		// monitoring switch listener
 		this.switchMonitoringService
@@ -85,19 +91,22 @@ public class ControlFragment extends Fragment
 		return rootView;
 	}
 
-	private void startMonitoringService()
+	public void startMonitoringService()
 	{
 		Intent i = new Intent(this.getActivity(), MonitoringService.class);
-		//i.putExtra("name", "SurvivingwithAndroid");
 		this.getActivity().startService(i);
-		Log.i(LTAG, "Monitoring switch turned on");
+		// set switch state
+		this.switchMonitoringService.setChecked(true);
+		Log.i(LTAG, "Monitoring service turned on");
 	}
 
-	private void stopMonitoringService()
+	public void stopMonitoringService()
 	{
 		Intent i = new Intent(this.getActivity(), MonitoringService.class);
 		this.getActivity().stopService(i);
-		Log.i(LTAG, "Monitoring switch turned off");
+		// set switch state
+		this.switchMonitoringService.setChecked(false);
+		Log.i(LTAG, "Monitoring service turned off");
 	}
 
 }

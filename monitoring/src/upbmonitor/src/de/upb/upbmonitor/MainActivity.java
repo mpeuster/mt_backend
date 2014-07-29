@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,6 +23,9 @@ import android.widget.TextView;
 public class MainActivity extends ActionBarActivity implements
 		ActionBar.TabListener
 {
+	private static final String LTAG = "MainActivity";
+	private static final int CONTROL_PAGE_ID = 0;
+	private static final int MONITORING_PAGE_ID = 1;
 
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -103,6 +107,15 @@ public class MainActivity extends ActionBarActivity implements
 		int id = item.getItemId();
 		if (id == R.id.action_settings)
 		{
+			// try to stop services before settings are changed
+			try
+			{
+				ControlFragment.getInstance().stopMonitoringService();
+			} catch (Exception e)
+			{
+				Log.e(LTAG, "Error while stopping monitoring service");
+			}
+
 			Intent i = new Intent(this, SettingsActivity.class);
 			startActivity(i);
 			return true;
@@ -148,9 +161,9 @@ public class MainActivity extends ActionBarActivity implements
 		{
 			// getItem is called to instantiate the fragment for the given page.
 			// Return a PlaceholderFragment if no real fragment is defined.
-			if (position == 0)
-				return ControlFragment.newInstance();
-			if (position == 1)
+			if (position == CONTROL_PAGE_ID)
+				return ControlFragment.getInstance();
+			if (position == MONITORING_PAGE_ID)
 				return MonitoringFragment.newInstance();
 			return PlaceholderFragment.newInstance(position);
 		}
