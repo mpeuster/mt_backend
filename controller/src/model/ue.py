@@ -110,6 +110,8 @@ class UE(Document):
                     location_service_id=self.location_service_id)
             except:
                 loc = None
+                logging.debug("Could not find location info for %s."
+                              % self.location_service_id)
             if loc:
                 context = self.context_list[-1]
                 context.position_x = loc.position_x
