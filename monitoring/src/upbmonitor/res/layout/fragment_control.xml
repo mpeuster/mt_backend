@@ -17,6 +17,8 @@
         android:divider="@drawable/horizontaldivider"
         android:dividerPadding="0dp"
         android:orientation="vertical"
+        android:scrollbarStyle="outsideOverlay"
+        android:scrollbars="vertical"
         android:showDividers="middle" >
 
         <LinearLayout
@@ -26,7 +28,7 @@
             android:padding="4dp" >
 
             <Switch
-                android:id="@+id/switch1"
+                android:id="@+id/switch_monitoringservice"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Monitoring Service" />
@@ -35,6 +37,7 @@
                 android:id="@+id/textView1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingLeft="8dp"
                 android:text="The monitoring service runs in the background and measures UE activity. It automatically sends these information to the testbed backend."
                 android:textAppearance="?android:attr/textAppearanceSmall" />
 
@@ -47,7 +50,7 @@
             android:padding="8dp" >
 
             <Switch
-                android:id="@+id/switch2"
+                android:id="@+id/switch_dualnetworking"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Dual Networking" />
@@ -56,6 +59,7 @@
                 android:id="@+id/TextView01"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingLeft="8dp"
                 android:text="Enable or disable the dual connectivity mode. If enabled 3G and Wi-Fi interfaces are active simultaneously. This action needs root access. Attention: Wi-Fi status is not shown in status bar of the device."
                 android:textAppearance="?android:attr/textAppearanceSmall" />
 
