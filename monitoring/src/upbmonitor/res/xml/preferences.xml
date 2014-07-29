@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
     <PreferenceCategory 
-        android:title="Category Title"
+        android:title="Backend Connection"
         android:key="pref_key_category1">
-	    <CheckBoxPreference
-	        android:key="preference_test"
-	        android:title="TestTitle"
-	        android:summary="Test Summary String"
-	        android:defaultValue="true" />
+	    <EditTextPreference android:title="Backend API address" android:key="pref_backend_api_address" android:defaultValue="192.168.222.1" android:summary="Address of the RESTful backend API. IP or domain without 'http.//'."/>
+	    <EditTextPreference android:key="pref_backend_api_port" android:title="Backend API port" android:defaultValue="5000"/>
     </PreferenceCategory>
 
 </PreferenceScreen>
