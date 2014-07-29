@@ -30,18 +30,12 @@ class Location(restful.Resource):
         loc.position_x = json_data["position_x"]
         loc.position_y = json_data["position_y"]
         loc.save()
-        # trigger location update in all matching UE model entries
-        for ue in model.ue.UE.objects(
-                location_service_id=loc.location_service_id):
-            ue.pull_external_location()
-            ue.save()
-            # send update signal
-            api.zmq_send(json.dumps({"action": "put", "ue": ue.uuid}))
+        # ATTENTION: Location is only updated in UE context,
+        # if the UE performs an update action!
         # trigger location update in all matching AP model entries
-        for ap in model.accesspoint.AccessPoint.objects(
-                location_service_id=loc.location_service_id):
-            ap.position_x = loc.position_x
-            ap.position_y = loc.position_y
-            ap.save()
-            logging.debug("Updated location of AP: %s" % str(ap.device_id))
+        model.accesspoint.AccessPoint.objects(
+            location_service_id=loc.location_service_id).update(
+                set__position_x=loc.position_x,
+                set__position_y=loc.position_y
+                )
         return None, 201

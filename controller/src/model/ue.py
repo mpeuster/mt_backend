@@ -26,8 +26,8 @@ class Context(EmbeddedDocument):
     # system fields
     updated_at = DateTimeField(default=datetime.datetime.now)
     # user fields
-    position_x = FloatField(default=0)
-    position_y = FloatField(default=0)
+    position_x = FloatField(default=-1)
+    position_y = FloatField(default=-1)
     display_state = IntField(default=0)
     active_application = StringField(default=None)
 
@@ -59,12 +59,15 @@ class UE(Document):
     @staticmethod
     def create(json_data):
         try:
-            ue = UE(uuid=uuid.uuid1().hex,
+            new_uuid = uuid.uuid1().hex
+            ue = UE(uuid=new_uuid,
                     device_id=json_data['device_id'])
-            ue.update(json_data)
-            ue.add_context(json_data)
             ue.save()
+            UE.update(new_uuid, json_data)
+            UE.add_context(new_uuid, json_data)
+
         except NotUniqueError:
+            logging.exception("Error:")
             raise ResourceAlreadyExistsError("UE with this device_id exists.")
         return ue
 
@@ -78,46 +81,41 @@ class UE(Document):
             raise ResourceNotFoundError("UE not found in model.")
         return ue
 
-    def update(self, json_data):
+    @staticmethod
+    def update(uuid, json_data):
         try:
-            self.device_id = json_data["device_id"]
-            self.location_service_id = json_data["location_service_id"]
-            self.wifi_mac = json_data["wifi_mac"]
+            # atomic update of ue entry
+            UE.objects(uuid=uuid).update_one(
+                set__device_id=json_data["device_id"],
+                set__location_service_id=json_data["location_service_id"],
+                set__wifi_mac=json_data["wifi_mac"]
+                )
         except:
             raise RequestError("Error during update.")
 
-    def add_context(self, json_data):
+    @staticmethod
+    def add_context(uuid, json_data):
         try:
             new_c = Context()
             new_c.position_x = json_data["position_x"]
             new_c.position_y = json_data["position_y"]
             new_c.display_state = json_data["display_state"]
             new_c.active_application = json_data["active_application"]
-            self.context_list.append(new_c)
-        except:
-            raise RequestError("Error during update.")
-        self.pull_external_location()
-
-    def pull_external_location(self):
-        """
-        Pulls latest location data from the 3rd party location service,
-        stored in the model, if a location_service_id and a context is present.
-        The location is stored in the latest context object.
-        """
-        if self.location_service_id is not None and len(self.context_list) > 0:
+            # try to use third party location if available
             try:
                 loc = model.location.Location.objects.get(
-                    location_service_id=self.location_service_id)
+                    location_service_id=json_data["location_service_id"])
+                new_c.position_x = loc.position_x
+                new_c.position_y = loc.position_y
             except:
-                loc = None
                 logging.debug("Could not find location info for %s."
-                              % self.location_service_id)
-            if loc:
-                context = self.context_list[-1]
-                context.position_x = loc.position_x
-                context.position_y = loc.position_y
-                logging.debug("External location inserted into UE: %s"
-                              % str(self.device_id))
+                              % json_data["location_service_id"])
+            # atomic update of ue entry
+            UE.objects(uuid=uuid).update_one(
+                push__context_list=new_c)
+        except:
+            logging.exception("Error:")
+            raise RequestError("Error during update.")
 
     @property
     def uri(self):

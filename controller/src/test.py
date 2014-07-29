@@ -183,6 +183,13 @@ class Location_InterfaceTest(unittest.TestCase):
         data = json.loads(r.json())
         self.assertIsInstance(data, list)
         self.ue_url = data[0]
+        # get ue data
+        ue_data = helper_get_ue(self.ue_url)
+        # update requests to create more than one context
+        r = requests.put(API_BASE_URL + self.ue_url,
+                         data=json.dumps(ue_data))
+        r = requests.put(API_BASE_URL + self.ue_url,
+                         data=json.dumps(ue_data))
 
     def tearDown(self):
         """
@@ -211,6 +218,11 @@ class Location_InterfaceTest(unittest.TestCase):
         r = requests.post(API_BASE_URL + "/api/location",
                           data=json.dumps(data))
         self.assertEqual(r.status_code, 201)
+        # send update request to ue, to create new context with new location
+        ue_data = helper_get_ue(self.ue_url)
+        # update requests to create more than one context
+        r = requests.put(API_BASE_URL + self.ue_url,
+                         data=json.dumps(ue_data))
         # check if the position is available at UE
         ue = helper_get_ue(self.ue_url)
         self.assertEqual(ue["position_x"], 200.01)

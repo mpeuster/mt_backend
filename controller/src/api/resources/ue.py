@@ -58,12 +58,10 @@ class UE(restful.Resource):
         # validate data
         api.check_required_fields(json_data, REQUIRED_FIELDS)
         # update model
-        ue = model.ue.UE.get(uuid)
-        ue.update(json_data)
-        ue.add_context(json_data)
-        ue.save()
+        model.ue.UE.update(uuid, json_data)
+        model.ue.UE.add_context(uuid, json_data)
         # send update signal
-        api.zmq_send(json.dumps({"action": "put", "ue": ue.uuid}))
+        api.zmq_send(json.dumps({"action": "put", "ue": uuid}))
         return None, 204
 
     def delete(self, uuid):
