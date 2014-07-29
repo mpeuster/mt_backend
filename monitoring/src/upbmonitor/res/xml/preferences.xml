@@ -6,5 +6,10 @@
 	    <EditTextPreference android:title="Backend API address" android:key="pref_backend_api_address" android:defaultValue="192.168.222.1" android:summary="Address of the RESTful backend API. IP or domain without 'http.//'."/>
 	    <EditTextPreference android:key="pref_backend_api_port" android:title="Backend API port" android:defaultValue="5000"/>
     </PreferenceCategory>
+    <PreferenceCategory
+        android:title="Monitoring"
+        android:key="pref_key_category2">
+        <EditTextPreference android:key="pref_monitoring_intervall" android:title="Intervall (s)" android:defaultValue="1"/>
+    </PreferenceCategory>
 
 </PreferenceScreen>
