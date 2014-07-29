@@ -20,6 +20,8 @@ class NetworkManager(object):
         model.connect_db()
         # setup zero mq receiver
         self.setup_zmq()
+        # load management algorithm
+        plugin.load_algorithm(model.CONFIG["algorithm"]["name"])
 
     def setup_zmq(self):
         context = zmq.Context()
@@ -36,7 +38,6 @@ class NetworkManager(object):
             data = json.loads(r)
             logging.debug("Received: %s" % str(data))
             if "action" in data:
-                pass
                 if data["action"] in UPDATE_ACTIONS:
                     self.dispatch_update_notification(data)
 
@@ -48,6 +49,8 @@ class NetworkManager(object):
 
         #######################################################################
         # run algorithm
+        if plugin.algorithm is None:
+            raise Exception("No resource management algorithm loaded.")
         result = plugin.algorithm.compute(ue_list, ap_list, data["ue"])
         assert(len(result) > 1)
         logging.info("=" * 40)

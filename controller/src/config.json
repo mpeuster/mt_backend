@@ -6,6 +6,10 @@
 		"password": "NMT2secret1234",
 		"db": "nmt2db"
 	},
+	"algorithm":
+	{
+		"name": "SimpleNearestApAlgorithm"
+	},
 	"zmq": {
 		"host": "localhost",
 		"port": 5557

@@ -6,10 +6,9 @@ class SimpleNearestApAlgorithm(base.BaseAlgorithm):
 
     def __init__(self):
         """
-        ATTENTION: Logging messages here break the logging environment.
-        (Executed before logging setup)
+        Initialization work
         """
-        pass
+        logging.info("Loaded algorithm: %s" % str(self.__class__.__name__))
 
     def compute(self, ue_list, ap_list, requesting_ue):
         """
@@ -28,7 +27,7 @@ class SimpleNearestApAlgorithm(base.BaseAlgorithm):
                 e.g. {"ue_uuid1": "ap_uuid2", "ue_uuid2": None}
         """
         # TODO: Implement real algorithm
-        logging.info("Running SimpleNearestApAlgorithm...")
+        logging.info("Running %s..." % str(self.__class__.__name__))
 
         power_states_dict = {}
         assignment_dict = {}

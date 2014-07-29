@@ -5,8 +5,7 @@ class BaseAlgorithm(object):
 
     def __init__(self):
         """
-        ATTENTION: Logging messages here break the logging environment.
-        (Executed before logging setup)
+        Initialization work
         """
         pass
 
