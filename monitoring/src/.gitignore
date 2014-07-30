@@ -8,7 +8,7 @@ target/
 *.swp
 *.orig
 *.log
-*.properties
+#*.properties
 seed.txt
 map.txt
 
