@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -19,36 +18,7 @@ public class MonitoringService extends Service
 	private static int MONITORING_INTERVAL = Integer.MAX_VALUE;
 
 	private Handler monitoringHandler = new Handler();
-	// TODO move to MonitoringThread class
-	private Runnable monitoringTask = new Runnable()
-	{
-		public void run()
-		{
-			Log.v("PeriodicTimerService", "Awake with interval: "
-					+ MONITORING_INTERVAL);
-			this.monitor();
-			monitoringHandler.postDelayed(monitoringTask, MONITORING_INTERVAL);
-		}
-		
-		private void monitor()
-		{
-			// get screen state
-			PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-			boolean screen_state = pm.isScreenOn();
-			// update model
-			UeContext c = UeContext.getInstance();
-			c.setDisplayState(screen_state);
-			c.incrementUpdateCount();
-			
-			// print out if new data is available (context has changed)
-			if(c.hasChanged())
-			{
-				Log.i(LTAG, "UpdateCount: " + c.getUpdateCount());
-				Log.i(LTAG, "Display state: " + c.isDisplayOn());
-				c.resetDataChangedFlag();
-			}
-		}
-	};
+	private Runnable monitoringTask = null;
 
 	@Override
 	public void onCreate()
@@ -91,7 +61,8 @@ public class MonitoringService extends Service
 		// start monitoring task
 		if (!monitoringHandler.hasMessages(0))
 		{
-			monitoringHandler.postDelayed(monitoringTask, MONITORING_INTERVAL);
+			this.monitoringTask = new MonitoringThread(this, this.monitoringHandler, MONITORING_INTERVAL);
+			monitoringHandler.postDelayed(monitoringTask, 0);
 			Log.d(LTAG, "Monitoring task started");
 		}
 		// start sticky, so service will be restarted if it is killed
