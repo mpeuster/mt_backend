@@ -35,6 +35,7 @@ public class ControlFragment extends Fragment
 
 	public ControlFragment()
 	{
+		
 	}
 
 	@Override
