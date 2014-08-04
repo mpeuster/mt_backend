@@ -1,8 +1,6 @@
 package de.upb.upbmonitor.monitoring;
 
-import de.upb.upbmonitor.monitoring.model.UeContext;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
@@ -61,7 +59,8 @@ public class MonitoringService extends Service
 		// start monitoring task
 		if (!monitoringHandler.hasMessages(0))
 		{
-			this.monitoringTask = new MonitoringThread(this, this.monitoringHandler, MONITORING_INTERVAL);
+			this.monitoringTask = new MonitoringThread(this,
+					this.monitoringHandler, MONITORING_INTERVAL);
 			monitoringHandler.postDelayed(monitoringTask, 0);
 			Log.d(LTAG, "Monitoring task started");
 		}

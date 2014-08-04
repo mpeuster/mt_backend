@@ -6,20 +6,33 @@ import android.os.PowerManager;
 import android.util.Log;
 import de.upb.upbmonitor.monitoring.model.UeContext;
 
+/**
+ * Represents the monitoring thread of the service.
+ * 
+ * Attention: This Runnable/Handler implementation is the way to do periodic
+ * tasks in Android. Do not use Java timers. However its a bit ugly.
+ * 
+ * @author manuel
+ * 
+ */
 public class MonitoringThread implements Runnable
 {
 	private static final String LTAG = "MonitoringThread";
 	private Context myContext;
 	private Handler myHandler;
 	private int mMonitoringInterval;
+	
+	private SystemMonitor mSystemMonitor;
 
 	public MonitoringThread(Context myContext, Handler myHandler,
 			int monitoringInterval)
-	{
+	{	// arguments
 		this.myContext = myContext;
 		this.myHandler = myHandler;
-		Log.d(LTAG, "MMM:" + monitoringInterval);
 		this.mMonitoringInterval = monitoringInterval;
+		
+		// initializations
+		this.mSystemMonitor = new SystemMonitor(this.myContext);		
 	}
 
 	public void run()
@@ -32,13 +45,10 @@ public class MonitoringThread implements Runnable
 
 	private void monitor()
 	{
-		// get screen state
-		PowerManager pm = (PowerManager) this.myContext
-				.getSystemService(Context.POWER_SERVICE);
-		boolean screen_state = pm.isScreenOn();
+		this.mSystemMonitor.monitor();
+
 		// update model
 		UeContext c = UeContext.getInstance();
-		c.setDisplayState(screen_state);
 		c.incrementUpdateCount();
 
 		// print out if new data is available (context has changed)
