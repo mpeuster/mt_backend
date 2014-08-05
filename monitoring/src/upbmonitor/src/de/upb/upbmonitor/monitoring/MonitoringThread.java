@@ -37,26 +37,19 @@ public class MonitoringThread implements Runnable
 
 	public void run()
 	{
-		Log.v("PeriodicTimerService", "Awake with interval: "
+		Log.v(LTAG, "Awake with interval: "
 				+ this.mMonitoringInterval);
+		// periodically monitor
 		this.monitor();
 		myHandler.postDelayed(this, this.mMonitoringInterval);
 	}
 
 	private void monitor()
 	{
+		// call monitoring components
 		this.mSystemMonitor.monitor();
-
 		// update model
 		UeContext c = UeContext.getInstance();
 		c.incrementUpdateCount();
-
-		// print out if new data is available (context has changed)
-		if (c.hasChanged())
-		{
-			Log.i(LTAG, "UpdateCount: " + c.getUpdateCount());
-			Log.i(LTAG, "Display state: " + c.isDisplayOn());
-			c.resetDataChangedFlag();
-		}
 	}
 }

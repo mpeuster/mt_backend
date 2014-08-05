@@ -9,7 +9,8 @@
     <PreferenceCategory
         android:title="Monitoring"
         android:key="pref_key_category2">
-        <EditTextPreference android:key="pref_monitoring_intervall" android:title="Intervall (ms)" android:defaultValue="1000" android:summary="Interval for monitoring event in milliseconds."/>
+        <EditTextPreference android:key="pref_monitoring_interval" android:title="Monitor Interval (ms)" android:defaultValue="1000" android:summary="Interval for monitoring event in milliseconds."/>
+        <EditTextPreference android:key="pref_sending_interval" android:title="Min. Sender Interval (ms)" android:defaultValue="5000" android:summary="Minimum interval for sending context updates in milliseconds."/>
     </PreferenceCategory>
 
 </PreferenceScreen>

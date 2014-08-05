@@ -14,9 +14,11 @@ public class MonitoringService extends Service
 	private static final String LTAG = "MonitoringService";
 	public static boolean SERVICE_EXISTS = false;
 	private static int MONITORING_INTERVAL = Integer.MAX_VALUE;
+	private static int SENDING_INTERVAL = Integer.MAX_VALUE;
 
-	private Handler monitoringHandler = new Handler();
+	private Handler threadHandler = new Handler();
 	private Runnable monitoringTask = null;
+	private Runnable sendingTask = null;
 
 	@Override
 	public void onCreate()
@@ -31,7 +33,8 @@ public class MonitoringService extends Service
 	{
 		super.onDestroy();
 		Log.d(LTAG, "onDestroy()");
-		monitoringHandler.removeCallbacks(monitoringTask);
+		threadHandler.removeCallbacks(monitoringTask);
+		threadHandler.removeCallbacks(sendingTask);
 		SERVICE_EXISTS = false;
 	}
 
@@ -45,7 +48,9 @@ public class MonitoringService extends Service
 			SharedPreferences preferences = PreferenceManager
 					.getDefaultSharedPreferences(this);
 			MONITORING_INTERVAL = Integer.valueOf(preferences.getString(
-					"pref_monitoring_intervall", "0"));
+					"pref_monitoring_interval", "0"));
+			SENDING_INTERVAL = Integer.valueOf(preferences.getString(
+					"pref_sending_interval", "0"));
 		} catch (Exception e)
 		{
 			// if preferences could not be read, use a fixed interval
@@ -54,15 +59,23 @@ public class MonitoringService extends Service
 					"Error reading preferences. Check your inputs.",
 					Toast.LENGTH_LONG).show();
 			MONITORING_INTERVAL = 1000;
+			SENDING_INTERVAL = 5000;
 		}
 
-		// start monitoring task
-		if (!monitoringHandler.hasMessages(0))
+		// run service's tasks
+		if (!threadHandler.hasMessages(0))
 		{
+			// start monitoring task
 			this.monitoringTask = new MonitoringThread(this,
-					this.monitoringHandler, MONITORING_INTERVAL);
-			monitoringHandler.postDelayed(monitoringTask, 0);
+					this.threadHandler, MONITORING_INTERVAL);
+			threadHandler.postDelayed(monitoringTask, 0);
 			Log.d(LTAG, "Monitoring task started");
+			
+			// start monitoring task
+			this.sendingTask = new SenderThread(this,
+					this.threadHandler, SENDING_INTERVAL);
+			threadHandler.postDelayed(sendingTask, 0);
+			Log.d(LTAG, "Sender task started");
 		}
 		// start sticky, so service will be restarted if it is killed
 		return Service.START_STICKY;
