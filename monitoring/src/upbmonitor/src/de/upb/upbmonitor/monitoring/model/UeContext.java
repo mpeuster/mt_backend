@@ -9,17 +9,6 @@ public class UeContext
 	private static UeContext INSTANCE;
 	private boolean CONTEXT_CHANGED;
 
-	private String mActiveApplication;
-
-	public synchronized String getActiveApplication()
-	{
-		return mActiveApplication;
-	}
-
-	public synchronized void setActiveApplication(String mActiveApplication)
-	{
-		this.mActiveApplication = mActiveApplication;
-	}
 
 	private int mUpdateCount;
 
@@ -46,6 +35,38 @@ public class UeContext
 			this.setDataChangedFlag();
 		this.mDisplayState = mDisplayState;
 	}
+	
+	private String mActiveApplicationPackage;
+	
+
+	public synchronized String getActiveApplicationPackage()
+	{
+		return mActiveApplicationPackage;
+	}
+
+	public synchronized void setActiveApplicationPackage(
+			String mActiveApplicationPackage)
+	{
+		if (!mActiveApplicationPackage.equals(this.mActiveApplicationPackage))
+			this.setDataChangedFlag();
+		this.mActiveApplicationPackage = mActiveApplicationPackage;
+	}
+	
+	private String mActiveApplicationActivity;
+	
+
+	public synchronized String getActiveApplicationActivity()
+	{
+		return mActiveApplicationActivity;
+	}
+
+	public synchronized void setActiveApplicationActivity(
+			String mActiveApplicationActivity)
+	{
+		if (!mActiveApplicationActivity.equals(this.mActiveApplicationActivity))
+			this.setDataChangedFlag();
+		this.mActiveApplicationActivity = mActiveApplicationActivity;
+	}
 
 	public synchronized static UeContext getInstance()
 	{
@@ -58,10 +79,10 @@ public class UeContext
 	{
 		// value initialization
 		this.CONTEXT_CHANGED = false;
-		this.mActiveApplication = null;
 		this.mUpdateCount = 0;
 		this.mDisplayState = false;
-
+		this.mActiveApplicationPackage = null;
+		this.mActiveApplicationActivity = null;
 	}
 
 	public void resetDataChangedFlag()

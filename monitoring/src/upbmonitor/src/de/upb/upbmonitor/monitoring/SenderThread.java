@@ -55,6 +55,8 @@ public class SenderThread implements Runnable
 			// TODO implement json client to update contexts
 			Log.i(LTAG, "UpdateCount: " + c.getUpdateCount());
 			Log.i(LTAG, "Display state: " + c.isDisplayOn());
+			Log.i(LTAG, "Active package: " + c.getActiveApplicationPackage());
+			Log.i(LTAG, "Active activity: " + c.getActiveApplicationActivity());
 			c.resetDataChangedFlag();
 		}
 	}
