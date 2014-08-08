@@ -1,11 +1,8 @@
 package de.upb.upbmonitor.monitoring;
 
-import java.util.List;
-
 import de.upb.upbmonitor.monitoring.model.UeContext;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningTaskInfo;
-import android.content.ComponentName;
 import android.content.Context;
 import android.os.PowerManager;
 import android.util.Log;

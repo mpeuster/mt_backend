@@ -9,7 +9,6 @@ public class UeContext
 	private static UeContext INSTANCE;
 	private boolean CONTEXT_CHANGED;
 
-
 	private int mUpdateCount;
 
 	public synchronized int getUpdateCount()
@@ -35,9 +34,8 @@ public class UeContext
 			this.setDataChangedFlag();
 		this.mDisplayState = mDisplayState;
 	}
-	
+
 	private String mActiveApplicationPackage;
-	
 
 	public synchronized String getActiveApplicationPackage()
 	{
@@ -51,9 +49,8 @@ public class UeContext
 			this.setDataChangedFlag();
 		this.mActiveApplicationPackage = mActiveApplicationPackage;
 	}
-	
+
 	private String mActiveApplicationActivity;
-	
 
 	public synchronized String getActiveApplicationActivity()
 	{
@@ -66,6 +63,42 @@ public class UeContext
 		if (!mActiveApplicationActivity.equals(this.mActiveApplicationActivity))
 			this.setDataChangedFlag();
 		this.mActiveApplicationActivity = mActiveApplicationActivity;
+	}
+
+	public synchronized long getTotalRxBytes()
+	{
+		NetworkTraffic nt = NetworkTraffic.getInstance();
+		return nt.getTotalRxBytes();
+	}
+
+	public synchronized long getTotalTxBytes()
+	{
+		NetworkTraffic nt = NetworkTraffic.getInstance();
+		return nt.getTotalTxBytes();
+	}
+
+	public synchronized long getMobileRxBytes()
+	{
+		NetworkTraffic nt = NetworkTraffic.getInstance();
+		return nt.getMobileRxBytes();
+	}
+
+	public synchronized long getMobileTxBytes()
+	{
+		NetworkTraffic nt = NetworkTraffic.getInstance();
+		return nt.getMobileTxBytes();
+	}
+
+	public synchronized long getWifiRxBytes()
+	{
+		NetworkTraffic nt = NetworkTraffic.getInstance();
+		return nt.getWifiRxBytes();
+	}
+
+	public synchronized long getWifiTxBytes()
+	{
+		NetworkTraffic nt = NetworkTraffic.getInstance();
+		return nt.getWifiTxBytes();
 	}
 
 	public synchronized static UeContext getInstance()
@@ -87,6 +120,8 @@ public class UeContext
 
 	public void resetDataChangedFlag()
 	{
+		NetworkTraffic nt = NetworkTraffic.getInstance();
+		nt.resetDataChangedFlag();
 		this.CONTEXT_CHANGED = false;
 	}
 
@@ -97,6 +132,7 @@ public class UeContext
 
 	public boolean hasChanged()
 	{
-		return this.CONTEXT_CHANGED;
+		NetworkTraffic nt = NetworkTraffic.getInstance();
+		return this.CONTEXT_CHANGED || nt.hasChanged();
 	}
 }

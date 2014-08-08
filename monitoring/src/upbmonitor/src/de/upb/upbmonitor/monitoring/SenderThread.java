@@ -53,10 +53,17 @@ public class SenderThread implements Runnable
 		if (c.hasChanged())
 		{
 			// TODO implement json client to update contexts
+			// system values
 			Log.i(LTAG, "UpdateCount: " + c.getUpdateCount());
 			Log.i(LTAG, "Display state: " + c.isDisplayOn());
 			Log.i(LTAG, "Active package: " + c.getActiveApplicationPackage());
 			Log.i(LTAG, "Active activity: " + c.getActiveApplicationActivity());
+			// network values
+			Log.i(LTAG, "Mobile Traffic:\tRx:" + c.getMobileRxBytes() + "\tTx:" + c.getMobileTxBytes());
+			Log.i(LTAG, "Wifi   Traffic:\tRx:" + c.getWifiRxBytes() + "\tTx:" + c.getWifiTxBytes());
+			Log.i(LTAG, "Total  Traffic:\tRx:" + c.getTotalRxBytes() + "\tTx:" + c.getTotalTxBytes());
+			
+			// reset changed flag in all models
 			c.resetDataChangedFlag();
 		}
 	}

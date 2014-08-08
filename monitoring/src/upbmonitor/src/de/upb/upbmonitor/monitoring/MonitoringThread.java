@@ -2,7 +2,6 @@ package de.upb.upbmonitor.monitoring;
 
 import android.content.Context;
 import android.os.Handler;
-import android.os.PowerManager;
 import android.util.Log;
 import de.upb.upbmonitor.monitoring.model.UeContext;
 
@@ -23,6 +22,7 @@ public class MonitoringThread implements Runnable
 	private int mMonitoringInterval;
 	
 	private SystemMonitor mSystemMonitor;
+	private NetworkMonitor mNetworkMonitor;
 
 	public MonitoringThread(Context myContext, Handler myHandler,
 			int monitoringInterval)
@@ -32,7 +32,8 @@ public class MonitoringThread implements Runnable
 		this.mMonitoringInterval = monitoringInterval;
 		
 		// initializations
-		this.mSystemMonitor = new SystemMonitor(this.myContext);		
+		this.mSystemMonitor = new SystemMonitor(this.myContext);	
+		this.mNetworkMonitor = new NetworkMonitor(this.myContext);
 	}
 
 	public void run()
@@ -48,6 +49,7 @@ public class MonitoringThread implements Runnable
 	{
 		// call monitoring components
 		this.mSystemMonitor.monitor();
+		this.mNetworkMonitor.monitor();
 		// update model
 		UeContext c = UeContext.getInstance();
 		c.incrementUpdateCount();
