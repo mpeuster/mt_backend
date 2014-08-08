@@ -21,24 +21,21 @@ public class SenderThread implements Runnable
 	private Context myContext;
 	private Handler myHandler;
 	private int mSenderInterval;
-	
-
 
 	public SenderThread(Context myContext, Handler myHandler,
 			int monitoringInterval)
-	{	// arguments
+	{ // arguments
 		this.myContext = myContext;
 		this.myHandler = myHandler;
 		this.mSenderInterval = monitoringInterval;
-		
+
 		// initializations
-	
+
 	}
 
 	public void run()
 	{
-		Log.v(LTAG, "Awake with interval: "
-				+ this.mSenderInterval);
+		Log.v(LTAG, "Awake with interval: " + this.mSenderInterval);
 		// periodically send
 		this.send();
 		myHandler.postDelayed(this, this.mSenderInterval);
@@ -48,7 +45,7 @@ public class SenderThread implements Runnable
 	{
 		// access model
 		UeContext c = UeContext.getInstance();
-	
+
 		// send context update if new data is available (context has changed)
 		if (c.hasChanged())
 		{
@@ -59,10 +56,22 @@ public class SenderThread implements Runnable
 			Log.i(LTAG, "Active package: " + c.getActiveApplicationPackage());
 			Log.i(LTAG, "Active activity: " + c.getActiveApplicationActivity());
 			// network values
-			Log.i(LTAG, "Mobile Traffic:\tRx:" + c.getMobileRxBytes() + "\tTx:" + c.getMobileTxBytes());
-			Log.i(LTAG, "Wifi   Traffic:\tRx:" + c.getWifiRxBytes() + "\tTx:" + c.getWifiTxBytes());
-			Log.i(LTAG, "Total  Traffic:\tRx:" + c.getTotalRxBytes() + "\tTx:" + c.getTotalTxBytes());
-			
+			Log.i(LTAG,
+					"Mobile Traffic:\tRx:" + c.getMobileRxBytes() + "\tTx:"
+							+ c.getMobileTxBytes() + "\tRx/s:"
+							+ c.getMobileRxBytesPerSecond() + " \tTx/s:"
+							+ c.getMobileTxBytesPerSecond());
+			Log.i(LTAG,
+					"Wifi   Traffic:\tRx:" + c.getWifiRxBytes() + "\tTx:"
+							+ c.getWifiTxBytes() + "\tRx/s:"
+							+ c.getWifiRxBytesPerSecond() + " \tTx/s:"
+							+ c.getWifiTxBytesPerSecond());
+			Log.i(LTAG,
+					"Total  Traffic:\tRx:" + c.getTotalRxBytes() + "\tTx:"
+							+ c.getTotalTxBytes() + "\tRx/s:"
+							+ c.getTotalRxBytesPerSecond() + " \tTx/s:"
+							+ c.getTotalTxBytesPerSecond());
+
 			// reset changed flag in all models
 			c.resetDataChangedFlag();
 		}

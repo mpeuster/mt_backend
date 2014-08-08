@@ -100,7 +100,47 @@ public class UeContext
 		NetworkTraffic nt = NetworkTraffic.getInstance();
 		return nt.getWifiTxBytes();
 	}
+	
+	public synchronized float getTotalRxBytesPerSecond()
+	{
+		NetworkTraffic nt = NetworkTraffic.getInstance();
+		return nt.getTotalRxBytesPerSecond();
+	}
 
+	public synchronized float getTotalTxBytesPerSecond()
+	{
+		NetworkTraffic nt = NetworkTraffic.getInstance();
+		return nt.getTotalTxBytesPerSecond();
+	}
+
+	public synchronized float getMobileRxBytesPerSecond()
+	{
+		NetworkTraffic nt = NetworkTraffic.getInstance();
+		return nt.getMobileRxBytesPerSecond();
+	}
+
+	public synchronized float getMobileTxBytesPerSecond()
+	{
+		NetworkTraffic nt = NetworkTraffic.getInstance();
+		return nt.getMobileTxBytesPerSecond();
+	}
+
+	public synchronized float getWifiRxBytesPerSecond()
+	{
+		NetworkTraffic nt = NetworkTraffic.getInstance();
+		return nt.getWifiRxBytesPerSecond();
+	}
+
+	public synchronized float getWifiTxBytesPerSecond()
+	{
+		NetworkTraffic nt = NetworkTraffic.getInstance();
+		return nt.getWifiTxBytesPerSecond();
+	}
+
+	/**
+	 * Use as singleton class.
+	 * @return class instance
+	 */
 	public synchronized static UeContext getInstance()
 	{
 		if (INSTANCE == null)

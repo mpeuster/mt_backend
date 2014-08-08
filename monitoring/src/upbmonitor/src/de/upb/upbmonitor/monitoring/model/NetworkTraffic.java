@@ -20,26 +20,8 @@ public class NetworkTraffic
 
 	private synchronized void setBytes(TType t, long b)
 	{
-		// gather data
-		TType tb = null; // backup type
-		switch (t)
-		{
-		case TotalRx:
-			tb = TType.TotalRxBackup;
-			break;
-		case TotalTx:
-			tb = TType.TotalTxBackup;
-			break;
-		case MobileRx:
-			tb = TType.MobileRxBackup;
-			break;
-		case MobileTx:
-			tb = TType.MobileTxBackup;
-			break;
-		default:
-			Log.e(LTAG, "Bad TType.");
-			break;
-		}
+		// get backup TType
+		TType tb = this.getBackupTType(t);
 
 		if (tb != null)
 		{
@@ -115,6 +97,57 @@ public class NetworkTraffic
 		return this.getBytes(TType.WifiTx);
 	}
 
+	public synchronized float getBytesPerSecond(TType t)
+	{
+		// wifi special cases (calculated from mobile and total values)
+		if (t == TType.WifiRx)
+			return this.getBytesPerSecond(TType.TotalRx)
+					- this.getBytesPerSecond(TType.MobileRx);
+		if (t == TType.WifiTx)
+			return this.getBytesPerSecond(TType.TotalTx)
+					- this.getBytesPerSecond(TType.MobileTx);
+
+		TType tb = this.getBackupTType(t); // backup type
+		// calculate byte_count and time_interval since last update
+		float byte_count = this.mBytes.get(t) - this.mBytes.get(tb);
+		float time_interval = this.mTimestamp.get(t) - this.mTimestamp.get(tb);
+		// calculate byte/s over time_intervall
+		if (time_interval < 50) // avoid to small measurements (< 50ms)
+			return 0.0F;
+		return byte_count / (time_interval / 1000); // = byte/s
+	}
+	
+	public synchronized float getTotalRxBytesPerSecond()
+	{
+		return this.getBytesPerSecond(TType.TotalRx);
+	}
+
+	public synchronized float getTotalTxBytesPerSecond()
+	{
+		return this.getBytesPerSecond(TType.TotalTx);
+	}
+
+	public synchronized float getMobileRxBytesPerSecond()
+	{
+		return this.getBytesPerSecond(TType.MobileRx);
+	}
+
+	public synchronized float getMobileTxBytesPerSecond()
+	{
+		return this.getBytesPerSecond(TType.MobileTx);
+	}
+
+	public synchronized float getWifiRxBytesPerSecond()
+	{
+		return this.getBytesPerSecond(TType.WifiRx);
+	}
+
+	public synchronized float getWifiTxBytesPerSecond()
+	{
+		return this.getBytesPerSecond(TType.WifiTx);
+	}
+	
+
 	public synchronized static NetworkTraffic getInstance()
 	{
 		if (INSTANCE == null)
@@ -130,23 +163,49 @@ public class NetworkTraffic
 		this.mBytes.put(TType.TotalTx, 0L);
 		this.mBytes.put(TType.MobileRx, 0L);
 		this.mBytes.put(TType.MobileTx, 0L);
+		this.mBytes.put(TType.TotalRxBackup, 0L);
+		this.mBytes.put(TType.TotalTxBackup, 0L);
+		this.mBytes.put(TType.MobileRxBackup, 0L);
+		this.mBytes.put(TType.MobileTxBackup, 0L);
 
 		this.mTimestamp = new HashMap<TType, Long>();
-		this.mBytes.put(TType.TotalRx, System.currentTimeMillis());
-		this.mBytes.put(TType.TotalTx, System.currentTimeMillis());
-		this.mBytes.put(TType.MobileRx, System.currentTimeMillis());
-		this.mBytes.put(TType.MobileTx, System.currentTimeMillis());
+		this.mTimestamp.put(TType.TotalRx, System.currentTimeMillis());
+		this.mTimestamp.put(TType.TotalTx, System.currentTimeMillis());
+		this.mTimestamp.put(TType.MobileRx, System.currentTimeMillis());
+		this.mTimestamp.put(TType.MobileTx, System.currentTimeMillis());
+		this.mTimestamp.put(TType.TotalRxBackup, System.currentTimeMillis());
+		this.mTimestamp.put(TType.TotalTxBackup, System.currentTimeMillis());
+		this.mTimestamp.put(TType.MobileRxBackup, System.currentTimeMillis());
+		this.mTimestamp.put(TType.MobileTxBackup, System.currentTimeMillis());
 	}
-	
+
 	public synchronized boolean hasChanged()
 	{
 		return true;
 	}
-	
-	public void  resetDataChangedFlag()
+
+	public void resetDataChangedFlag()
 	{
-		//TODO implement threshold based change flag for network model
+		// TODO implement threshold based change flag for network model
 	}
-	
+
+	private TType getBackupTType(TType t)
+	{
+		// select backup TType
+		switch (t)
+		{
+		case TotalRx:
+			return TType.TotalRxBackup;
+		case TotalTx:
+			return TType.TotalTxBackup;
+		case MobileRx:
+			return TType.MobileRxBackup;
+		case MobileTx:
+			return TType.MobileTxBackup;
+		default:
+			Log.e(LTAG, "Bad TType.");
+		}
+		return null;
+	}
 
 }
