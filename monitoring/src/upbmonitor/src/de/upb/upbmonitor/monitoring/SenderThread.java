@@ -46,7 +46,7 @@ public class SenderThread implements Runnable
 		if(!c.isRegistered())
 		{
 			// register UE in backend
-			this.restUeEndpoint.registerUe(c);
+			this.restUeEndpoint.register(c);
 			c.setRegistered(true);
 		}
 		else
@@ -69,7 +69,7 @@ public class SenderThread implements Runnable
 			Log.v(LTAG, c.toString());
 			
 			// send to backend
-			this.restUeEndpoint.updateUe(c);
+			this.restUeEndpoint.update(c);
 
 			// reset changed flag in all models
 			c.resetDataChangedFlag();
@@ -81,7 +81,7 @@ public class SenderThread implements Runnable
 		// access model
 		UeContext c = UeContext.getInstance();
 		// remove UE from backend
-		this.restUeEndpoint.removeUe(c);
+		this.restUeEndpoint.remove(c);
 		c.setRegistered(false);
 	}
 }

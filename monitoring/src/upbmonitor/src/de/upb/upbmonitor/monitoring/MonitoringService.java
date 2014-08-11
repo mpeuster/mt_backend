@@ -59,7 +59,7 @@ public class MonitoringService extends Service
 			SENDING_INTERVAL = Integer.valueOf(preferences.getString(
 					"pref_sending_interval", "0"));
 			// backend API destination preferences
-			BACKEND_HOST = preferences.getString("pref_backend_api_host", null);
+			BACKEND_HOST = preferences.getString("pref_backend_api_address", null);
 			BACKEND_PORT = Integer.valueOf(preferences.getString(
 					"pref_backend_api_port", "5000"));
 		} catch (Exception e)
@@ -72,7 +72,7 @@ public class MonitoringService extends Service
 			MONITORING_INTERVAL = 1000;
 			SENDING_INTERVAL = 5000;
 		}
-
+		
 		// initialize context model
 		this.initializeContext();
 
