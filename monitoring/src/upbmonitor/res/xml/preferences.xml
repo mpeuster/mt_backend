@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
     <PreferenceCategory 
-        android:title="Backend Connection"
+        android:title="Backend"
         android:key="pref_key_category1">
-	    <EditTextPreference android:title="Backend API address" android:key="pref_backend_api_address" android:defaultValue="192.168.222.1" android:summary="Address of the RESTful backend API. IP or domain without 'http.//'."/>
+	    <EditTextPreference android:title="Backend API address" android:key="pref_backend_api_address" android:defaultValue="192.168.222.101" android:summary="Address of the RESTful backend API. IP or domain without 'http.//'."/>
 	    <EditTextPreference android:key="pref_backend_api_port" android:title="Backend API port" android:defaultValue="5000" android:summary="Port of the RESTful backend API."/>
+	    <EditTextPreference android:title="Device ID" android:key="prof_backend_device_id" android:defaultValue="UE-UPB1" android:summary="Name to identify this UE in the backend controller."/>
+	    <EditTextPreference android:title="Location Service ID" android:key="prof_backend_locationservice_id" android:defaultValue="node1" android:summary="Associatin name for third party location service."/>
     </PreferenceCategory>
     <PreferenceCategory
         android:title="Monitoring"

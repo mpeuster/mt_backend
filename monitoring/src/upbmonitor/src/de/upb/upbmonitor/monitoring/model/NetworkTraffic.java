@@ -114,6 +114,7 @@ public class NetworkTraffic
 		// calculate byte/s over time_intervall
 		if (time_interval < 50) // avoid to small measurements (< 50ms)
 			return 0.0F;
+		// TODO Next: Make calculation interval dependent on last get()
 		return byte_count / (time_interval / 1000); // = byte/s
 	}
 	
@@ -186,7 +187,7 @@ public class NetworkTraffic
 
 	public void resetDataChangedFlag()
 	{
-		// TODO implement threshold based change flag for network model
+		// TODO Next: implement threshold based change flag for network model
 	}
 
 	private TType getBackupTType(TType t)

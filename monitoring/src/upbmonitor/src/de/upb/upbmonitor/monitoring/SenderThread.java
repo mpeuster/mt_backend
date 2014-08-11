@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.PowerManager;
 import android.util.Log;
 import de.upb.upbmonitor.monitoring.model.UeContext;
+import de.upb.upbmonitor.rest.UeEndpoint;
 
 /**
  * Represents the sender thread of the service.
@@ -21,27 +22,41 @@ public class SenderThread implements Runnable
 	private Context myContext;
 	private Handler myHandler;
 	private int mSenderInterval;
+	private UeEndpoint restUeEndpoint = null;
 
 	public SenderThread(Context myContext, Handler myHandler,
-			int monitoringInterval)
-	{ // arguments
+			int monitoringInterval, String backendHost, int backendPort)
+	{ 
+		// arguments
 		this.myContext = myContext;
 		this.myHandler = myHandler;
 		this.mSenderInterval = monitoringInterval;
-
+		
 		// initializations
-
+		// API end point
+		this.restUeEndpoint = new UeEndpoint(backendHost, backendPort);
 	}
 
 	public void run()
 	{
 		Log.v(LTAG, "Awake with interval: " + this.mSenderInterval);
-		// periodically send
-		this.send();
+		// access model
+		UeContext c = UeContext.getInstance();
+		
+		if(!c.isRegistered())
+		{
+			// register UE in backend
+			this.restUeEndpoint.registerUe();
+		}
+		else
+		{
+			// periodically send update if UE is registered		
+			this.sendUpdate();
+		}
 		myHandler.postDelayed(this, this.mSenderInterval);
 	}
 
-	private void send()
+	private void sendUpdate()
 	{
 		// access model
 		UeContext c = UeContext.getInstance();
@@ -75,5 +90,11 @@ public class SenderThread implements Runnable
 			// reset changed flag in all models
 			c.resetDataChangedFlag();
 		}
+	}
+	
+	public void removeUe()
+	{
+		// register UE in backend
+		this.restUeEndpoint.removeUe();
 	}
 }

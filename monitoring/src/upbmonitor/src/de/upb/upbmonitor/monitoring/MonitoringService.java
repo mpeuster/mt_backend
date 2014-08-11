@@ -1,5 +1,8 @@
 package de.upb.upbmonitor.monitoring;
 
+import de.upb.upbmonitor.monitoring.model.UeContext;
+import de.upb.upbmonitor.network.NetworkUtility;
+import de.upb.upbmonitor.rest.UeEndpoint;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,10 +18,12 @@ public class MonitoringService extends Service
 	public static boolean SERVICE_EXISTS = false;
 	private static int MONITORING_INTERVAL = Integer.MAX_VALUE;
 	private static int SENDING_INTERVAL = Integer.MAX_VALUE;
+	private static String BACKEND_HOST;
+	private static int BACKEND_PORT;
 
 	private Handler threadHandler = new Handler();
-	private Runnable monitoringTask = null;
-	private Runnable sendingTask = null;
+	private MonitoringThread monitoringTask = null;
+	private SenderThread sendingTask = null;
 
 	@Override
 	public void onCreate()
@@ -35,6 +40,7 @@ public class MonitoringService extends Service
 		Log.d(LTAG, "onDestroy()");
 		threadHandler.removeCallbacks(monitoringTask);
 		threadHandler.removeCallbacks(sendingTask);
+		sendingTask.removeUe(); // attention not async!
 		SERVICE_EXISTS = false;
 	}
 
@@ -47,10 +53,15 @@ public class MonitoringService extends Service
 		{
 			SharedPreferences preferences = PreferenceManager
 					.getDefaultSharedPreferences(this);
+			// monitoring preferences
 			MONITORING_INTERVAL = Integer.valueOf(preferences.getString(
 					"pref_monitoring_interval", "0"));
 			SENDING_INTERVAL = Integer.valueOf(preferences.getString(
 					"pref_sending_interval", "0"));
+			// backend API destination preferences
+			BACKEND_HOST = preferences.getString("pref_backend_api_host", null);
+			BACKEND_PORT = Integer.valueOf(preferences.getString(
+					"pref_backend_api_port", "5000"));
 		} catch (Exception e)
 		{
 			// if preferences could not be read, use a fixed interval
@@ -62,6 +73,9 @@ public class MonitoringService extends Service
 			SENDING_INTERVAL = 5000;
 		}
 
+		// initialize context model
+		this.initializeContext();
+
 		// run service's tasks
 		if (!threadHandler.hasMessages(0))
 		{
@@ -70,10 +84,10 @@ public class MonitoringService extends Service
 					this.threadHandler, MONITORING_INTERVAL);
 			threadHandler.postDelayed(monitoringTask, 0);
 			Log.d(LTAG, "Monitoring task started");
-			
+
 			// start monitoring task
-			this.sendingTask = new SenderThread(this,
-					this.threadHandler, SENDING_INTERVAL);
+			this.sendingTask = new SenderThread(this, this.threadHandler,
+					SENDING_INTERVAL, BACKEND_HOST, BACKEND_PORT);
 			threadHandler.postDelayed(sendingTask, 0);
 			Log.d(LTAG, "Sender task started");
 		}
@@ -81,10 +95,24 @@ public class MonitoringService extends Service
 		return Service.START_STICKY;
 	}
 
+	private void initializeContext()
+	{
+		UeContext c = UeContext.getInstance();
+		// values from preferences
+		SharedPreferences preferences = PreferenceManager
+				.getDefaultSharedPreferences(this);
+		c.setDeviceID(preferences
+				.getString("prof_backend_device_id", "device0"));
+		c.setLocationServiceID(preferences.getString(
+				"prof_backend_locationservice_id", "node0"));
+		// device values
+		c.setWifiMac(NetworkUtility.getWifiMacAddress());
+	}
+
 	@Override
 	public IBinder onBind(Intent intent)
 	{
-		// TODO for communication return IBinder implementation
+		// for communication return IBinder implementation
 		return null;
 	}
 }

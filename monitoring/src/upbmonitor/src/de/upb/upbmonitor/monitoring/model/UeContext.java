@@ -11,6 +11,19 @@ public class UeContext
 	private static UeContext INSTANCE;
 	private boolean CONTEXT_CHANGED;
 
+	private boolean mIsRegistered = false;
+	
+	
+	public synchronized boolean isRegistered()
+	{
+		return mIsRegistered;
+	}
+
+	public synchronized void setRegistered(boolean mIsRegistered)
+	{
+		this.mIsRegistered = mIsRegistered;
+	}
+
 	private int mUpdateCount;
 
 	public synchronized int getUpdateCount()
