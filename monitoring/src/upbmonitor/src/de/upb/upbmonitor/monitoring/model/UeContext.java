@@ -1,5 +1,7 @@
 package de.upb.upbmonitor.monitoring.model;
 
+import org.json.JSONObject;
+
 public class UeContext
 {
 	/**
@@ -19,6 +21,90 @@ public class UeContext
 	public synchronized void incrementUpdateCount()
 	{
 		this.mUpdateCount++;
+	}
+	
+	private String mUuid;
+	
+	public synchronized String getUuid()
+	{
+		return mUuid;
+	}
+
+	public synchronized void setUuid(String mUuid)
+	{
+		// no change indicator here, since it is only set once
+		// and the network controller knows this value
+		this.mUuid = mUuid;
+	}
+
+	private String mDeviceID;
+	
+	public synchronized String getDeviceID()
+	{
+		return mDeviceID;
+	}
+
+	public synchronized void setDeviceID(String mDeviceID)
+	{
+		if (!mDeviceID.equals(this.mDeviceID))
+			this.setDataChangedFlag();
+		this.mDeviceID = mDeviceID;
+	}
+	
+	private String mLocationServiceID;
+	
+	public synchronized String getLocationServiceID()
+	{
+		return mLocationServiceID;
+	}
+
+	public synchronized void setLocationServiceID(String mLocationServiceID)
+	{
+		if (!mLocationServiceID.equals(this.mLocationServiceID))
+			this.setDataChangedFlag();
+		this.mLocationServiceID = mLocationServiceID;
+	}
+	
+	private String mWifiMac;
+	
+	public synchronized String getWifiMac()
+	{
+		return mWifiMac;
+	}
+
+	public synchronized void setWifiMac(String mWifiMac)
+	{
+		if (!mWifiMac.equals(this.mWifiMac))
+			this.setDataChangedFlag();
+		this.mWifiMac = mWifiMac;
+	}
+	
+	private int mPositionX;
+
+	public synchronized int getPositionX()
+	{
+		return mPositionX;
+	}
+
+	public synchronized void setPositionX(int mPositionX)
+	{
+		if (mPositionX != this.mPositionX)
+			this.setDataChangedFlag();
+		this.mPositionX = mPositionX;
+	}
+	
+	private int mPositionY;
+
+	public synchronized int getPositionY()
+	{
+		return mPositionY;
+	}
+
+	public synchronized void setPositionY(int mPositionY)
+	{
+		if (mPositionY != this.mPositionY)
+			this.setDataChangedFlag();
+		this.mPositionY = mPositionY;
 	}
 
 	private boolean mDisplayState;
@@ -174,5 +260,30 @@ public class UeContext
 	{
 		NetworkTraffic nt = NetworkTraffic.getInstance();
 		return this.CONTEXT_CHANGED || nt.hasChanged();
+	}
+	
+	/**
+	 * JSON Tag names
+	 */
+	private static final String JSON_DEVICE_ID = "device_id";
+	private static final String JSON_LOCATIONSERVICE_ID = "location_service_id";
+	private static final String JSON_POSITION_X = "position_x";
+	private static final String JSON_POSITION_Y = "position_y";
+	private static final String JSON_DISPLAY_STATE = "display_state";
+	private static final String JSON_ACTIVE_APPLICATION_PACKAGE = "active_application";
+	private static final String JSON_ACTIVE_APPLICATION_ACTIVITY = "active_application_activity";
+	private static final String JSON_WIFI_MAC = "wifi_mac";
+	
+	
+	/**
+	 * Generate JSON from context model object.
+	 * @return JSONObject
+	 */
+	public JSONObject toJson()
+	{
+		//TODO create JSON object
+		
+		return null;
+		
 	}
 }
