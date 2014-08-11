@@ -1,5 +1,6 @@
 package de.upb.upbmonitor.rest;
 
+import android.util.Log;
 import de.upb.upbmonitor.monitoring.model.UeContext;
 
 public class UeEndpoint extends RestClient
@@ -11,25 +12,20 @@ public class UeEndpoint extends RestClient
 		super(host, port);
 	}
 
-	public void registerUe()
-	{
-		// access model
-		UeContext c = UeContext.getInstance();
-
-		c.setRegistered(true);
-
+	public void registerUe(UeContext c)
+	{		
+		Log.v(LTAG, c.toJson().toString());
 		this.post("bla");
 	}
-
-	public void removeUe()
+	
+	public void updateUe(UeContext c)
 	{
-		// access model
-		UeContext c = UeContext.getInstance();
-
-		this.delete("bla");
 		
-		c.setRegistered(false);
+	}
 
+	public void removeUe(UeContext c)
+	{
+		this.delete("bla");
 	}
 
 }

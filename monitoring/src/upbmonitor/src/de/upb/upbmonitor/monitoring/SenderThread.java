@@ -46,7 +46,8 @@ public class SenderThread implements Runnable
 		if(!c.isRegistered())
 		{
 			// register UE in backend
-			this.restUeEndpoint.registerUe();
+			this.restUeEndpoint.registerUe(c);
+			c.setRegistered(true);
 		}
 		else
 		{
@@ -64,28 +65,11 @@ public class SenderThread implements Runnable
 		// send context update if new data is available (context has changed)
 		if (c.hasChanged())
 		{
-			// TODO implement json client to update contexts
-			// system values
-			Log.i(LTAG, "UpdateCount: " + c.getUpdateCount());
-			Log.i(LTAG, "Display state: " + c.isDisplayOn());
-			Log.i(LTAG, "Active package: " + c.getActiveApplicationPackage());
-			Log.i(LTAG, "Active activity: " + c.getActiveApplicationActivity());
-			// network values
-			Log.i(LTAG,
-					"Mobile Traffic:\tRx:" + c.getMobileRxBytes() + "\tTx:"
-							+ c.getMobileTxBytes() + "\tRx/s:"
-							+ c.getMobileRxBytesPerSecond() + " \tTx/s:"
-							+ c.getMobileTxBytesPerSecond());
-			Log.i(LTAG,
-					"Wifi   Traffic:\tRx:" + c.getWifiRxBytes() + "\tTx:"
-							+ c.getWifiTxBytes() + "\tRx/s:"
-							+ c.getWifiRxBytesPerSecond() + " \tTx/s:"
-							+ c.getWifiTxBytesPerSecond());
-			Log.i(LTAG,
-					"Total  Traffic:\tRx:" + c.getTotalRxBytes() + "\tTx:"
-							+ c.getTotalTxBytes() + "\tRx/s:"
-							+ c.getTotalRxBytesPerSecond() + " \tTx/s:"
-							+ c.getTotalTxBytesPerSecond());
+			// detailed log output:
+			Log.v(LTAG, c.toString());
+			
+			// send to backend
+			this.restUeEndpoint.updateUe(c);
 
 			// reset changed flag in all models
 			c.resetDataChangedFlag();
@@ -94,7 +78,10 @@ public class SenderThread implements Runnable
 	
 	public void removeUe()
 	{
-		// register UE in backend
-		this.restUeEndpoint.removeUe();
+		// access model
+		UeContext c = UeContext.getInstance();
+		// remove UE from backend
+		this.restUeEndpoint.removeUe(c);
+		c.setRegistered(false);
 	}
 }

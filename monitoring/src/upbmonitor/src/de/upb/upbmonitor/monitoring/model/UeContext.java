@@ -1,6 +1,9 @@
 package de.upb.upbmonitor.monitoring.model;
 
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import android.util.Log;
 
 public class UeContext
 {
@@ -8,12 +11,13 @@ public class UeContext
 	 * Tread UE context as singelton class
 	 */
 
+	private static final String LTAG = "UeContext";
+
 	private static UeContext INSTANCE;
 	private boolean CONTEXT_CHANGED;
 
 	private boolean mIsRegistered = false;
-	
-	
+
 	public synchronized boolean isRegistered()
 	{
 		return mIsRegistered;
@@ -35,9 +39,9 @@ public class UeContext
 	{
 		this.mUpdateCount++;
 	}
-	
+
 	private String mUuid;
-	
+
 	public synchronized String getUuid()
 	{
 		return mUuid;
@@ -51,7 +55,7 @@ public class UeContext
 	}
 
 	private String mDeviceID;
-	
+
 	public synchronized String getDeviceID()
 	{
 		return mDeviceID;
@@ -63,9 +67,9 @@ public class UeContext
 			this.setDataChangedFlag();
 		this.mDeviceID = mDeviceID;
 	}
-	
+
 	private String mLocationServiceID;
-	
+
 	public synchronized String getLocationServiceID()
 	{
 		return mLocationServiceID;
@@ -77,9 +81,9 @@ public class UeContext
 			this.setDataChangedFlag();
 		this.mLocationServiceID = mLocationServiceID;
 	}
-	
+
 	private String mWifiMac;
-	
+
 	public synchronized String getWifiMac()
 	{
 		return mWifiMac;
@@ -91,29 +95,29 @@ public class UeContext
 			this.setDataChangedFlag();
 		this.mWifiMac = mWifiMac;
 	}
-	
-	private int mPositionX;
 
-	public synchronized int getPositionX()
+	private float mPositionX;
+
+	public synchronized float getPositionX()
 	{
 		return mPositionX;
 	}
 
-	public synchronized void setPositionX(int mPositionX)
+	public synchronized void setPositionX(float mPositionX)
 	{
 		if (mPositionX != this.mPositionX)
 			this.setDataChangedFlag();
 		this.mPositionX = mPositionX;
 	}
-	
-	private int mPositionY;
 
-	public synchronized int getPositionY()
+	private float mPositionY;
+
+	public synchronized float getPositionY()
 	{
 		return mPositionY;
 	}
 
-	public synchronized void setPositionY(int mPositionY)
+	public synchronized void setPositionY(float mPositionY)
 	{
 		if (mPositionY != this.mPositionY)
 			this.setDataChangedFlag();
@@ -199,7 +203,7 @@ public class UeContext
 		NetworkTraffic nt = NetworkTraffic.getInstance();
 		return nt.getWifiTxBytes();
 	}
-	
+
 	public synchronized float getTotalRxBytesPerSecond()
 	{
 		NetworkTraffic nt = NetworkTraffic.getInstance();
@@ -238,6 +242,7 @@ public class UeContext
 
 	/**
 	 * Use as singleton class.
+	 * 
 	 * @return class instance
 	 */
 	public synchronized static UeContext getInstance()
@@ -275,6 +280,34 @@ public class UeContext
 		return this.CONTEXT_CHANGED || nt.hasChanged();
 	}
 	
+	public String toString()
+	{
+		String res = "Context:\n";
+		res = res.concat("-----\n");
+		res = res.concat("UpdateCount: \t" + getUpdateCount() + "\n");
+		res = res.concat("Device ID: \t" + getDeviceID() + "\n");
+		res = res.concat("Location Service ID: \t" + getLocationServiceID() + "\n");
+		res = res.concat("Position X/Y: \t" + getPositionX() + "/" + getPositionY() + "\n");
+		res = res.concat("Display state: \t" + isDisplayOn() + "\n");
+		res = res.concat("Active package: \t" + getActiveApplicationPackage() + "\n");
+		res = res.concat("Active activity: \t" + getActiveApplicationActivity() + "\n");
+		res = res.concat("Wifi MAC: \t" + getWifiMac() + "\n");
+		res = res.concat("Mobile Traffic:\tRx:" + getMobileRxBytes() + "\tTx:"
+				+ getMobileTxBytes() + "\tRx/s:"
+				+ getMobileRxBytesPerSecond() + " \tTx/s:"
+				+ getMobileTxBytesPerSecond() + "\n");
+		res = res.concat("Wifi   Traffic:\tRx:" + getWifiRxBytes() + "\tTx:"
+				+ getWifiTxBytes() + "\tRx/s:"
+				+ getWifiRxBytesPerSecond() + " \tTx/s:"
+				+ getWifiTxBytesPerSecond() + "\n");
+		res = res.concat("Total  Traffic:\tRx:" + getTotalRxBytes() + "\tTx:"
+				+ getTotalTxBytes() + "\tRx/s:"
+				+ getTotalRxBytesPerSecond() + " \tTx/s:"
+				+ getTotalTxBytesPerSecond() + "\n");
+		res = res.concat("-----\n");
+		return res;
+	}
+
 	/**
 	 * JSON Tag names
 	 */
@@ -286,17 +319,37 @@ public class UeContext
 	private static final String JSON_ACTIVE_APPLICATION_PACKAGE = "active_application";
 	private static final String JSON_ACTIVE_APPLICATION_ACTIVITY = "active_application_activity";
 	private static final String JSON_WIFI_MAC = "wifi_mac";
-	
-	
+
 	/**
 	 * Generate JSON from context model object.
-	 * @return JSONObject
+	 * 
+	 * @return JSONObject or null
 	 */
 	public JSONObject toJson()
 	{
-		//TODO create JSON object
-		
+		JSONObject object = new JSONObject();
+		try
+		{
+			object.put(JSON_DEVICE_ID, this.getDeviceID());
+			object.put(JSON_LOCATIONSERVICE_ID, this.getLocationServiceID());
+			object.put(JSON_POSITION_X, Float.valueOf(this.getPositionX()));
+			object.put(JSON_POSITION_Y, Float.valueOf(this.getPositionY()));
+			object.put(
+					JSON_DISPLAY_STATE,
+					this.isDisplayOn() ? Integer.valueOf(1) : Integer
+							.valueOf(0));
+			object.put(JSON_ACTIVE_APPLICATION_PACKAGE,
+					this.getActiveApplicationPackage());
+			object.put(JSON_ACTIVE_APPLICATION_ACTIVITY,
+					this.getActiveApplicationActivity());
+			object.put(JSON_WIFI_MAC, this.getWifiMac());
+			//TODO add network statistics to JSON update
+			return object;
+		} catch (JSONException e)
+		{
+			Log.e(LTAG, e.getMessage());
+		}
 		return null;
-		
+
 	}
 }
