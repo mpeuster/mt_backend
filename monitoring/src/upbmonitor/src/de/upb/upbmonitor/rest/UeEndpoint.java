@@ -1,6 +1,12 @@
 package de.upb.upbmonitor.rest;
 
+import java.io.IOException;
+
 import org.apache.http.HttpResponse;
+import org.apache.http.ParseException;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import android.util.Log;
 import de.upb.upbmonitor.monitoring.model.UeContext;
@@ -13,43 +19,94 @@ public class UeEndpoint
 
 	public UeEndpoint(String host, int port)
 	{
-		this.mUrl = "http://" + host + ":" + port + "/api/ue";
+		this.mUrl = "http://" + host + ":" + port;
 		Log.v(LTAG, "Created endpoint: " + this.mUrl);
 	}
 
-	public void register(UeContext c)
+	public void register()
 	{
 		class UePostRequest extends RestAsyncRequest
 		{
 			@Override
 			protected void onPostExecute(HttpResponse response)
 			{
+				// error handling
 				if (response == null)
+				{
+					Log.e(LTAG, "Request error.");
 					return;
-				Log.i(LTAG, response.getStatusLine().toString());
-				//TODO implement request result handling
-				// response.getEntity().getContent()
+				}
+				if (response.getStatusLine().getStatusCode() != 201)
+				{
+					Log.e(LTAG, "Bad Request: "
+							+ response.getStatusLine().getStatusCode());
+					return;
+				}
+				// result code looks fine, process it:
+				try
+				{
+					// parse json data
+					String json_string;
+					json_string = EntityUtils.toString(response.getEntity());
+					JSONArray temp = new JSONArray(json_string);
+					// set URI in model
+					UeContext c = UeContext.getInstance();
+					c.setURI(temp.get(0).toString());
+					Log.i(LTAG, "Registered with URI: " + c.getURI());
+				} catch (Exception e)
+				{
+					e.printStackTrace();
+				}
 			}
 		}
 		;
 		UePostRequest r = new UePostRequest();
-		r.setup(RequestType.POST, this.mUrl, c.toJson().toString());
+		r.setup(RequestType.POST, this.mUrl + "/api/ue", UeContext
+				.getInstance().toJson().toString());
 		r.execute();
 	}
 
-	public void update(UeContext c)
+	public void update()
 	{
 
 	}
-	
-	public void getAssignment(UeContext c)
+
+	public void get()
 	{
-		
+
 	}
 
-	public void remove(UeContext c)
+	public void remove()
 	{
-		// this.delete("bla");
+		class UeDeleteRequest extends RestAsyncRequest
+		{
+			@Override
+			protected void onPostExecute(HttpResponse response)
+			{
+				// error handling
+				if (response == null)
+				{
+					Log.e(LTAG, "Request error.");
+					return;
+				}
+				if (response.getStatusLine().getStatusCode() != 204)
+				{
+					Log.e(LTAG, "Bad Request: "
+							+ response.getStatusLine().getStatusCode());
+					return;
+				}
+				// result code looks fine, reset model
+				UeContext c = UeContext.getInstance();
+				c.setURI(null);
+				c.setRegistered(false);
+				Log.i(LTAG, "UE was succesfully removed from backend.");
+			}
+		}
+		;
+		UeDeleteRequest r = new UeDeleteRequest();
+		r.setup(RequestType.DELETE, this.mUrl
+				+ UeContext.getInstance().getURI(), null);
+		r.execute();
 	}
 
 }

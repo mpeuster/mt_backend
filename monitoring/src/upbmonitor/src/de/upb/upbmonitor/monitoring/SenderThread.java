@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.util.Log;
+import android.widget.Toast;
 import de.upb.upbmonitor.monitoring.model.UeContext;
 import de.upb.upbmonitor.rest.UeEndpoint;
 
@@ -46,13 +47,22 @@ public class SenderThread implements Runnable
 		if(!c.isRegistered())
 		{
 			// register UE in backend
-			this.restUeEndpoint.register(c);
+			this.restUeEndpoint.register();
 			c.setRegistered(true);
 		}
-		else
+		else if (c.getURI() != null)
 		{
 			// periodically send update if UE is registered		
 			this.sendUpdate();
+		}
+		else
+		{
+			// something went wrong with the register operation
+			Toast.makeText(myContext,
+					"Backend connection error.",
+					Toast.LENGTH_SHORT).show();
+			// trigger re-register
+			c.setRegistered(false);
 		}
 		myHandler.postDelayed(this, this.mSenderInterval);
 	}
@@ -69,7 +79,7 @@ public class SenderThread implements Runnable
 			Log.v(LTAG, c.toString());
 			
 			// send to backend
-			this.restUeEndpoint.update(c);
+			this.restUeEndpoint.update();
 
 			// reset changed flag in all models
 			c.resetDataChangedFlag();
@@ -81,7 +91,7 @@ public class SenderThread implements Runnable
 		// access model
 		UeContext c = UeContext.getInstance();
 		// remove UE from backend
-		this.restUeEndpoint.remove(c);
+		this.restUeEndpoint.remove();
 		c.setRegistered(false);
 	}
 }

@@ -39,7 +39,7 @@ public class RestAsyncRequest extends AsyncTask<Void, Void, HttpResponse>
 	@Override
 	protected HttpResponse doInBackground(Void... arg0)
 	{
-		if (this.mUrl == null || this.mData == null)
+		if (this.mUrl == null)
 		{
 			Log.e(LTAG, "Error in RestAsyncRequest. Call setup first.");
 			return null;

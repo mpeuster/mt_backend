@@ -40,18 +40,18 @@ public class UeContext
 		this.mUpdateCount++;
 	}
 
-	private String mUuid;
+	private String mURI = null;
 
-	public synchronized String getUuid()
+	public synchronized String getURI()
 	{
-		return mUuid;
+		return mURI;
 	}
 
-	public synchronized void setUuid(String mUuid)
+	public synchronized void setURI(String mURI)
 	{
 		// no change indicator here, since it is only set once
 		// and the network controller knows this value
-		this.mUuid = mUuid;
+		this.mURI = mURI;
 	}
 
 	private String mDeviceID;
