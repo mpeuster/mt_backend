@@ -68,7 +68,32 @@ public class UeEndpoint
 
 	public void update()
 	{
-
+		class UeUpdateRequest extends RestAsyncRequest
+		{
+			@Override
+			protected void onPostExecute(HttpResponse response)
+			{
+				// error handling
+				if (response == null)
+				{
+					Log.e(LTAG, "Request error.");
+					return;
+				}
+				if (response.getStatusLine().getStatusCode() != 204)
+				{
+					Log.e(LTAG, "Bad Request: "
+							+ response.getStatusLine().getStatusCode());
+					return;
+				}
+				Log.i(LTAG, "UE was succesfully updatet in backend.");
+			}
+		}
+		;
+		UeUpdateRequest r = new UeUpdateRequest();
+		r.setup(RequestType.PUT, this.mUrl
+				+ UeContext.getInstance().getURI(), UeContext.getInstance()
+				.toJson().toString());
+		r.execute();
 	}
 
 	public void get()
