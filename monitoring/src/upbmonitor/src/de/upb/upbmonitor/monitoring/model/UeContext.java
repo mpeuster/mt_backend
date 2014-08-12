@@ -279,31 +279,32 @@ public class UeContext
 		NetworkTraffic nt = NetworkTraffic.getInstance();
 		return this.CONTEXT_CHANGED || nt.hasChanged();
 	}
-	
+
 	public String toString()
 	{
 		String res = "Context:\n";
 		res = res.concat("-----\n");
 		res = res.concat("UpdateCount: \t" + getUpdateCount() + "\n");
 		res = res.concat("Device ID: \t" + getDeviceID() + "\n");
-		res = res.concat("Location Service ID: \t" + getLocationServiceID() + "\n");
-		res = res.concat("Position X/Y: \t" + getPositionX() + "/" + getPositionY() + "\n");
+		res = res.concat("Location Service ID: \t" + getLocationServiceID()
+				+ "\n");
+		res = res.concat("Position X/Y: \t" + getPositionX() + "/"
+				+ getPositionY() + "\n");
 		res = res.concat("Display state: \t" + isDisplayOn() + "\n");
-		res = res.concat("Active package: \t" + getActiveApplicationPackage() + "\n");
-		res = res.concat("Active activity: \t" + getActiveApplicationActivity() + "\n");
+		res = res.concat("Active package: \t" + getActiveApplicationPackage()
+				+ "\n");
+		res = res.concat("Active activity: \t" + getActiveApplicationActivity()
+				+ "\n");
 		res = res.concat("Wifi MAC: \t" + getWifiMac() + "\n");
 		res = res.concat("Mobile Traffic:\tRx:" + getMobileRxBytes() + "\tTx:"
-				+ getMobileTxBytes() + "\tRx/s:"
-				+ getMobileRxBytesPerSecond() + " \tTx/s:"
-				+ getMobileTxBytesPerSecond() + "\n");
+				+ getMobileTxBytes() + "\tRx/s:" + getMobileRxBytesPerSecond()
+				+ " \tTx/s:" + getMobileTxBytesPerSecond() + "\n");
 		res = res.concat("Wifi   Traffic:\tRx:" + getWifiRxBytes() + "\tTx:"
-				+ getWifiTxBytes() + "\tRx/s:"
-				+ getWifiRxBytesPerSecond() + " \tTx/s:"
-				+ getWifiTxBytesPerSecond() + "\n");
+				+ getWifiTxBytes() + "\tRx/s:" + getWifiRxBytesPerSecond()
+				+ " \tTx/s:" + getWifiTxBytesPerSecond() + "\n");
 		res = res.concat("Total  Traffic:\tRx:" + getTotalRxBytes() + "\tTx:"
-				+ getTotalTxBytes() + "\tRx/s:"
-				+ getTotalRxBytesPerSecond() + " \tTx/s:"
-				+ getTotalTxBytesPerSecond() + "\n");
+				+ getTotalTxBytes() + "\tRx/s:" + getTotalRxBytesPerSecond()
+				+ " \tTx/s:" + getTotalTxBytesPerSecond() + "\n");
 		res = res.concat("-----\n");
 		return res;
 	}
@@ -316,9 +317,21 @@ public class UeContext
 	private static final String JSON_POSITION_X = "position_x";
 	private static final String JSON_POSITION_Y = "position_y";
 	private static final String JSON_DISPLAY_STATE = "display_state";
-	private static final String JSON_ACTIVE_APPLICATION_PACKAGE = "active_application";
+	private static final String JSON_ACTIVE_APPLICATION_PACKAGE = "active_application_package";
 	private static final String JSON_ACTIVE_APPLICATION_ACTIVITY = "active_application_activity";
 	private static final String JSON_WIFI_MAC = "wifi_mac";
+	private static final String JSON_TOTAL_RX = "rx_total_bytes";
+	private static final String JSON_TOTAL_TX = "tx_total_bytes";
+	private static final String JSON_MOBILE_RX = "rx_mobile_bytes";
+	private static final String JSON_MOBILE_TX = "tx_mobile_bytes";
+	private static final String JSON_WIFI_RX = "rx_wifi_bytes";
+	private static final String JSON_WIFI_TX = "tx_wifi_bytes";
+	private static final String JSON_TOTAL_RX_S = "rx_total_bytes_per_second";
+	private static final String JSON_TOTAL_TX_S = "tx_total_bytes_per_second";
+	private static final String JSON_MOBILE_RX_S = "rx_mobile_bytes_per_second";
+	private static final String JSON_MOBILE_TX_S = "tx_mobile_bytes_per_second";
+	private static final String JSON_WIFI_RX_S = "rx_wifi_bytes_per_second";
+	private static final String JSON_WIFI_TX_S = "tx_wifi_bytes_per_second";
 
 	/**
 	 * Generate JSON from context model object.
@@ -330,10 +343,12 @@ public class UeContext
 		JSONObject object = new JSONObject();
 		try
 		{
+			// general
 			object.put(JSON_DEVICE_ID, this.getDeviceID());
 			object.put(JSON_LOCATIONSERVICE_ID, this.getLocationServiceID());
 			object.put(JSON_POSITION_X, Float.valueOf(this.getPositionX()));
 			object.put(JSON_POSITION_Y, Float.valueOf(this.getPositionY()));
+			// system state
 			object.put(
 					JSON_DISPLAY_STATE,
 					this.isDisplayOn() ? Integer.valueOf(1) : Integer
@@ -342,8 +357,23 @@ public class UeContext
 					this.getActiveApplicationPackage());
 			object.put(JSON_ACTIVE_APPLICATION_ACTIVITY,
 					this.getActiveApplicationActivity());
+			// network: bytes
+			object.put(JSON_TOTAL_RX, this.getTotalRxBytes());
+			object.put(JSON_TOTAL_TX, this.getTotalTxBytes());
+			object.put(JSON_MOBILE_RX, this.getMobileRxBytes());
+			object.put(JSON_MOBILE_TX, this.getMobileTxBytes());
+			object.put(JSON_WIFI_RX, this.getWifiRxBytes());
+			object.put(JSON_WIFI_TX, this.getWifiTxBytes());
+			// network: bytes per second
+			object.put(JSON_TOTAL_RX_S, this.getTotalRxBytesPerSecond());
+			object.put(JSON_TOTAL_TX_S, this.getTotalTxBytesPerSecond());
+			object.put(JSON_MOBILE_RX_S, this.getMobileRxBytesPerSecond());
+			object.put(JSON_MOBILE_TX_S, this.getMobileTxBytesPerSecond());
+			object.put(JSON_WIFI_RX_S, this.getWifiRxBytesPerSecond());
+			object.put(JSON_WIFI_TX_S, this.getWifiTxBytesPerSecond());
+			// network: properties
 			object.put(JSON_WIFI_MAC, this.getWifiMac());
-			//TODO add network statistics to JSON update
+
 			return object;
 		} catch (JSONException e)
 		{
