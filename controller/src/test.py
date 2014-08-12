@@ -77,7 +77,7 @@ class UE_InterfaceTest(unittest.TestCase):
     def test_validate_ue_data(self):
         # create test ue
         r = helper_create_ue()
-        url = json.loads(r.json())[0]
+        url = r.json()[0]
         # get new ue
         ue_data = helper_get_ue(url)
         # check if initial data is valid and unchanged in response
@@ -92,7 +92,7 @@ class UE_InterfaceTest(unittest.TestCase):
     def test_update_ue(self):
         # create test ue
         r = helper_create_ue()
-        url = json.loads(r.json())[0]
+        url = r.json()[0]
         # update request
         r = requests.put(API_BASE_URL + url,
                          data=json.dumps(self.request_data2))
@@ -118,17 +118,17 @@ class UE_InterfaceTest(unittest.TestCase):
     def test_context_list(self):
         # create test ue
         r = helper_create_ue()
-        url = json.loads(r.json())[0]
+        url = r.json()[0]
         # make update to create second context
         r = requests.put(API_BASE_URL + url,
                          data=json.dumps(self.request_data2))
         # get context list
         r = requests.get(API_BASE_URL + url + "/context")
-        clist = json.loads(r.json())
+        clist = r.json()
         self.assertGreaterEqual(len(clist), 2)
         for curl in clist:
             r = requests.get(API_BASE_URL + curl)
-            data = json.loads(r.json())
+            data = r.json()
             # check response
             self.assertEqual(r.status_code, 200)
             # check if new data is valid and included in response
@@ -142,7 +142,7 @@ class UE_InterfaceTest(unittest.TestCase):
         """
         # create test ue
         r = helper_create_ue()
-        url = json.loads(r.json())[0]
+        url = r.json()[0]
         # give the algorithm some time to assign
         time.sleep(2)
         # get new ue
@@ -153,7 +153,7 @@ class UE_InterfaceTest(unittest.TestCase):
         self.assertTrue(ue_data["assigned_accesspoint"] is not None)
         # get ap which is assigned
         r = requests.get(API_BASE_URL + ap_url)
-        ap = json.loads(r.json())
+        ap = r.json()
         self.assertEqual(r.status_code, 200)
         self.assertIsInstance(ap, dict)
         self.assertTrue("device_id" in ap)
@@ -164,7 +164,7 @@ class UE_InterfaceTest(unittest.TestCase):
     def _helper_create_n_ues(self, n):
         for i in range(0, n):
             r = helper_create_ue("device-%s" % str(i + 1))
-            data = json.loads(r.json())
+            data = r.json()
             # check response
             self.assertEqual(r.status_code, 201)
             self.assertIsInstance(data, list)
@@ -180,7 +180,7 @@ class Location_InterfaceTest(unittest.TestCase):
     def setUp(self):
         r = helper_create_ue(
             device_id="loc_ue1", location_service_id="loc_node1")
-        data = json.loads(r.json())
+        data = r.json()
         self.assertIsInstance(data, list)
         self.ue_url = data[0]
         # get ue data
@@ -246,12 +246,12 @@ class Location_InterfaceTest(unittest.TestCase):
         self.assertEqual(r.status_code, 201)
         # get access points and check location
         r = requests.get(API_BASE_URL + "/api/accesspoint")
-        data = json.loads(r.json())
+        data = r.json()
         self.assertEqual(r.status_code, 200)
         self.assertIsInstance(data, list)
         for url in data:
             r = requests.get(API_BASE_URL + url)
-            ap = json.loads(r.json())
+            ap = r.json()
             self.assertEqual(r.status_code, 200)
             self.assertIsInstance(ap, dict)
             self.assertTrue("device_id" in ap)
@@ -285,12 +285,12 @@ class AccessPoint_InterfaceTest(unittest.TestCase):
     def test_get_accesspoints(self):
         # get list
         r = requests.get(API_BASE_URL + "/api/accesspoint")
-        data = json.loads(r.json())
+        data = r.json()
         self.assertEqual(r.status_code, 200)
         self.assertIsInstance(data, list)
         for url in data:
             r = requests.get(API_BASE_URL + url)
-            ap = json.loads(r.json())
+            ap = r.json()
             self.assertEqual(r.status_code, 200)
             self.assertIsInstance(ap, dict)
             self.assertTrue("device_id" in ap)
@@ -318,7 +318,7 @@ def helper_delete_ue(url):
 
 def helper_get_ue(url):
     r = requests.get(API_BASE_URL + url)
-    data = json.loads(r.json())
+    data = r.json()
     # check response
     assert(r.status_code == 200)
     assert(type(data) is dict)
@@ -328,7 +328,7 @@ def helper_get_ue(url):
 
 def helper_get_ue_list():
         r = requests.get(API_BASE_URL + "/api/ue")
-        data = json.loads(r.json())
+        data = r.json()
         assert(r.status_code == 200)
         assert(type(data) is list)
         return data
