@@ -46,3 +46,18 @@ def connect_db():
     except:
         logging.exception("Could not connect to database")
         logging.info("Database connection failed. Stopping daemon.")
+
+
+"""
+Helper
+"""
+
+
+def try_get(data, key, default=None):
+    """
+    Tries to get the key from the dict, or
+    returns default value.
+    """
+    if key not in data:
+        return default
+    return data[key]

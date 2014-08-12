@@ -15,7 +15,20 @@ UE_RESOURCE_FIELDS = {
     'position_x': fields.Float,
     'position_y': fields.Float,
     'display_state': fields.Integer,
-    'active_application': fields.String,
+    'active_application_package': fields.String,
+    'active_application_activity': fields.String,
+    'rx_total_bytes': fields.Integer,
+    'tx_total_bytes': fields.Integer,
+    'rx_mobile_bytes': fields.Integer,
+    'tx_mobile_bytes': fields.Integer,
+    'rx_wifi_bytes': fields.Integer,
+    'tx_wifi_bytes': fields.Integer,
+    'rx_total_bytes_per_second': fields.Float,
+    'tx_total_bytes_per_second': fields.Float,
+    'rx_mobile_bytes_per_second': fields.Float,
+    'tx_mobile_bytes_per_second': fields.Float,
+    'rx_wifi_bytes_per_second': fields.Float,
+    'tx_wifi_bytes_per_second': fields.Float,
     'assigned_accesspoint': fields.String,
     'uri': fields.String,
     'wifi_mac': fields.String
@@ -29,7 +42,20 @@ class Context(EmbeddedDocument):
     position_x = FloatField(default=-1)
     position_y = FloatField(default=-1)
     display_state = IntField(default=0)
-    active_application = StringField(default=None)
+    active_application_package = StringField(default=None)
+    active_application_activity = StringField(default=None)
+    rx_total_bytes = IntField(default=-1)
+    tx_total_bytes = IntField(default=-1)
+    rx_mobile_bytes = IntField(default=-1)
+    tx_mobile_bytes = IntField(default=-1)
+    rx_wifi_bytes = IntField(default=-1)
+    tx_wifi_bytes = IntField(default=-1)
+    rx_total_bytes_per_second = FloatField(default=-1)
+    tx_total_bytes_per_second = FloatField(default=-1)
+    rx_mobile_bytes_per_second = FloatField(default=-1)
+    tx_mobile_bytes_per_second = FloatField(default=-1)
+    rx_wifi_bytes_per_second = FloatField(default=-1)
+    tx_wifi_bytes_per_second = FloatField(default=-1)
 
     def get_parent_ue(self):
         for ue in UE.objects:
@@ -97,10 +123,40 @@ class UE(Document):
     def add_context(uuid, json_data):
         try:
             new_c = Context()
-            new_c.position_x = json_data["position_x"]
-            new_c.position_y = json_data["position_y"]
-            new_c.display_state = json_data["display_state"]
-            new_c.active_application = json_data["active_application"]
+            new_c.position_x = model.try_get(
+                json_data, "position_x", -1)
+            new_c.position_y = model.try_get(
+                json_data, "position_y", -1)
+            new_c.display_state = model.try_get(
+                json_data, "display_state", -1)
+            new_c.active_application_package = model.try_get(
+                json_data, "active_application_package", None)
+            new_c.active_application_activity = model.try_get(
+                json_data, "active_application_activity", None)
+            new_c.rx_total_bytes = model.try_get(
+                json_data, "rx_total_bytes", -1)
+            new_c.tx_total_bytes = model.try_get(
+                json_data, "tx_total_bytes", -1)
+            new_c.rx_mobile_bytes = model.try_get(
+                json_data, "rx_mobile_bytes", -1)
+            new_c.tx_mobile_bytes = model.try_get(
+                json_data, "tx_mobile_bytes", -1)
+            new_c.rx_wifi_bytes = model.try_get(
+                json_data, "rx_wifi_bytes", -1)
+            new_c.tx_wifi_bytes = model.try_get(
+                json_data, "tx_wifi_bytes", -1)
+            new_c.rx_total_bytes_per_second = model.try_get(
+                json_data, "rx_total_bytes_per_second", -1)
+            new_c.tx_total_bytes_per_second = model.try_get(
+                json_data, "tx_total_bytes_per_second", -1)
+            new_c.rx_mobile_bytes_per_second = model.try_get(
+                json_data, "rx_mobile_bytes_per_second", -1)
+            new_c.tx_mobile_bytes_per_second = model.try_get(
+                json_data, "tx_mobile_bytes_per_second", -1)
+            new_c.rx_wifi_bytes_per_second = model.try_get(
+                json_data, "rx_wifi_bytes_per_second", -1)
+            new_c.tx_wifi_bytes_per_second = model.try_get(
+                json_data, "tx_wifi_bytes_per_second", -1)
             # try to use third party location if available
             try:
                 loc = model.location.Location.objects.get(
