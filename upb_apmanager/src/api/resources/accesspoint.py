@@ -3,6 +3,7 @@ import logging
 from flask import request
 from flask.ext import restful
 import model
+from api.errors import *
 
 
 class APList(restful.Resource):
@@ -11,8 +12,12 @@ class APList(restful.Resource):
         """
         Returns list of access points, grouped by usage availability.
         """
-        pass
-        return None
+        result = {}
+        result["online"] = [ap.uuid for ap in model.AccessPoints.itervalues()
+                            if ap.state == "online"]
+        result["offline"] = [ap.uuid for ap in model.AccessPoints.itervalues()
+                             if ap.state == "offline"]
+        return result
 
 
 class AP(restful.Resource):
@@ -21,8 +26,10 @@ class AP(restful.Resource):
         """
         Return details of access point taken from configuration file.
         """
-        pass
-        return None
+        if uuid in model.AccessPoints:
+            return model.AccessPoints[uuid].marshal()
+        else:
+            raise ResourceNotFoundError
 
 
 class PowerState(restful.Resource):
@@ -31,12 +38,15 @@ class PowerState(restful.Resource):
         """
         Returns power state of specific AP.
         """
-        pass
-        return None
+        if uuid in model.AccessPoints:
+            return {"power_state": model.AccessPoints[uuid].power_state}
+        else:
+            raise ResourceNotFoundError
+        return "test"
 
     def put(self, uuid):
         """
         Sets the power state of a specific AP.
         """
-        pass
+        pass  # TODO next!
         return None

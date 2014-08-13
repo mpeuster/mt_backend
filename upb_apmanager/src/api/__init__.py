@@ -56,3 +56,6 @@ class APIServer(object):
         self.api.add_resource(resources.accesspoint.AP,
                               "/api/network/accesspoint/<string:uuid>",
                               endpoint="accesspoint")
+        self.api.add_resource(resources.accesspoint.PowerState,
+                              "/api/network/accesspoint/<string:uuid>/power_state",
+                              endpoint="accesspoint_power_state")

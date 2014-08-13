@@ -1,36 +1,24 @@
 {
 	"accesspoints": [
 		{
-			"device_id": "AP1",
-			"location_service_id": "loc_ap1",
+			"name": "AP1",
 			"ssid": "WLAN1",
-			"state": "online",
-			"position_x": 100,
-			"position_y": 100
+			"state": "online"
 		},
 		{
-			"device_id": "AP2",
-			"location_service_id": "loc_ap2",
+			"name": "AP2",
 			"ssid": "WLAN2",
-			"state": "online",
-			"position_x": 800,
-			"position_y": 100
+			"state": "online"
 		},
 		{
-			"device_id": "AP3",
-			"location_service_id": "loc_ap3",
+			"name": "AP3",
 			"ssid": "WLAN3",
-			"state": "offline",
-			"position_x": 100,
-			"position_y": 800
+			"state": "offline"
 		},
 		{
-			"device_id": "AP4",
-			"location_service_id": "loc_ap4",
+			"name": "AP4",
 			"ssid": "WLAN4",
-			"state": "online",
-			"position_x": 800,
-			"position_y": 800
+			"state": "online"
 		}
 	]
 

@@ -1,31 +1,35 @@
 import logging
 import uuid
+from flask.ext.restful import fields, marshal
 import model
+
+AP_RESOURCE_FIELDS = {
+    'uuid': fields.String,
+    'name': fields.String,
+    'ssid': fields.String,
+}
 
 
 class AccessPoint():
 
     def __init__(
             self,
-            device_id,
+            name,
             ssid,
-            location_service_id=None,
-            position_x=0,
-            position_y=0,
             state="offline"):
         # create uuid
         self.uuid = uuid.uuid1().hex
         # set parameter
-        self.device_id = device_id
+        self.name = name
         self.ssid = ssid
-        self.location_service_id = location_service_id
-        self.position_x = position_x
-        self.position_y = position_y
         self.state = state
         self.power_state = "radio_off"
         self.enabled_macs = []
         self.disabled_macs = []
 
     def __repr__(self):
-        return ("%s with SSID=%s and UUID=%s") \
-            % (self.device_id, self.ssid, self.uuid)
+        return ("SSID=%s and UUID=%s") \
+            % (self.ssid, self.uuid)
+
+    def marshal(self):
+        return marshal(self, AP_RESOURCE_FIELDS)
