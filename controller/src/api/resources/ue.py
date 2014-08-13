@@ -10,8 +10,6 @@ from api.errors import JsonRequestParsingError
 REQUIRED_FIELDS = [
     "device_id",
     "location_service_id",
-    "position_x",
-    "position_y",
     "display_state",
     "wifi_mac"
 ]
