@@ -49,7 +49,25 @@ class AccessPoint_InterfaceTest(unittest.TestCase):
             self.assertTrue("power_state" in data)
 
     def test_put_power_state(self):
-        pass
+        # get all access points
+        r = requests.get(API_BASE_URL + "/api/network/accesspoint")
+        self.assertEqual(r.status_code, 200)
+        data = r.json()
+        self.assertIsInstance(data, dict)
+        for uuid in data["online"]:
+            # change switch on all online aps
+            cmd = {"power_state": "radio_on"}
+            r = requests.put(
+                API_BASE_URL + "/api/network/accesspoint/"
+                + uuid + "/power_state", data=json.dumps(cmd))
+            self.assertEqual(r.status_code, 204)
+        for uuid in data["online"]:
+            # change switch off all online aps
+            cmd = {"power_state": "radio_off"}
+            r = requests.put(
+                API_BASE_URL + "/api/network/accesspoint/"
+                + uuid + "/power_state", data=json.dumps(cmd))
+            self.assertEqual(r.status_code, 204)
 
     def test_post_client_mac(self):
         pass

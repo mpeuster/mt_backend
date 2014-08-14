@@ -48,5 +48,15 @@ class PowerState(restful.Resource):
         """
         Sets the power state of a specific AP.
         """
-        pass  # TODO next!
-        return None
+        try:
+            json_data = request.get_json(force=True)
+        except:
+            raise JsonRequestParsingError("Request parsing error")
+        logging.debug("PUT request body: %s" % str(json_data))
+        if uuid not in model.AccessPoints:
+            raise ResourceNotFoundError
+        if "power_state" not in json_data:
+            raise RequestDataError
+        # request is valid change model
+        model.AccessPoints[uuid].power_state = json_data["power_state"]
+        return None, 204
