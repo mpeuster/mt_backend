@@ -6,6 +6,7 @@ import resources
 import model
 import api
 import errors
+import driver
 
 
 def check_required_fields(data, required_keys):
@@ -23,6 +24,8 @@ class APIServer(object):
         # load access point definitions from configuration file
         model.load_aps_from_config(
             model.CONFIG["accesspoints"])
+        # load AP driver
+        driver.load()
 
     def run(self):
         self.setup_application()

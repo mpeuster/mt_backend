@@ -57,6 +57,9 @@ class PowerState(restful.Resource):
             raise ResourceNotFoundError
         if "power_state" not in json_data:
             raise RequestDataError
+        if (json_data["power_state"] != "radio_on" and
+                json_data["power_state"] != "radio_off"):
+            raise RequestDataError
         # request is valid, change model
         model.AccessPoints[uuid].power_state = json_data["power_state"]
         return None, 204
@@ -96,5 +99,6 @@ class Client(restful.Resource):
             else:
                 if mac in ap.disabled_macs:
                     ap.disabled_macs.remove(mac)
-        # TODO trigger mac black/white listing
+            # trigger mac black/white listing
+            ap.trigger_mac_list_change()
         return None, 204
