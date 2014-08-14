@@ -44,8 +44,10 @@ class ResourceManager(object):
         logging.info("Create ZMQ receiver: %s" % constr)
 
     def run(self):
+        """
+        run endless ZMQ receiver loop and react on incoming update messages
+        """
         logging.info("Running ResourceManager instance...")
-        # run endless ZMQ receiver loop and react on incoming update messages
         while True:
             r = self.zmqreceiver.recv()
             data = json.loads(r)
@@ -55,6 +57,14 @@ class ResourceManager(object):
                     self.dispatch_update_notification(data)
 
     def dispatch_update_notification(self, data):
+        """
+        This is executed if an update message was received by ZMQ.
+        (e.g. new UE in system, or location changed, ...)
+
+        Runs the optimization plugin to compute:
+            a) Power management: Which APs are on or off?
+            b) Assignment: Which UE connects to which AP?
+        """
         # fetch data from DB
         ue_list = [ue.marshal().copy() for ue in model.ue.UE.objects]
         ap_list = [ap.marshal().copy()
@@ -71,11 +81,19 @@ class ResourceManager(object):
         logging.info("Result: Assignment: %s" % str(result[1]))
         logging.info("=" * 40)
         #######################################################################
-
         # trigger ap manager and update model with results and store them
+        self.apply_power_control_result(result[0])
+        self.apply_assignment_result(result[1])
 
-        # ## POWER STATE
-        for uuid, state in result[0].items():  # iterate all power states
+    def apply_power_control_result(self, result):
+        """
+        Apply power control result:
+            1. Trigger the AP manager in order to change the power state
+               of the corresponding access point.
+               (Only done if a pwoer_state has changed)
+            2. Apply changes to model and store it in the DB.
+        """
+        for uuid, state in result.items():  # iterate all power states
             try:
                 power_state = 1 if state else 0
 
@@ -92,8 +110,17 @@ class ResourceManager(object):
                 # can fail if access point was deleted
                 logging.warning("Power state update failed.")
 
-        # ## ASSIGNMENT
-        for ue_uuid, ap_uuid in result[1].items():  # iterate all assignments
+    def apply_assignment_result(self, result):
+        """
+        Apply assignment result:
+            1. Trigger MAC address black and white listing at the AP manager
+               component to ensure that UEs can only connect to assigned APs.
+               (Only done if assignment has changed)
+            2. Apply changes to model and store it in the DB.
+            3. TODO: Trigger notification of UE, so that it can pull the
+               assignment result in order to (re)connect to the right AP.
+        """
+        for ue_uuid, ap_uuid in result.items():  # iterate all assignments
             try:
                 ue = model.ue.UE.objects.get(uuid=ue_uuid)
 
@@ -112,6 +139,7 @@ class ResourceManager(object):
                         ue.wifi_mac,
                         enable_on,
                         disable_on)
+
                 # update model
                 if ap_uuid is None:
                     ue.remove_accesspoint()
@@ -126,6 +154,3 @@ class ResourceManager(object):
             except:
                 # can fail if ue was deleted
                 logging.warning("Assignment update failed.")
-
-        # TODO: split above part in smaller chunks of code
-        # TODO: trigger UE update notification
