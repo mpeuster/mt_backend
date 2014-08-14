@@ -34,7 +34,7 @@ class AccessPoint(Document):
     def create(json_data):
         try:
             ap = AccessPoint(
-                uuid=uuid.uuid1().hex,
+                uuid=json_data['uuid'],  # uuid.uuid1().hex,
                 device_id=json_data['device_id'],
                 location_service_id=json_data['location_service_id'])
             ap.ssid = json_data['ssid']
@@ -62,9 +62,55 @@ class AccessPoint(Document):
         return ap
 
     @staticmethod
-    def load_from_config(json_list):
-        for ap in json_list:
-            AccessPoint.create(ap)
+    def refresh(config_json, config_apmanger):
+        """
+        Deletes all existing access point objects from the database.
+
+        Merges AP data from local config and from AP manager component.
+        Both provided as argument with format dict.
+
+        Only APs which are present in the manager AP list are used.
+        Additional APs from the config are ignored. If an AP has no config
+        entry, default values will be used for this.
+
+        Attention: UUID from manager is also used locally.
+        """
+        # remove all old access point definitions
+        model.accesspoint.AccessPoint.drop_collection()
+
+        def find_ap(ssid, name):
+            """
+            Helper that finds APs from configuration file.
+            Matching by either name or ssid.
+            """
+            for ap in config_json:
+                if "device_id" in ap:
+                    if ap["device_id"] == name:
+                        return ap
+                if ssid in ap:
+                    if ap["ssid"] == ssid:
+                        return ap
+            return None
+
+        # merge AP info from manager and local config
+        ap_lsit = []
+        for apm in config_apmanger:  # only use AP definitions from manager
+            if apm is not None:
+                apc = find_ap(apm["ssid"], apm["name"])
+                if apc is None:
+                    # no config entry for AP found: use default values
+                    logging.info("No local config for: %s" % apm["name"])
+                    apc = {}
+                    apc["device_id"] = apm["name"]
+                    apc["location_service_id"] = apm["name"]
+                    apc["position_x"] = 0
+                    apc["position_y"] = 0
+                # add manager values to config entry
+                apc["uuid"] = apm["uuid"]
+                apc["ssid"] = apm["ssid"]
+                apc["name"] = apm["name"]
+                # finally create new AP from config entry
+                AccessPoint.create(apc)
 
     @property
     def uri(self):

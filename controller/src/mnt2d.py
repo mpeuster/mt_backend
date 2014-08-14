@@ -67,7 +67,7 @@ class MNT2Daemon(DaemonBase):  # inherit DaemonBase to build a Unix daemon
         logging.info('MNT2 daemon running with PID: %s'
                      % str(self.pid))
         # Run manager instance
-        mng = manager.NetworkManager(params)
+        mng = manager.ResourceManager(params)
         try:
             mng.run()
         except:

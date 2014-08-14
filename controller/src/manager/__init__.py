@@ -4,13 +4,14 @@ import time
 import json
 import model
 import plugin
+import apcontrol
 from api.errors import *
 
 
 UPDATE_ACTIONS = ["post", "put", "delete"]
 
 
-class NetworkManager(object):
+class ResourceManager(object):
 
     def __init__(self, params):
         self.params = params
@@ -18,8 +19,20 @@ class NetworkManager(object):
         model.load_config(params.config, basepath=params.path)
         # connect to database
         model.connect_db()
+        # clear db
+        model.ue.UE.drop_collection()
+        model.location.Location.drop_collection()
+        model.accesspoint.AccessPoint.drop_collection()
         # setup zero mq receiver
         self.setup_zmq()
+        # load access point definitions from configuration file
+        # and from remote AP manager component.
+        # Deletes all current AP definitions at first.
+        # If connection to remote AP manage API is not possible,
+        # the system will run without any AP object and thus
+        # no APs are assigned to UEs.
+        model.accesspoint.AccessPoint.refresh(
+            model.CONFIG["accesspoints"], apcontrol.get_accesspoints())
         # load management algorithm
         plugin.load_algorithm(model.CONFIG["algorithm"]["name"])
 
@@ -31,8 +44,8 @@ class NetworkManager(object):
         logging.info("Create ZMQ receiver: %s" % constr)
 
     def run(self):
-        logging.info("Running NetworkManager instance...")
-
+        logging.info("Running ResourceManager instance...")
+        # run endless ZMQ receiver loop and react on incoming update messages
         while True:
             r = self.zmqreceiver.recv()
             data = json.loads(r)
