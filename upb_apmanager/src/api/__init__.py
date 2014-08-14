@@ -2,7 +2,7 @@ import api
 import logging
 from flask import Flask
 from flask.ext import restful
-import resources.accesspoint
+import resources
 import model
 import api
 import errors
@@ -50,12 +50,12 @@ class APIServer(object):
 
     def setup_api(self):
         # access points
-        self.api.add_resource(resources.accesspoint.APList,
+        self.api.add_resource(resources.APList,
                               "/api/network/accesspoint",
                               endpoint="accesspoint_list")
-        self.api.add_resource(resources.accesspoint.AP,
+        self.api.add_resource(resources.AP,
                               "/api/network/accesspoint/<string:uuid>",
                               endpoint="accesspoint")
-        self.api.add_resource(resources.accesspoint.PowerState,
+        self.api.add_resource(resources.PowerState,
                               "/api/network/accesspoint/<string:uuid>/power_state",
                               endpoint="accesspoint_power_state")
