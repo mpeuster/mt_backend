@@ -73,13 +73,15 @@ class ResourceManager(object):
         #######################################################################
 
         # trigger ap manager and update model with results and store them
+
+        # ## POWER STATE
         for uuid, state in result[0].items():  # iterate all power states
             try:
                 power_state = 1 if state else 0
 
                 # if we have a changed power_state, we trigger the AP manger
-                if not model.accesspoint.AccessPoint.objects.get(
-                        uuid=uuid).power_state == power_state:
+                if model.accesspoint.AccessPoint.objects.get(
+                        uuid=uuid).power_state != power_state:
                     # trigger AP manager component
                     ap_manager_client.set_power_state(uuid, state)
 
@@ -90,9 +92,27 @@ class ResourceManager(object):
                 # can fail if access point was deleted
                 logging.warning("Power state update failed.")
 
+        # ## ASSIGNMENT
         for ue_uuid, ap_uuid in result[1].items():  # iterate all assignments
             try:
                 ue = model.ue.UE.objects.get(uuid=ue_uuid)
+
+                # if the assignment has changed, trigger MAC list update at AP
+                if ue.assigned_accesspoint != ap_uuid:
+                    # list of assigned aAP UUIDs
+                    enable_on = [ap.uuid for ap
+                                 in model.accesspoint.AccessPoint.objects
+                                 if ap.uuid == ap_uuid]
+                    # list of not assigned AP UUIDs
+                    disable_on = [ap.uuid for ap
+                                  in model.accesspoint.AccessPoint.objects
+                                  if ap.uuid != ap_uuid]
+                    # trigger AP manager component
+                    ap_manager_client.set_mac_list(
+                        ue.wifi_mac,
+                        enable_on,
+                        disable_on)
+                # update model
                 if ap_uuid is None:
                     ue.remove_accesspoint()
                 else:
@@ -107,5 +127,5 @@ class ResourceManager(object):
                 # can fail if ue was deleted
                 logging.warning("Assignment update failed.")
 
-        # TODO: trigger AP power control
+        # TODO: split above part in smaller chunks of code
         # TODO: trigger UE update notification

@@ -62,20 +62,20 @@ def set_power_state(uuid, power_state):
             + uuid + "/power_state", data=json.dumps(cmd))
         return r.status_code
     except:
-        logging.error("Connection to AccessPointManager not possible.")
+        logging.exception("Connection to AccessPointManager not possible.")
         return None
 
 
 def set_mac_list(mac, enable_on, disable_on):
-    assert(isinstance(enable_on, list))
-    assert(isinstance(disable_on, list))
     try:
+        assert(isinstance(enable_on, list))
+        assert(isinstance(disable_on, list))
         cmd = {}
         cmd["enable_on"] = enable_on
         cmd["disable_on"] = disable_on
         r = requests.put(
-            get_connection() + "/api/network/client/" + mac,
+            get_connection() + "/api/network/client/" + str(mac),
             data=json.dumps(cmd))
     except:
-        logging.error("Connection to AccessPointManager not possible.")
+        logging.exception("Connection to AccessPointManager not possible.")
         return None
