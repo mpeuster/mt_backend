@@ -70,7 +70,25 @@ class AccessPoint_InterfaceTest(unittest.TestCase):
             self.assertEqual(r.status_code, 204)
 
     def test_post_client_mac(self):
-        pass
+        # get list of AP uuids:
+        r = requests.get(API_BASE_URL + "/api/network/accesspoint")
+        self.assertEqual(r.status_code, 200)
+        aps = r.json()
+        # enable and disable some APs for this mac:
+        mac = "00:11:aa:bb:22:cc"
+        cmd = {}
+        cmd["enable_on"] = [uuid for uuid in aps["online"]]
+        cmd["disable_on"] = []
+        r = requests.put(
+            API_BASE_URL + "/api/network/client/" + mac,
+            data=json.dumps(cmd))
+        self.assertEqual(r.status_code, 204)
+        cmd["enable_on"] = []
+        cmd["disable_on"] = [uuid for uuid in aps["online"]]
+        r = requests.put(
+            API_BASE_URL + "/api/network/client/" + mac,
+            data=json.dumps(cmd))
+        self.assertEqual(r.status_code, 204)
 
 
 if __name__ == '__main__':

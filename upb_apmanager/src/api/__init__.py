@@ -50,12 +50,19 @@ class APIServer(object):
 
     def setup_api(self):
         # access points
-        self.api.add_resource(resources.APList,
-                              "/api/network/accesspoint",
-                              endpoint="accesspoint_list")
-        self.api.add_resource(resources.AP,
-                              "/api/network/accesspoint/<string:uuid>",
-                              endpoint="accesspoint")
-        self.api.add_resource(resources.PowerState,
-                              "/api/network/accesspoint/<string:uuid>/power_state",
-                              endpoint="accesspoint_power_state")
+        self.api.add_resource(
+            resources.APList,
+            "/api/network/accesspoint",
+            endpoint="accesspoint_list")
+        self.api.add_resource(
+            resources.AP,
+            "/api/network/accesspoint/<string:uuid>",
+            endpoint="accesspoint")
+        self.api.add_resource(
+            resources.PowerState,
+            "/api/network/accesspoint/<string:uuid>/power_state",
+            endpoint="accesspoint_power_state")
+        self.api.add_resource(
+            resources.Client,
+            "/api/network/client/<string:mac>",
+            endpoint="client_mac")
