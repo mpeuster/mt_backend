@@ -4,7 +4,7 @@ import time
 import json
 import model
 import plugin
-import apcontrol
+import ap_manager_client
 from api.errors import *
 
 
@@ -32,7 +32,7 @@ class ResourceManager(object):
         # the system will run without any AP object and thus
         # no APs are assigned to UEs.
         model.accesspoint.AccessPoint.refresh(
-            model.CONFIG["accesspoints"], apcontrol.get_accesspoints())
+            model.CONFIG["accesspoints"], ap_manager_client.get_accesspoints())
         # load management algorithm
         plugin.load_algorithm(model.CONFIG["algorithm"]["name"])
 
@@ -72,10 +72,18 @@ class ResourceManager(object):
         logging.info("=" * 40)
         #######################################################################
 
-        # update model with results and store them into DB
+        # trigger ap manager and update model with results and store them
         for uuid, state in result[0].items():  # iterate all power states
             try:
                 power_state = 1 if state else 0
+
+                # if we have a changed power_state, we trigger the AP manger
+                if not model.accesspoint.AccessPoint.objects.get(
+                        uuid=uuid).power_state == power_state:
+                    # trigger AP manager component
+                    ap_manager_client.set_power_state(uuid, state)
+
+                # update model (should be atomic update!)
                 model.accesspoint.AccessPoint.objects(uuid=uuid).update_one(
                     set__power_state=power_state)
             except:

@@ -40,6 +40,7 @@ class AccessPoint(Document):
             ap.ssid = json_data['ssid']
             ap.position_x = json_data['position_x']
             ap.position_y = json_data['position_y']
+            ap.power_state = json_data['power_state']
             ap.save()
             logging.info("Registered AccessPoint: %s at %d/%d with SSID: %s" %
                          (ap.device_id, ap.position_x, ap.position_y, ap.ssid))
@@ -109,6 +110,7 @@ class AccessPoint(Document):
                 apc["uuid"] = apm["uuid"]
                 apc["ssid"] = apm["ssid"]
                 apc["name"] = apm["name"]
+                apc["power_state"] = apm["power_state"]
                 # finally create new AP from config entry
                 AccessPoint.create(apc)
 
