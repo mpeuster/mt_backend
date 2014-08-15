@@ -76,10 +76,12 @@ class Request(object):
         assert(r.status_code == 200)
         return r.json()
 
-    def get(url):
+    def get(self, url):
         r = requests.get(self._get_url() + url)
         assert(r.status_code == 200)
-        data = r.json()
+        return r.json()
+
+# TODO: Add Helper class, providing methods like: register_n(n, data=RDATA)
 
 
 def main():
