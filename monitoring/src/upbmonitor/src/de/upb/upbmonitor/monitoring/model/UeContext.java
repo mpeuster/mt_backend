@@ -8,6 +8,9 @@ import java.util.LinkedHashMap;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 public class UeContext
@@ -17,20 +20,17 @@ public class UeContext
 	 */
 
 	private static final String LTAG = "UeContext";
-
+	private Context myContext = null;
 	private static UeContext INSTANCE;
 	private boolean CONTEXT_CHANGED;
 
-	private boolean mIsRegistered = false;
-
-	public synchronized boolean isRegistered()
+	/**
+	 * Context is needed to access shared preferences. It is set by the monitoring and/or sender thread.
+	 * @param c
+	 */
+	public synchronized void updateApplicationContext(Context c)
 	{
-		return mIsRegistered;
-	}
-
-	public synchronized void setRegistered(boolean mIsRegistered)
-	{
-		this.mIsRegistered = mIsRegistered;
+		this.myContext = c;
 	}
 
 	private int mUpdateCount;
@@ -45,18 +45,28 @@ public class UeContext
 		this.mUpdateCount++;
 	}
 
-	private String mURI = null;
+	//private String mURI = null;
 
 	public synchronized String getURI()
 	{
-		return mURI;
+		if(this.myContext == null)
+			return null;
+		SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(this.myContext);
+		return p.getString("pref_current_URI", null);
+		//return mURI;
 	}
 
 	public synchronized void setURI(String mURI)
 	{
+		// get preference manager
+		SharedPreferences p = PreferenceManager.getDefaultSharedPreferences(this.myContext);
+		SharedPreferences.Editor e = p.edit();
+		e.putString("pref_current_URI", mURI);
+		e.commit();
+		
 		// no change indicator here, since it is only set once
 		// and the network controller knows this value
-		this.mURI = mURI;
+		//this.mURI = mURI;
 	}
 
 	private String mDeviceID;
@@ -317,7 +327,6 @@ public class UeContext
 	/**
 	 * JSON Tag names
 	 */
-	private static final String JSON_IS_REGISTERED = "is_registered";
 	private static final String JSON_URI = "backend_uri";
 	private static final String JSON_DEVICE_ID = "device_id";
 	private static final String JSON_LOCATIONSERVICE_ID = "location_service_id";
@@ -401,7 +410,6 @@ public class UeContext
 		LinkedHashMap<String, String> r = new LinkedHashMap<String, String>();
 
 		// additional (internal, not for public API)
-		r.put(JSON_IS_REGISTERED, Boolean.toString(this.isRegistered()));
 		r.put(JSON_URI, this.getURI());
 		// public API values
 		r.put(JSON_DEVICE_ID, this.getDeviceID());

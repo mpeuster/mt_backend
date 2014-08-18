@@ -24,6 +24,7 @@ public class SenderThread implements Runnable
 	private Handler myHandler;
 	private int mSenderInterval;
 	private UeEndpoint restUeEndpoint = null;
+	private boolean shuldBeConnected = false;
 
 	public SenderThread(Context myContext, Handler myHandler,
 			int monitoringInterval, String backendHost, int backendPort)
@@ -32,6 +33,9 @@ public class SenderThread implements Runnable
 		this.myContext = myContext;
 		this.myHandler = myHandler;
 		this.mSenderInterval = monitoringInterval;
+		
+		// also pass context to model
+		UeContext.getInstance().updateApplicationContext(myContext);
 		
 		// initializations
 		// API end point
@@ -44,26 +48,31 @@ public class SenderThread implements Runnable
 		// access model
 		UeContext c = UeContext.getInstance();
 		
-		if(!c.isRegistered())
+		if(c.getURI() == null)
 		{
-			// register UE in backend
-			this.restUeEndpoint.register();
-			c.setRegistered(true);
+			if(!this.shuldBeConnected)
+			{
+				// register UE in backend
+				this.restUeEndpoint.register();
+				this.shuldBeConnected = true;
+			}
+			else
+			{
+				// something went wrong with the register operation in the last try
+				Toast.makeText(myContext,
+						"Backend connection error.",
+						Toast.LENGTH_SHORT).show();
+				// trigger re-register
+				this.shuldBeConnected = false;
+			}
 		}
-		else if (c.getURI() != null)
+		else 
 		{
 			// periodically send update if UE is registered		
 			this.sendUpdate();
 		}
-		else
-		{
-			// something went wrong with the register operation
-			Toast.makeText(myContext,
-					"Backend connection error.",
-					Toast.LENGTH_SHORT).show();
-			// trigger re-register
-			c.setRegistered(false);
-		}
+		
+		// re-schedule
 		myHandler.postDelayed(this, this.mSenderInterval);
 	}
 
@@ -92,6 +101,5 @@ public class SenderThread implements Runnable
 		UeContext c = UeContext.getInstance();
 		// remove UE from backend
 		this.restUeEndpoint.remove();
-		c.setRegistered(false);
 	}
 }

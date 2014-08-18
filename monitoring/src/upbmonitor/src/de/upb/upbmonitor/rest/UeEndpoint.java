@@ -123,7 +123,6 @@ public class UeEndpoint
 				// result code looks fine, reset model
 				UeContext c = UeContext.getInstance();
 				c.setURI(null);
-				c.setRegistered(false);
 				Log.i(LTAG, "UE was succesfully removed from backend.");
 			}
 		}
