@@ -4,7 +4,9 @@ import de.upb.upbmonitor.monitoring.model.UeContext;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningTaskInfo;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.PowerManager;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 public class SystemMonitor
@@ -21,6 +23,7 @@ public class SystemMonitor
 	{
 		this.monitorActiveApplication();
 		this.monitorScreenState();
+		this.monitorLocation();
 	}
 
 	/**
@@ -61,6 +64,45 @@ public class SystemMonitor
 		{
 			Log.w(LTAG, "Not able to get running task info: " + e.getMessage());
 		}
+	}
+
+	/**
+	 * location monitoring. looks in the shared preferences if manual location
+	 * definition is enabled.
+	 * 
+	 * reads location info and sets it to the model. other solutions for finding
+	 * a location directly on the UE should be implemented here.
+	 */
+	public void monitorLocation()
+	{
+		boolean enabled;
+		int px = 0;
+		int py = 0;
+		// try to get manually set location from shared preferences
+		try
+		{
+			SharedPreferences preferences = PreferenceManager
+					.getDefaultSharedPreferences(this.myContext);
+			// location preferences
+			enabled = preferences.getBoolean("pref_enable_manual_location",
+					false);
+			px = preferences.getInt("pref_manual_location_x", 0);
+			py = preferences.getInt("pref_manual_location_y", 0);
+		} catch (Exception e)
+		{
+			Log.e(LTAG, "Error reading preferences. Using default values.");
+			enabled = false;
+		}
+		// only use values if manual location is enabled
+		if (!enabled)
+		{
+			px = 0;
+			py = 0;
+		}
+		// set values in model
+		UeContext c = UeContext.getInstance();
+		c.setPositionX(px);
+		c.setPositionY(py);
 	}
 
 }
