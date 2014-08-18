@@ -30,8 +30,11 @@ public class MonitoringListAdapter extends BaseAdapter
 	public void updateData(LinkedHashMap<String, String> d)
 	{
 		data.clear();
-		for (String key : d.keySet())
-			data.put(key, d.get(key));
+		if(d != null)
+		{
+			for (String key : d.keySet())
+				data.put(key, d.get(key));
+		}
 		this.notifyDataSetChanged();
 	}
 

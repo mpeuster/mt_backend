@@ -17,6 +17,7 @@
         android:layout_height="wrap_content"
         android:gravity="right"
         android:text="value"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:typeface="monospace" />
 
 </LinearLayout>

@@ -1,5 +1,7 @@
 package de.upb.upbmonitor;
 
+import java.util.LinkedHashMap;
+
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,12 +12,14 @@ import android.view.ViewGroup;
 import de.upb.upbmonitor.monitoring.MonitoringService;
 import de.upb.upbmonitor.monitoring.model.UeContext;
 import android.widget.ListView;
+import android.widget.TextView;
 
 public class MonitoringFragment extends Fragment
 {
 	private static final String LTAG = "MonitoringFragment";
 
 	private ListView listView;
+	private TextView textMonitoringServiceStatus;
 	MonitoringListAdapter adapter = null;
 
 	private Handler mHandler = new Handler();
@@ -24,8 +28,19 @@ public class MonitoringFragment extends Fragment
 	{
 		public void run()
 		{
-			if (adapter != null && MonitoringService.SERVICE_EXISTS)
-				adapter.updateData(UeContext.getInstance().toListViewData());
+			// update headline
+			textMonitoringServiceStatus
+					.setText(MonitoringService.SERVICE_EXISTS ? "Current Device State:"
+							: "Turn monitoring service on in order to see monitoring outputs.");
+						
+			// update list view
+			if (adapter != null)
+			{
+				if(MonitoringService.SERVICE_EXISTS)
+					adapter.updateData(UeContext.getInstance().toListViewData());
+				else // if service is not active, show empty list
+					adapter.updateData(null);
+			}
 			mHandler.postDelayed(periodicTask, 1000);
 		}
 	};
@@ -51,6 +66,8 @@ public class MonitoringFragment extends Fragment
 				container, false);
 
 		listView = (ListView) rootView.findViewById(R.id.listViewMonitoring);
+		textMonitoringServiceStatus = (TextView) rootView
+				.findViewById(R.id.textViewMonitoringStatus);
 
 		// create custom adapter
 		adapter = new MonitoringListAdapter(getActivity(), UeContext

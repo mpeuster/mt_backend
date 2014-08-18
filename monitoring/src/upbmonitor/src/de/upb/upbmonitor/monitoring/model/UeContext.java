@@ -317,6 +317,8 @@ public class UeContext
 	/**
 	 * JSON Tag names
 	 */
+	private static final String JSON_IS_REGISTERED = "is_registered";
+	private static final String JSON_URI = "backend_uri";
 	private static final String JSON_DEVICE_ID = "device_id";
 	private static final String JSON_LOCATIONSERVICE_ID = "location_service_id";
 	private static final String JSON_POSITION_X = "position_x";
@@ -398,6 +400,10 @@ public class UeContext
 	{
 		LinkedHashMap<String, String> r = new LinkedHashMap<String, String>();
 
+		// additional (internal, not for public API)
+		r.put(JSON_IS_REGISTERED, Boolean.toString(this.isRegistered()));
+		r.put(JSON_URI, this.getURI());
+		// public API values
 		r.put(JSON_DEVICE_ID, this.getDeviceID());
 		r.put(JSON_LOCATIONSERVICE_ID, this.getLocationServiceID());
 		r.put(JSON_POSITION_X, Float.toString(this.getPositionX()));
