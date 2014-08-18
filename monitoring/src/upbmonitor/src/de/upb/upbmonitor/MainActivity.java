@@ -26,7 +26,8 @@ public class MainActivity extends ActionBarActivity implements
 	private static final String LTAG = "MainActivity";
 	private static final int CONTROL_PAGE_ID = 0;
 	private static final int MONITORING_PAGE_ID = 1;
-
+	private static final int LOCATION_PAGE_ID = 2;
+	
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
 	 * fragments for each of the sections. We use a {@link FragmentPagerAdapter}
@@ -165,6 +166,8 @@ public class MainActivity extends ActionBarActivity implements
 				return ControlFragment.getInstance();
 			if (position == MONITORING_PAGE_ID)
 				return MonitoringFragment.newInstance();
+			if (position == LOCATION_PAGE_ID)
+				return LocationFragment.newInstance();
 			return PlaceholderFragment.newInstance(position);
 		}
 
