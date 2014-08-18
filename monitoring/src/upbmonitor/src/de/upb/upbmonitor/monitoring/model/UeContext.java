@@ -1,5 +1,10 @@
 package de.upb.upbmonitor.monitoring.model;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -381,5 +386,47 @@ public class UeContext
 		}
 		return null;
 
+	}
+
+	/**
+	 * Return all values as a LinkedHashMap <KeyString, Value:String> Used to
+	 * display the data inside the App.
+	 * 
+	 * @return LinkedHashMap<String, String>
+	 */
+	public LinkedHashMap<String, String> toListViewData()
+	{
+		LinkedHashMap<String, String> r = new LinkedHashMap<String, String>();
+
+		r.put(JSON_DEVICE_ID, this.getDeviceID());
+		r.put(JSON_LOCATIONSERVICE_ID, this.getLocationServiceID());
+		r.put(JSON_POSITION_X, Float.toString(this.getPositionX()));
+		r.put(JSON_POSITION_Y, Float.toString(this.getPositionY()));
+		// system state
+		r.put(JSON_DISPLAY_STATE, Boolean.toString(this.isDisplayOn()));
+		r.put(JSON_ACTIVE_APPLICATION_PACKAGE,
+				this.getActiveApplicationPackage());
+		r.put(JSON_ACTIVE_APPLICATION_ACTIVITY,
+				this.getActiveApplicationActivity());
+		// network: bytes
+		r.put(JSON_TOTAL_RX, Long.toString(this.getTotalRxBytes()));
+		r.put(JSON_TOTAL_TX, Long.toString(this.getTotalTxBytes()));
+		r.put(JSON_MOBILE_RX, Long.toString(this.getMobileRxBytes()));
+		r.put(JSON_MOBILE_TX, Long.toString(this.getMobileTxBytes()));
+		r.put(JSON_WIFI_RX, Long.toString(this.getWifiRxBytes()));
+		r.put(JSON_WIFI_TX, Long.toString(this.getWifiTxBytes()));
+		// network: bytes per second
+		r.put(JSON_TOTAL_RX_S, Float.toString(this.getTotalRxBytesPerSecond()));
+		r.put(JSON_TOTAL_TX_S, Float.toString(this.getTotalTxBytesPerSecond()));
+		r.put(JSON_MOBILE_RX_S,
+				Float.toString(this.getMobileRxBytesPerSecond()));
+		r.put(JSON_MOBILE_TX_S,
+				Float.toString(this.getMobileTxBytesPerSecond()));
+		r.put(JSON_WIFI_RX_S, Float.toString(this.getWifiRxBytesPerSecond()));
+		r.put(JSON_WIFI_TX_S, Float.toString(this.getWifiTxBytesPerSecond()));
+		// network: properties
+		r.put(JSON_WIFI_MAC, this.getWifiMac());
+
+		return r;
 	}
 }
