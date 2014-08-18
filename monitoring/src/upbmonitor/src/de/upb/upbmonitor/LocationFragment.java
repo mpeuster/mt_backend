@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
-import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -61,16 +60,17 @@ public class LocationFragment extends Fragment
 		this.tvPY = (TextView) rootView.findViewById(R.id.textViewPY);
 
 		// fill number picker controls
-				this.fillNumberPicker(this.npPositionX, 0, 2000, positionStepSize);
-				this.fillNumberPicker(this.npPositionY, 0, 2000, positionStepSize);
-				
-		// load stored values
-		this.switchManualLocation.setChecked(this.getManualLocationPreference());
-		this.setEnableToPositionControls(this.getManualLocationPreference());
-		this.npPositionX.setValue(this.getPositionXPreference() / positionStepSize);
-		this.npPositionY.setValue(this.getPositionYPreference() / positionStepSize);
+		this.fillNumberPicker(this.npPositionX, 0, 2000, positionStepSize);
+		this.fillNumberPicker(this.npPositionY, 0, 2000, positionStepSize);
 
-		
+		// load stored values
+		this.switchManualLocation
+				.setChecked(this.getManualLocationPreference());
+		this.setEnableToPositionControls(this.getManualLocationPreference());
+		this.npPositionX.setValue(this.getPositionXPreference()
+				/ positionStepSize);
+		this.npPositionY.setValue(this.getPositionYPreference()
+				/ positionStepSize);
 
 		// manual location switch listener
 		this.switchManualLocation
