@@ -52,7 +52,8 @@ class SimpleNearestApAlgorithm(base.BaseAlgorithm):
             - assignment_dict: UE uuid -> AP uuid / None
                 e.g. {"ue_uuid1": "ap_uuid2", "ue_uuid2": None}
 
-        This simple algorithm assigns each UE to the closest AP.
+        This simple algorithm assigns each UE to the closest AP if the
+        display_state of the UE != 0.
         All APs which have at least one UE assigned are switched on.
         """
         logging.info("Running %s..." % str(self.__class__.__name__))
@@ -60,11 +61,12 @@ class SimpleNearestApAlgorithm(base.BaseAlgorithm):
         power_states_dict = {}
         assignment_dict = {}
 
-        # assign closest AP for each UE
+        # assign closest AP for each UE with display_state != 0
         for ue in ue_list:
-            closest_ap = self.find_closest_ap(ue, ap_list)
-            if closest_ap is not None:
-                assignment_dict[ue["uuid"]] = closest_ap["uuid"]
+            if ue["display_state"] != 0:
+                closest_ap = self.find_closest_ap(ue, ap_list)
+                if closest_ap is not None:
+                    assignment_dict[ue["uuid"]] = closest_ap["uuid"]
 
         # switch on all APs which are assigned to an UE
         for ap in ap_list:

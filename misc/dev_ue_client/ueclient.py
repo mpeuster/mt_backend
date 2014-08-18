@@ -28,7 +28,7 @@ RDATA = {
     "location_service_id": "tcnode1",
     "position_x": 0,
     "position_y": 0,
-    "display_state": 0,
+    "display_state": 1,
     "active_application_package": "com.android.browser",
     "wifi_mac": "00:8a:32:ce:fd:7e"
 }
