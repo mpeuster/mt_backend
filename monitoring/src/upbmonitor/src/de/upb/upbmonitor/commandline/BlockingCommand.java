@@ -47,7 +47,7 @@ public class BlockingCommand
 			@Override
 			public void commandCompleted(int id, int exitCode)
 			{
-				Log.i(LTAG, "Exitcode: " + exitCode);
+				Log.i(LTAG, "Cmd: '" + this.getCommand().trim() + "' Exitcode: " + exitCode);
 				this.notifyAll();
 			}
 

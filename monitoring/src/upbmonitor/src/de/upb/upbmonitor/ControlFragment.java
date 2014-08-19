@@ -6,6 +6,7 @@ import com.stericson.RootTools.RootTools;
 
 import de.upb.upbmonitor.commandline.BlockingCommand;
 import de.upb.upbmonitor.monitoring.MonitoringService;
+import de.upb.upbmonitor.network.NetworkManager;
 import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
@@ -120,20 +121,24 @@ public class ControlFragment extends Fragment
 
 	public void startDualNetworking()
 	{
-		Log.i(LTAG, "Dual networking turned on");
-
-		// just a test of command line API
-		ArrayList<String> out = BlockingCommand.execute("busybox ifconfig");
-		Log.i(LTAG, "Finished.");
-		
-		for(String l : out)
-			Log.v(LTAG, l);
-
+		Toast.makeText(getActivity(), "Eanbleing dual network connectivity.",
+				Toast.LENGTH_LONG).show();
+		// get NetworkManager instance
+		NetworkManager nm = NetworkManager.getInstance();
+		// try to enable dual networking
+		nm.enableDualNetworking();
+		// only keep switch on if DN was really turned on
+		this.switchDualNetworking.setChecked(nm.isDualNetworkingEnabled());
 	}
 
 	public void stopDualNetworking()
 	{
-		Log.i(LTAG, "Dual networking turned off");
+		Toast.makeText(getActivity(), "Disableing dual network connectivity.",
+				Toast.LENGTH_LONG).show();
+		// get NetworkManager instance
+		NetworkManager nm = NetworkManager.getInstance();
+		// try to disable dual networking
+		nm.disableDualNetworking();
 	}
 
 	/**
