@@ -1,5 +1,7 @@
 package de.upb.upbmonitor;
 
+import com.stericson.RootTools.RootTools;
+
 import de.upb.upbmonitor.monitoring.MonitoringService;
 import android.support.v4.app.Fragment;
 import android.content.Intent;
@@ -80,12 +82,9 @@ public class ControlFragment extends Fragment
 							boolean isChecked)
 					{
 						if (isChecked)
-						{
-							Log.i(LTAG, "Dual networking turned on");
-						} else
-						{
-							Log.i(LTAG, "Dual networking turned off");
-						}
+							startDualNetworking();
+						else
+							stopDualNetworking();
 					}
 				});
 
@@ -108,6 +107,35 @@ public class ControlFragment extends Fragment
 		// set switch state
 		this.switchMonitoringService.setChecked(false);
 		Log.i(LTAG, "Monitoring service turned off");
+	}
+	
+	public void startDualNetworking()
+	{
+		Log.i(LTAG, "Dual networking turned on");
+		//RootTools.debugMode = true; //ON
+		
+		// check for busybox availability
+		if (RootTools.isBusyboxAvailable()) {
+		    Log.i(LTAG,"Busybox is available");
+		} else {
+		    // do something else
+			Log.e(LTAG,"Busybox is NOT available");
+		}
+		
+		// check for su rights
+		if (RootTools.isAccessGiven()) {
+			 Log.i(LTAG,"Root access granted");
+		}
+		else
+		{
+			Log.e(LTAG,"Root access not possible");
+		}
+		
+	}
+	
+	public void stopDualNetworking()
+	{
+		Log.i(LTAG, "Dual networking turned off");
 	}
 
 }
