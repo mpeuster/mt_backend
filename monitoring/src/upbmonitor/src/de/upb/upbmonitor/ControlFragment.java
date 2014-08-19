@@ -1,7 +1,10 @@
 package de.upb.upbmonitor;
 
+import java.util.ArrayList;
+
 import com.stericson.RootTools.RootTools;
 
+import de.upb.upbmonitor.commandline.BlockingCommand;
 import de.upb.upbmonitor.monitoring.MonitoringService;
 import android.support.v4.app.Fragment;
 import android.content.Intent;
@@ -11,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.Toast;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.Switch;
 
@@ -37,7 +41,7 @@ public class ControlFragment extends Fragment
 
 	public ControlFragment()
 	{
-		
+
 	}
 
 	@Override
@@ -88,6 +92,11 @@ public class ControlFragment extends Fragment
 					}
 				});
 
+		// check for root/busybox capabilities of device and disable
+		// dual network switch if not available
+		this.switchDualNetworking.setEnabled(this.checkRootAvailability()
+				&& this.checkBusyBoxAvailability());
+
 		return rootView;
 	}
 
@@ -108,34 +117,63 @@ public class ControlFragment extends Fragment
 		this.switchMonitoringService.setChecked(false);
 		Log.i(LTAG, "Monitoring service turned off");
 	}
-	
+
 	public void startDualNetworking()
 	{
 		Log.i(LTAG, "Dual networking turned on");
-		//RootTools.debugMode = true; //ON
+
+		// just a test of command line API
+		ArrayList<String> out = BlockingCommand.execute("busybox ifconfig");
+		Log.i(LTAG, "Finished.");
 		
-		// check for busybox availability
-		if (RootTools.isBusyboxAvailable()) {
-		    Log.i(LTAG,"Busybox is available");
-		} else {
-		    // do something else
-			Log.e(LTAG,"Busybox is NOT available");
-		}
-		
-		// check for su rights
-		if (RootTools.isAccessGiven()) {
-			 Log.i(LTAG,"Root access granted");
-		}
-		else
-		{
-			Log.e(LTAG,"Root access not possible");
-		}
-		
+		for(String l : out)
+			Log.v(LTAG, l);
+
 	}
-	
+
 	public void stopDualNetworking()
 	{
 		Log.i(LTAG, "Dual networking turned off");
+	}
+
+	/**
+	 * checks if root access is possible and tries to get root access for this
+	 * app.
+	 * 
+	 * @return true/false
+	 */
+	public boolean checkRootAvailability()
+	{
+		if (RootTools.isAccessGiven())
+		{
+			Log.i(LTAG, "Root access granted");
+			return true;
+		}
+		Toast.makeText(getActivity(),
+				"ERROR: Root access not possible on device!", Toast.LENGTH_LONG)
+				.show();
+		Log.e(LTAG, "Root access not possible");
+		return false;
+	}
+
+	/**
+	 * checks for busybox (command line tool) availability
+	 * 
+	 * @return true/false
+	 */
+	public boolean checkBusyBoxAvailability()
+	{
+		if (RootTools.isBusyboxAvailable())
+		{
+			Log.i(LTAG, "Busybox is available.");
+			return true;
+		}
+
+		Toast.makeText(getActivity(),
+				"ERROR: Busybox is not installed on device!", Toast.LENGTH_LONG)
+				.show();
+		Log.e(LTAG, "Busybox is NOT available");
+		return false;
 	}
 
 }

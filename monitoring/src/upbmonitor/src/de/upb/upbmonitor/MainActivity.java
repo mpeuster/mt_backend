@@ -2,6 +2,8 @@ package de.upb.upbmonitor;
 
 import java.util.Locale;
 
+import com.stericson.RootTools.RootTools;
+
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -19,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity implements
 		ActionBar.TabListener
@@ -27,7 +30,7 @@ public class MainActivity extends ActionBarActivity implements
 	private static final int CONTROL_PAGE_ID = 0;
 	private static final int MONITORING_PAGE_ID = 1;
 	private static final int LOCATION_PAGE_ID = 2;
-	
+
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
 	 * fragments for each of the sections. We use a {@link FragmentPagerAdapter}
