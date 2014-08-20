@@ -1,7 +1,6 @@
 package de.upb.upbmonitor.commandline;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.concurrent.TimeoutException;
 
 import android.util.Log;
@@ -12,19 +11,17 @@ import com.stericson.RootTools.execution.Command;
 import com.stericson.RootTools.execution.CommandCapture;
 
 /**
- * Wraps the RootTools API in order to execute command line commands
- * in a blocking way.
+ * Wraps the RootTools API in order to execute command line commands.
  *  
  * @author manuel
  */
-public class BlockingCommand
+public class NonBlockingCommand
 {
 	private static final String LTAG = "BlockingCommand";
-	private static ArrayList<String> output;
 	
-	public static ArrayList<String> execute(String... command)
+	public static void execute(String... command)
 	{
-		return BlockingCommand.execute(true, command);
+		NonBlockingCommand.execute(true, command);
 	}
 	
 	/**
@@ -35,11 +32,8 @@ public class BlockingCommand
 	 * @param command
 	 * @return ArrayList<String>
 	 */
-	public static ArrayList<String> execute(boolean asRoot, String... command)
-	{
-		// create output array
-		output = new ArrayList<String>();
-		
+	public static void execute(boolean asRoot, String... command)
+	{	
 		// define command
 		Command cmd = new CommandCapture(0, false, command)
 		{
@@ -54,13 +48,11 @@ public class BlockingCommand
 			@Override
 			public void commandOutput(int id, String line)
 			{
-				output.add(line);
 			}
 
 			@Override
 			public void commandTerminated(int id, String reason)
 			{
-				this.notifyAll();
 			}
 		};
 		try
@@ -68,11 +60,6 @@ public class BlockingCommand
 			// execute command
 			RootTools.getShell(asRoot).add(cmd);
 			
-			// wait until command has finished
-			synchronized (cmd)
-			{
-				cmd.wait();
-			}
 		} catch (IOException e)
 		{
 			e.printStackTrace();
@@ -82,11 +69,6 @@ public class BlockingCommand
 		} catch (RootDeniedException e)
 		{
 			e.printStackTrace();
-		} catch (InterruptedException e)
-		{
-			e.printStackTrace();
 		}
-		// return output lines of command
-		return output;
 	}
 }

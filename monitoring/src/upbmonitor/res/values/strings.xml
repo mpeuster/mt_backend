@@ -9,6 +9,29 @@
     <string name="title_section4">Section 4</string>
     <string name="title_section5">Section 5</string>
     <string name="action_settings">Settings</string>
+    
+    
+    <!-- Template for wpa_supplicant configuration -->
+    <!-- ATTENTION: Formating like line breaks needs to be exactly preserved! -->
+    <string name="wpa_template">ctrl_interface=/data/misc/wifi/sockets\n\
+disable_scan_offload=1\n\
+update_config=1\n\
+device_name=yakju\n\
+manufacturer=samsung\n\
+model_name=Galaxy Nexus\n\
+model_number=Galaxy Nexus\n\
+serial_number=0A3C233F01009003\n\
+device_type=10-0050F204-5\n\
+config_methods=physical_display virtual_push_button\n\
+p2p_disabled=1\n\
+\n\
+network={\n\
+\tssid=\"PEU-WLAN\"\n\
+\tpsk=\"meinwaldecklebehoch\"\n\
+\tkey_mgmt=WPA-PSK\n\
+\tpriority=1\n\
+}\n\
+</string>
    
 
 </resources>

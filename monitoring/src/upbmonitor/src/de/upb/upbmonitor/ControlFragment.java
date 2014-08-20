@@ -128,7 +128,7 @@ public class ControlFragment extends Fragment
 		// try to enable dual networking
 		nm.enableDualNetworking();
 		// only keep switch on if DN was really turned on
-		this.switchDualNetworking.setChecked(nm.isDualNetworkingEnabled());
+		//this.switchDualNetworking.setChecked(nm.isDualNetworkingEnabled());
 	}
 
 	public void stopDualNetworking()

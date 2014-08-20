@@ -1,9 +1,13 @@
 package de.upb.upbmonitor.network;
 
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
+import de.upb.upbmonitor.R;
 import android.util.Log;
 import de.upb.upbmonitor.commandline.BlockingCommand;
+import de.upb.upbmonitor.commandline.NonBlockingCommand;
 import de.upb.upbmonitor.monitoring.model.UeContext;
 
 public class NetworkManager
@@ -13,6 +17,8 @@ public class NetworkManager
 	private static final String WIFI_INTERFACE = "wlan0";
 	private static final String MOBILE_INTERFACE = "rmnet0";
 	private static NetworkManager INSTANCE;
+	
+	public static String WPA_TEMPLATE = null;
 
 	/**
 	 * Use as singleton class.
@@ -28,36 +34,45 @@ public class NetworkManager
 
 	public synchronized void enableDualNetworking()
 	{
+		//TODO: Split so that WiFi reconnection is easily possible!
+		
+		// create a individual configuration for wpa_supplicant
+		setWifiConfiguration();
+		
 		Log.i(LTAG, "Enabling dual networking");
-		// 1. stop dhcp client
-		BlockingCommand.execute("pkill dhcpcd");
-		// 2. disable wifi with the wifi manager
-		BlockingCommand.execute("svc wifi disable");
-		// 3. enable mobile with mobile manager
-		BlockingCommand.execute("svc data enable");
-		// 4. bring up wifi interface by hand
-		BlockingCommand.execute("netcfg wlan0 up");
-		// 5. configure target wifi
-		// TODO conf target wifi
-		// 6. connect to actual wifi
-		BlockingCommand.execute("wpa_supplicant -B -Dnl80211 -iwlan0 -c/data/misc/wifi/wpa_supplicant.conf");
-		// 7. bring up dhcp client and receive ip (takes some time!)
-		BlockingCommand.execute("dhcpcd wlan0 &");	
+		// stop dhcp client
+		NonBlockingCommand.execute("pkill dhcpcd");
+		// kill wifi management
+		NonBlockingCommand.execute("pkill wpa_supplicant");
+		// disable wifi with the wifi manager
+		NonBlockingCommand.execute("svc wifi disable");
+		// enable mobile with mobile manager
+		NonBlockingCommand.execute("svc data enable");
+		// bring up wifi interface by hand
+		NonBlockingCommand.execute("netcfg wlan0 up");
+		// configure target wifi (copy indiv. config to destination)
+		NonBlockingCommand.execute("cp /sdcard/wpa_supplicant.conf /data/misc/wifi/wpa_supplicant.conf");
+		NonBlockingCommand.execute("chmod 666 /data/misc/wifi/wpa_supplicant.conf");
+		// connect to actual wifi
+		NonBlockingCommand.execute("wpa_supplicant -B -Dnl80211 -iwlan0 -c/data/misc/wifi/wpa_supplicant.conf");
+		// bring up dhcp client and receive ip (takes some time!)
+		NonBlockingCommand.execute("dhcpcd wlan0");	
+		
 	}
 
 	public synchronized void disableDualNetworking()
 	{
 		Log.i(LTAG, "Disabling dual networking");
 		// kill dhcp client
-		BlockingCommand.execute("pkill dhcpcd");
+		NonBlockingCommand.execute("pkill dhcpcd");
 		// kill wifi management
-		BlockingCommand.execute("pkill wpa_supplicant");
+		NonBlockingCommand.execute("pkill wpa_supplicant");
 		// tear down wifi interface
-		BlockingCommand.execute("netcfg wlan0 down");
+		NonBlockingCommand.execute("netcfg wlan0 down");
 		// disable wifi in manager
-		BlockingCommand.execute("svc wifi disable");
+		NonBlockingCommand.execute("svc wifi disable");
 		// disable data in manager
-		BlockingCommand.execute("svc data disable");
+		NonBlockingCommand.execute("svc data disable");
 	}
 
 	public synchronized boolean isDualNetworkingEnabled()
@@ -122,6 +137,22 @@ public class NetworkManager
 			if (p.length() > 1)
 				result.add(p);
 		return result;
+	}
+	
+	private void setWifiConfiguration()
+	{
+		String filename = "/sdcard/wpa_supplicant.conf";
+		String string = WPA_TEMPLATE;
+		FileOutputStream outputStream;
+		
+		try {
+			
+			 FileOutputStream f = new FileOutputStream(filename);
+			 f.write(string.getBytes());
+		        f.close();
+			} catch (Exception e) {
+			  e.printStackTrace();
+			}
 	}
 
 }
