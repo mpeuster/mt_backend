@@ -51,6 +51,11 @@ public class DebugFragment extends Fragment
 		b1.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 //NetworkManager.getInstance().switchWiFi();
+            	NetworkManager.getInstance().getWiFiInterfaceIp();
+            	NetworkManager.getInstance().getWiFiInterfaceMac();
+            	NetworkManager.getInstance().getMobileInterfaceIp();
+            	NetworkManager.getInstance().getMobileInterfaceMac();
+            	NetworkManager.getInstance().getCurrentSsid();
             }
         });
 		

@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import android.util.Log;
 import de.upb.upbmonitor.commandline.Shell;
 
-
 public class NetworkManager
 {
 	private static final String LTAG = "NetworkManager";
@@ -13,7 +12,7 @@ public class NetworkManager
 	private static final String WIFI_INTERFACE = "wlan0";
 	private static final String MOBILE_INTERFACE = "rmnet0";
 	private static NetworkManager INSTANCE;
-	
+
 	public static String WPA_TEMPLATE = null;
 
 	/**
@@ -37,19 +36,20 @@ public class NetworkManager
 		Shell.execute("svc data enable");
 		// bring up wifi interface by hand
 		Shell.execute("netcfg wlan0 up");
-		
+
 		// try to connect to default WiFi
 		connectToWiFi(ssid, wpa_psk);
 	}
-	
+
 	public synchronized void connectToWiFi(String ssid, String wpa_psk)
 	{
-		Log.i(LTAG, "Connecting to WiFi with SSID: " + ssid + " and PSK: " + wpa_psk);		
-		//-- create an individual configuration for wpa_supplicant
-		if(ssid != null) // only reconfigure config if ssid is given
+		Log.i(LTAG, "Connecting to WiFi with SSID: " + ssid + " and PSK: "
+				+ wpa_psk);
+		// -- create an individual configuration for wpa_supplicant
+		if (ssid != null) // only reconfigure config if ssid is given
 			setWifiConfiguration(ssid, wpa_psk);
-						
-		//-- connection procedure
+
+		// -- connection procedure
 		// stop dhcp client
 		Shell.execute("pkill dhcpcd");
 		// kill wifi management
@@ -62,7 +62,6 @@ public class NetworkManager
 		// bring up dhcp client and receive ip (takes some time!)
 		Shell.execute("dhcpcd wlan0");
 	}
-	
 
 	public synchronized void disableDualNetworking()
 	{
@@ -94,35 +93,75 @@ public class NetworkManager
 	{
 		return this.isInterfaceUp(MOBILE_INTERFACE);
 	}
-	
+
 	public synchronized String getWiFiInterfaceIp()
 	{
-		return null;
+		return this.getInterfaceIp(WIFI_INTERFACE);
 	}
-	
+
 	public synchronized String getMobileInterfaceIp()
 	{
-		return null;
+		return this.getInterfaceIp(MOBILE_INTERFACE);
 	}
-	
+
 	public synchronized String getWiFiInterfaceMac()
 	{
-		return null;
+		return this.getInterfaceMac(WIFI_INTERFACE);
 	}
-	
+
 	public synchronized String getMobileInterfaceMac()
 	{
-		return null;
+		return this.getInterfaceMac(MOBILE_INTERFACE);
 	}
-	
+
 	public synchronized String getCurrentSsid()
 	{
-		return null;
+		// look into wpa_supplicatn.conf to get ssid
+		ArrayList<String> out = Shell
+				.executeBlocking("cat /data/misc/wifi/wpa_supplicant.conf | grep \"ssid=\" | cut -d '\"' -f2");
+		// if output is not one line, something went wrong
+		if (out.size() < 1)
+		{
+			Log.e(LTAG, "Error reading: /data/misc/wifi/wpa_supplicant.conf");
+			return null;
+		}
+		// get SSID (always use last output)
+		String ssid = out.get(out.size() - 1);
+
+		Log.d(LTAG, "Current SSID: " + ssid);
+
+		return ssid;
 	}
 
 	/**
 	 * ====================== HELPER ======================
 	 */
+
+	private synchronized String getInterfaceIp(String interfaceName)
+	{
+		ArrayList<String> status = this.getInterfaceStatus(interfaceName);
+		// check result for errors
+		if (status == null || status.size() < 2)
+			return null;
+
+		Log.d(LTAG, "Interface IP of " + interfaceName + ": " + status.get(2));
+
+		// return IP field
+		return status.get(2);
+	}
+
+	private synchronized String getInterfaceMac(String interfaceName)
+	{
+		ArrayList<String> status = this.getInterfaceStatus(interfaceName);
+		// check result for errors
+		if (status == null || status.size() < 2)
+			return null;
+
+		Log.d(LTAG, "Interface MAC of " + interfaceName + ": " + status.get(4));
+
+		// return IP field
+		return status.get(4);
+	}
 
 	private synchronized boolean isInterfaceUp(String interfaceName)
 	{
