@@ -26,7 +26,7 @@ config_methods=physical_display virtual_push_button\n\
 p2p_disabled=1\n\
 \n\
 network={\n\
-\tssid=\"PEU-WLAN\"\n\
+\tssid=\"peuroam\"\n\
 \tpsk=\"meinwaldecklebehoch\"\n\
 \tkey_mgmt=WPA-PSK\n\
 \tpriority=1\n\

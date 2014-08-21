@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import com.stericson.RootTools.RootTools;
 
-import de.upb.upbmonitor.commandline.BlockingCommand;
 import de.upb.upbmonitor.monitoring.MonitoringService;
 import de.upb.upbmonitor.network.NetworkManager;
 import android.support.v4.app.Fragment;

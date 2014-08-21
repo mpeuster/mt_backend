@@ -4,10 +4,12 @@ import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
+
+
+
 import de.upb.upbmonitor.R;
 import android.util.Log;
-import de.upb.upbmonitor.commandline.BlockingCommand;
-import de.upb.upbmonitor.commandline.NonBlockingCommand;
+import de.upb.upbmonitor.commandline.Shell;
 import de.upb.upbmonitor.monitoring.model.UeContext;
 
 public class NetworkManager
@@ -41,22 +43,22 @@ public class NetworkManager
 		
 		Log.i(LTAG, "Enabling dual networking");
 		// stop dhcp client
-		NonBlockingCommand.execute("pkill dhcpcd");
+		Shell.execute("pkill dhcpcd");
 		// kill wifi management
-		NonBlockingCommand.execute("pkill wpa_supplicant");
+		Shell.execute("pkill wpa_supplicant");
 		// disable wifi with the wifi manager
-		NonBlockingCommand.execute("svc wifi disable");
+		Shell.execute("svc wifi disable");
 		// enable mobile with mobile manager
-		NonBlockingCommand.execute("svc data enable");
+		Shell.execute("svc data enable");
 		// bring up wifi interface by hand
-		NonBlockingCommand.execute("netcfg wlan0 up");
+		Shell.execute("netcfg wlan0 up");
 		// configure target wifi (copy indiv. config to destination)
-		NonBlockingCommand.execute("cp /sdcard/wpa_supplicant.conf /data/misc/wifi/wpa_supplicant.conf");
-		NonBlockingCommand.execute("chmod 666 /data/misc/wifi/wpa_supplicant.conf");
+		Shell.execute("cp /sdcard/wpa_supplicant.conf /data/misc/wifi/wpa_supplicant.conf");
+		Shell.execute("chmod 666 /data/misc/wifi/wpa_supplicant.conf");
 		// connect to actual wifi
-		NonBlockingCommand.execute("wpa_supplicant -B -Dnl80211 -iwlan0 -c/data/misc/wifi/wpa_supplicant.conf");
+		Shell.execute("wpa_supplicant -B -Dnl80211 -iwlan0 -c/data/misc/wifi/wpa_supplicant.conf");
 		// bring up dhcp client and receive ip (takes some time!)
-		NonBlockingCommand.execute("dhcpcd wlan0");	
+		Shell.execute("dhcpcd wlan0");	
 		
 	}
 
@@ -64,15 +66,15 @@ public class NetworkManager
 	{
 		Log.i(LTAG, "Disabling dual networking");
 		// kill dhcp client
-		NonBlockingCommand.execute("pkill dhcpcd");
+		Shell.execute("pkill dhcpcd");
 		// kill wifi management
-		NonBlockingCommand.execute("pkill wpa_supplicant");
+		Shell.execute("pkill wpa_supplicant");
 		// tear down wifi interface
-		NonBlockingCommand.execute("netcfg wlan0 down");
+		Shell.execute("netcfg wlan0 down");
 		// disable wifi in manager
-		NonBlockingCommand.execute("svc wifi disable");
+		Shell.execute("svc wifi disable");
 		// disable data in manager
-		NonBlockingCommand.execute("svc data disable");
+		Shell.execute("svc data disable");
 	}
 
 	public synchronized boolean isDualNetworkingEnabled()
@@ -122,7 +124,7 @@ public class NetworkManager
 	{
 
 		// execute netcfg command to check interface state
-		ArrayList<String> out = BlockingCommand.execute("netcfg | grep "
+		ArrayList<String> out = Shell.executeBlocking("netcfg | grep "
 				+ interfaceName);
 		// if output is not one line, something went wrong
 		if (out.size() < 1)

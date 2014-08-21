@@ -1,6 +1,7 @@
 package de.upb.upbmonitor.commandline;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.concurrent.TimeoutException;
 
 import android.util.Log;
@@ -15,25 +16,34 @@ import com.stericson.RootTools.execution.CommandCapture;
  *  
  * @author manuel
  */
-public class NonBlockingCommand
+public class Shell
 {
 	private static final String LTAG = "BlockingCommand";
+	private static ArrayList<String> output;
 	
 	public static void execute(String... command)
 	{
-		NonBlockingCommand.execute(true, command);
+		execute(true, false, command);
+	}
+	
+	public static ArrayList<String> executeBlocking(String... command)
+	{
+		return execute(true, true, command);
 	}
 	
 	/**
 	 * Executes command as root or not.
-	 * Returns ArrayList<String> of its ooutputs.
+	 * Returns ArrayList<String> of its outputs if used in blocking mode.
 	 * 
 	 * @param asRoot
 	 * @param command
 	 * @return ArrayList<String>
 	 */
-	public static void execute(boolean asRoot, String... command)
-	{	
+	private static ArrayList<String> execute(boolean asRoot, final boolean asBlocking, String... command)
+	{
+		// create output array
+		output = new ArrayList<String>();
+		
 		// define command
 		Command cmd = new CommandCapture(0, false, command)
 		{
@@ -48,11 +58,14 @@ public class NonBlockingCommand
 			@Override
 			public void commandOutput(int id, String line)
 			{
+				if(asBlocking)
+					output.add(line);
 			}
 
 			@Override
 			public void commandTerminated(int id, String reason)
 			{
+				this.notifyAll();
 			}
 		};
 		try
@@ -60,6 +73,14 @@ public class NonBlockingCommand
 			// execute command
 			RootTools.getShell(asRoot).add(cmd);
 			
+			if(asBlocking)
+			{
+				// wait until command has finished
+				synchronized (cmd)
+				{
+					cmd.wait();
+				}
+			}
 		} catch (IOException e)
 		{
 			e.printStackTrace();
@@ -69,6 +90,11 @@ public class NonBlockingCommand
 		} catch (RootDeniedException e)
 		{
 			e.printStackTrace();
+		} catch (InterruptedException e)
+		{
+			e.printStackTrace();
 		}
+		// return output lines of command
+		return output;
 	}
 }
