@@ -26,9 +26,9 @@ config_methods=physical_display virtual_push_button\n\
 p2p_disabled=1\n\
 \n\
 network={\n\
-\tssid=\"peuroam\"\n\
-\tpsk=\"meinwaldecklebehoch\"\n\
-\tkey_mgmt=WPA-PSK\n\
+\tssid=\"${SSID}\"\n\
+\tpsk=\"${WPA_PSK}\"\n\
+\tkey_mgmt=${KEY_MGMT}\n\
 \tpriority=1\n\
 }\n\
 </string>

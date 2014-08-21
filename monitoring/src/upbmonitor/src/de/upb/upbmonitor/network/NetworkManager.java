@@ -4,9 +4,6 @@ import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
-
-
-
 import de.upb.upbmonitor.R;
 import android.util.Log;
 import de.upb.upbmonitor.commandline.Shell;
@@ -19,7 +16,7 @@ public class NetworkManager
 	private static final String WIFI_INTERFACE = "wlan0";
 	private static final String MOBILE_INTERFACE = "rmnet0";
 	private static NetworkManager INSTANCE;
-	
+
 	public static String WPA_TEMPLATE = null;
 
 	/**
@@ -36,11 +33,12 @@ public class NetworkManager
 
 	public synchronized void enableDualNetworking()
 	{
-		//TODO: Split so that WiFi reconnection is easily possible!
-		
+		// TODO: Split so that WiFi reconnection is easily possible!
+
 		// create a individual configuration for wpa_supplicant
-		setWifiConfiguration();
-		
+		// setWifiConfiguration("peuroam", "meinwaldecklebehoch");
+		setWifiConfiguration("peu-test", null);
+
 		Log.i(LTAG, "Enabling dual networking");
 		// stop dhcp client
 		Shell.execute("pkill dhcpcd");
@@ -58,8 +56,8 @@ public class NetworkManager
 		// connect to actual wifi
 		Shell.execute("wpa_supplicant -B -Dnl80211 -iwlan0 -c/data/misc/wifi/wpa_supplicant.conf");
 		// bring up dhcp client and receive ip (takes some time!)
-		Shell.execute("dhcpcd wlan0");	
-		
+		Shell.execute("dhcpcd wlan0");
+
 	}
 
 	public synchronized void disableDualNetworking()
@@ -140,21 +138,48 @@ public class NetworkManager
 				result.add(p);
 		return result;
 	}
-	
-	private void setWifiConfiguration()
+
+	/**
+	 * Writs the WiFi configuration to the wpa_supplicant.conf file. Needs the
+	 * SSID of the target Wifi. WPA_PSK can be the WiFi's key, or null in order
+	 * to use no encryption.
+	 * 
+	 * Resulting config file is written to SD-card and has to be copied from
+	 * there, because we are not allowed to write into system files.
+	 * 
+	 * @param ssid
+	 * @param wpa_psk
+	 * @return
+	 */
+	private boolean setWifiConfiguration(String ssid, String wpa_psk)
 	{
+		// definitions
 		String filename = "/sdcard/wpa_supplicant.conf";
-		String string = WPA_TEMPLATE;
-		FileOutputStream outputStream;
-		
-		try {
-			
-			 FileOutputStream f = new FileOutputStream(filename);
-			 f.write(string.getBytes());
-		        f.close();
-			} catch (Exception e) {
-			  e.printStackTrace();
-			}
+		String config_str = WPA_TEMPLATE;
+		String key_mgmt = wpa_psk == null ? "NONE" : "WPA-PSK";
+
+		// set configuration values in teplate
+		config_str = config_str.replace("${SSID}", ssid); // set ssid
+		if (wpa_psk != null)
+			config_str = config_str.replace("${WPA_PSK}", wpa_psk); // psk
+		else
+			config_str = config_str.replace("\tpsk=\"${WPA_PSK}\"\n", ""); // no
+																			// psk
+		config_str = config_str.replace("${KEY_MGMT}", key_mgmt); // mode
+
+		// write configuration file to SD card (is copied later, since we are
+		// not allowed to write system paths)
+		try
+		{
+			FileOutputStream f = new FileOutputStream(filename);
+			f.write(config_str.getBytes());
+			f.close();
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+			return false;
+		}
+		return true;
 	}
 
 }
