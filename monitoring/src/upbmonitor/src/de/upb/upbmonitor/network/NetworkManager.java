@@ -1,13 +1,10 @@
 package de.upb.upbmonitor.network;
 
 import java.io.FileOutputStream;
-import java.io.PrintWriter;
 import java.util.ArrayList;
-
-import de.upb.upbmonitor.R;
 import android.util.Log;
 import de.upb.upbmonitor.commandline.Shell;
-import de.upb.upbmonitor.monitoring.model.UeContext;
+
 
 public class NetworkManager
 {
@@ -40,16 +37,17 @@ public class NetworkManager
 		setWifiConfiguration("peu-test", null);
 
 		Log.i(LTAG, "Enabling dual networking");
-		// stop dhcp client
-		Shell.execute("pkill dhcpcd");
-		// kill wifi management
-		Shell.execute("pkill wpa_supplicant");
 		// disable wifi with the wifi manager
 		Shell.execute("svc wifi disable");
 		// enable mobile with mobile manager
 		Shell.execute("svc data enable");
 		// bring up wifi interface by hand
 		Shell.execute("netcfg wlan0 up");
+		
+		// stop dhcp client
+		Shell.execute("pkill dhcpcd");
+		// kill wifi management
+		Shell.execute("pkill wpa_supplicant");
 		// configure target wifi (copy indiv. config to destination)
 		Shell.execute("cp /sdcard/wpa_supplicant.conf /data/misc/wifi/wpa_supplicant.conf");
 		Shell.execute("chmod 666 /data/misc/wifi/wpa_supplicant.conf");
