@@ -8,7 +8,9 @@ import de.upb.upbmonitor.monitoring.MonitoringService;
 import de.upb.upbmonitor.network.NetworkManager;
 import android.support.v4.app.Fragment;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -122,10 +124,20 @@ public class ControlFragment extends Fragment
 	{
 		Toast.makeText(getActivity(), "Eanbleing dual network connectivity.",
 				Toast.LENGTH_LONG).show();
+
+		// get preferences for default WiFi
+		SharedPreferences preferences = PreferenceManager
+				.getDefaultSharedPreferences(getActivity());
+		String default_ssid = preferences.getString("pref_wifi_default_ssid", null);
+		String default_psk = preferences.getString("pref_wifi_default_psk", null);
+		// special case: use no encryption
+		if(default_psk.length() < 1 || default_psk.equals("none"))
+			default_psk = null;
+		
 		// get NetworkManager instance
 		NetworkManager nm = NetworkManager.getInstance();
 		// try to enable dual networking
-		nm.enableDualNetworking();
+		nm.enableDualNetworking(default_ssid, default_psk);
 		// only keep switch on if DN was really turned on
 		//this.switchDualNetworking.setChecked(nm.isDualNetworkingEnabled());
 	}

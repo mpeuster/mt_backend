@@ -13,7 +13,7 @@ public class NetworkManager
 	private static final String WIFI_INTERFACE = "wlan0";
 	private static final String MOBILE_INTERFACE = "rmnet0";
 	private static NetworkManager INSTANCE;
-
+	
 	public static String WPA_TEMPLATE = null;
 
 	/**
@@ -28,14 +28,8 @@ public class NetworkManager
 		return INSTANCE;
 	}
 
-	public synchronized void enableDualNetworking()
+	public synchronized void enableDualNetworking(String ssid, String wpa_psk)
 	{
-		// TODO: Split so that WiFi reconnection is easily possible!
-
-		// create a individual configuration for wpa_supplicant
-		// setWifiConfiguration("peuroam", "meinwaldecklebehoch");
-		setWifiConfiguration("peu-test", null);
-
 		Log.i(LTAG, "Enabling dual networking");
 		// disable wifi with the wifi manager
 		Shell.execute("svc wifi disable");
@@ -44,6 +38,18 @@ public class NetworkManager
 		// bring up wifi interface by hand
 		Shell.execute("netcfg wlan0 up");
 		
+		// try to connect to default WiFi
+		connectToWiFi(ssid, wpa_psk);
+	}
+	
+	public synchronized void connectToWiFi(String ssid, String wpa_psk)
+	{
+		Log.i(LTAG, "Connecting to WiFi with SSID: " + ssid + " and PSK: " + wpa_psk);		
+		//-- create an individual configuration for wpa_supplicant
+		if(ssid != null) // only reconfigure config if ssid is given
+			setWifiConfiguration(ssid, wpa_psk);
+						
+		//-- connection procedure
 		// stop dhcp client
 		Shell.execute("pkill dhcpcd");
 		// kill wifi management
@@ -55,8 +61,8 @@ public class NetworkManager
 		Shell.execute("wpa_supplicant -B -Dnl80211 -iwlan0 -c/data/misc/wifi/wpa_supplicant.conf");
 		// bring up dhcp client and receive ip (takes some time!)
 		Shell.execute("dhcpcd wlan0");
-
 	}
+	
 
 	public synchronized void disableDualNetworking()
 	{
@@ -87,6 +93,31 @@ public class NetworkManager
 	public synchronized boolean isMobileInterfaceEnabled()
 	{
 		return this.isInterfaceUp(MOBILE_INTERFACE);
+	}
+	
+	public synchronized String getWiFiInterfaceIp()
+	{
+		return null;
+	}
+	
+	public synchronized String getMobileInterfaceIp()
+	{
+		return null;
+	}
+	
+	public synchronized String getWiFiInterfaceMac()
+	{
+		return null;
+	}
+	
+	public synchronized String getMobileInterfaceMac()
+	{
+		return null;
+	}
+	
+	public synchronized String getCurrentSsid()
+	{
+		return null;
 	}
 
 	/**

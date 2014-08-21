@@ -31,6 +31,7 @@ public class MainActivity extends ActionBarActivity implements
 	private static final int CONTROL_PAGE_ID = 0;
 	private static final int MONITORING_PAGE_ID = 1;
 	private static final int LOCATION_PAGE_ID = 2;
+	private static final int DEBUG_PAGE_ID = 3;
 
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -54,7 +55,7 @@ public class MainActivity extends ActionBarActivity implements
 
 		// load default settings
 		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
-		
+
 		// setup network manager
 		NetworkManager.WPA_TEMPLATE = getString(R.string.wpa_template);
 
@@ -175,6 +176,8 @@ public class MainActivity extends ActionBarActivity implements
 				return MonitoringFragment.newInstance();
 			if (position == LOCATION_PAGE_ID)
 				return LocationFragment.newInstance();
+			if (position == DEBUG_PAGE_ID)
+				return DebugFragment.newInstance();
 			return PlaceholderFragment.newInstance(position);
 		}
 
