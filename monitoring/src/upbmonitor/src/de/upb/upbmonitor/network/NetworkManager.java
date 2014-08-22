@@ -5,6 +5,16 @@ import java.util.ArrayList;
 import android.util.Log;
 import de.upb.upbmonitor.commandline.Shell;
 
+/**
+ * This class is a network manager to enable Mobile and Wi-Fi connections
+ * simultaneously.
+ * 
+ * It needs root access because it controls the network interfaces with shell
+ * commands to circumvent Android's connection manager.
+ * 
+ * @author manuel
+ * 
+ */
 public class NetworkManager
 {
 	private static final String LTAG = "NetworkManager";
@@ -27,6 +37,15 @@ public class NetworkManager
 		return INSTANCE;
 	}
 
+	/**
+	 * Enables Wi-Fi and Mobile data at the same time. Default Wi-Fi parameters
+	 * can be given to this method. It will try to connect to this Wi-Fi.
+	 * Otherwise no Wi-Fi connection will be established and the interface is
+	 * only switched on.
+	 * 
+	 * @param ssid
+	 * @param wpa_psk
+	 */
 	public synchronized void enableDualNetworking(String ssid, String wpa_psk)
 	{
 		Log.i(LTAG, "Enabling dual networking");
@@ -41,6 +60,15 @@ public class NetworkManager
 		connectToWiFi(ssid, wpa_psk);
 	}
 
+	/**
+	 * Connect to the specified Wi-Fi if we are in dual mode. IF wpa_psk is
+	 * null, it is assumed that the network is not encrypted.
+	 * 
+	 * Only DHCP is supported at the moment.
+	 * 
+	 * @param ssid
+	 * @param wpa_psk
+	 */
 	public synchronized void connectToWiFi(String ssid, String wpa_psk)
 	{
 		Log.i(LTAG, "Connecting to WiFi with SSID: " + ssid + " and PSK: "
@@ -63,6 +91,11 @@ public class NetworkManager
 		Shell.execute("dhcpcd wlan0");
 	}
 
+	/**
+	 * Disables the dual networking mode by disabling both, Wi-Fi and mobile
+	 * data. After this, Wi-Fi and Mobile data can again be switched on in
+	 * normal mode in Android's settings dialog.
+	 */
 	public synchronized void disableDualNetworking()
 	{
 		Log.i(LTAG, "Disabling dual networking");

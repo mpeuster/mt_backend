@@ -197,6 +197,9 @@ public class ControlFragment extends Fragment
 		return rootView;
 	}
 
+	/**
+	 * Starts monitoring service.
+	 */
 	public void startMonitoringService()
 	{
 		Intent i = new Intent(this.getActivity(), MonitoringService.class);
@@ -206,6 +209,9 @@ public class ControlFragment extends Fragment
 		Log.i(LTAG, "Monitoring service turned on");
 	}
 
+	/**
+	 * Stops monitoring service.
+	 */
 	public void stopMonitoringService()
 	{
 		Intent i = new Intent(this.getActivity(), MonitoringService.class);
@@ -215,6 +221,9 @@ public class ControlFragment extends Fragment
 		Log.i(LTAG, "Monitoring service turned off");
 	}
 
+	/**
+	 * Starts dual networking if not already active.
+	 */
 	public void startDualNetworking()
 	{
 		// get NetworkManager instance
@@ -230,8 +239,8 @@ public class ControlFragment extends Fragment
 		// disable switch
 		this.switchDualNetworking.setEnabled(false);
 
-		// trigger status test (after 3s)
-		mHandler.postDelayed(updateTask, 3000);
+		// trigger status test (after 5s)
+		mHandler.postDelayed(updateTask, 5000);
 
 		// get preferences for default WiFi
 		SharedPreferences preferences = PreferenceManager
@@ -248,6 +257,9 @@ public class ControlFragment extends Fragment
 		nm.enableDualNetworking(default_ssid, default_psk);
 	}
 
+	/**
+	 * Stops dual networking if not already deactivated.
+	 */
 	public void stopDualNetworking()
 	{
 		// get NetworkManager instance
@@ -263,8 +275,8 @@ public class ControlFragment extends Fragment
 		// disable switch
 		this.switchDualNetworking.setEnabled(false);
 
-		// trigger status test (after 4s)
-		mHandler.postDelayed(updateTask, 2000);
+		// trigger status test (after 3s)
+		mHandler.postDelayed(updateTask, 3000);
 
 		// try to disable dual networking
 		nm.disableDualNetworking();
@@ -310,6 +322,15 @@ public class ControlFragment extends Fragment
 		return false;
 	}
 
+	/**
+	 * Updates the network status view elements.
+	 * Texts and status colors of icons.
+	 * @param mobile_status
+	 * @param mobile_ip
+	 * @param wifi_status
+	 * @param wifi_ip
+	 * @param ssid
+	 */
 	private void updateNetworkStatus(boolean mobile_status, String mobile_ip,
 			boolean wifi_status, String wifi_ip, String ssid)
 	{
