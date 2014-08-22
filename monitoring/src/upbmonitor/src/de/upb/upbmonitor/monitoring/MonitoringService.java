@@ -1,7 +1,7 @@
 package de.upb.upbmonitor.monitoring;
 
 import de.upb.upbmonitor.monitoring.model.UeContext;
-import de.upb.upbmonitor.network.NetworkUtility;
+import de.upb.upbmonitor.network.NetworkManager;
 import de.upb.upbmonitor.rest.UeEndpoint;
 import android.app.Service;
 import android.content.Intent;
@@ -106,7 +106,7 @@ public class MonitoringService extends Service
 		c.setLocationServiceID(preferences.getString(
 				"prof_backend_locationservice_id", "node0"));
 		// device values
-		c.setWifiMac(NetworkUtility.getWifiMacAddress());
+		c.setWifiMac(NetworkManager.getInstance().getWiFiInterfaceMac());
 	}
 
 	@Override
