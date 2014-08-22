@@ -42,17 +42,73 @@ public class ControlFragment extends Fragment
 	private ImageView imageWifiStatus;
 
 	private Handler mHandler = new Handler();
+	private int updateTries = 0;
+	private static final int MAX_RETRY = 10;
 
+	/**
+	 * Background task that checks the network status. If the current status
+	 * fits to user inputs, its stops checking. Needed, because it is not always
+	 * clear how long it takes until, dual networking mode is up and IPs are
+	 * received.
+	 */
 	private Runnable updateTask = new Runnable()
 	{
 		public void run()
 		{
-			// update network status
+			Log.i(LTAG, "Update task run: " + updateTries);
+			// count number of tries
+			updateTries++;
+			// check for try count
+			if (updateTries > MAX_RETRY)
+			{
+				Log.e(LTAG, "Update task has reached MAX_RETRY.");
+				// enable switch (fallback)
+				switchDualNetworking.setEnabled(true);
+				// reset and stop runnable
+				updateTries = 0;
+				return;
+			}
+
+			// get network status
 			NetworkManager nm = NetworkManager.getInstance();
-			updateNetworkStatus(nm.isMobileInterfaceEnabled(),
-					nm.getMobileInterfaceIp(), nm.isWiFiInterfaceEnabled(),
-					nm.getWiFiInterfaceIp(), nm.getCurrentSsid());
-			mHandler.postDelayed(updateTask, 1000);
+			boolean mobile_state = nm.isMobileInterfaceEnabled();
+			boolean wifi_state = nm.isWiFiInterfaceEnabled();
+			String mobile_ip = nm.getMobileInterfaceIp();
+			String wifi_ip = nm.getWiFiInterfaceIp();
+
+			// if status is not equal try inputs, try to check again after some
+			// time
+			if (mobile_state != switchDualNetworking.isChecked()
+					|| wifi_state != switchDualNetworking.isChecked())
+			{
+				mHandler.postDelayed(updateTask, 2000);
+				return;
+			} else
+			{
+				// is network state matches inputs, re-enable switch
+				switchDualNetworking.setEnabled(true);
+			}
+
+			// if IP state does not match network state, try to check it again
+			if (mobile_state == "0.0.0.0/0".equals(mobile_ip))
+			{
+				mHandler.postDelayed(updateTask, 1000);
+				return;
+			}
+
+			// if IP state does not match network state, try to check it again
+			if (wifi_state == "0.0.0.0/0".equals(wifi_ip))
+			{
+				mHandler.postDelayed(updateTask, 1000);
+				return;
+			}
+
+			// update network status output
+			updateNetworkStatus(mobile_state, mobile_ip, wifi_state, wifi_ip,
+					nm.getCurrentSsid());
+
+			// reset try counter
+			updateTries = 0;
 		}
 	};
 
@@ -90,9 +146,13 @@ public class ControlFragment extends Fragment
 		this.textWifiStatus = (TextView) rootView
 				.findViewById(R.id.textViewWifiStatus);
 
-		// set switch states based on service state
+		// set switch state based on service state (if app is restarted)
 		this.switchMonitoringService
 				.setChecked(MonitoringService.SERVICE_EXISTS);
+
+		// set switch state based on network state (if app is restarted)
+		this.switchDualNetworking.setChecked(NetworkManager.getInstance()
+				.isDualNetworkingEnabled());
 
 		// monitoring switch listener
 		this.switchMonitoringService
@@ -157,8 +217,21 @@ public class ControlFragment extends Fragment
 
 	public void startDualNetworking()
 	{
+		// get NetworkManager instance
+		NetworkManager nm = NetworkManager.getInstance();
+
+		// if dual networking is already enabled: skip
+		if (nm.isDualNetworkingEnabled())
+			return;
+
 		Toast.makeText(getActivity(), "Eanbleing dual network connectivity.",
 				Toast.LENGTH_LONG).show();
+
+		// disable switch
+		this.switchDualNetworking.setEnabled(false);
+
+		// trigger status test (after 3s)
+		mHandler.postDelayed(updateTask, 3000);
 
 		// get preferences for default WiFi
 		SharedPreferences preferences = PreferenceManager
@@ -171,20 +244,28 @@ public class ControlFragment extends Fragment
 		if (default_psk.length() < 1 || default_psk.equals("none"))
 			default_psk = null;
 
-		// get NetworkManager instance
-		NetworkManager nm = NetworkManager.getInstance();
 		// try to enable dual networking
 		nm.enableDualNetworking(default_ssid, default_psk);
-		// only keep switch on if DN was really turned on
-		// this.switchDualNetworking.setChecked(nm.isDualNetworkingEnabled());
 	}
 
 	public void stopDualNetworking()
 	{
-		Toast.makeText(getActivity(), "Disableing dual network connectivity.",
-				Toast.LENGTH_LONG).show();
 		// get NetworkManager instance
 		NetworkManager nm = NetworkManager.getInstance();
+
+		// if dual networking is already disabled:skip
+		if (!nm.isDualNetworkingEnabled())
+			return;
+
+		Toast.makeText(getActivity(), "Disableing dual network connectivity.",
+				Toast.LENGTH_LONG).show();
+
+		// disable switch
+		this.switchDualNetworking.setEnabled(false);
+
+		// trigger status test (after 4s)
+		mHandler.postDelayed(updateTask, 2000);
+
 		// try to disable dual networking
 		nm.disableDualNetworking();
 	}
@@ -232,14 +313,9 @@ public class ControlFragment extends Fragment
 	private void updateNetworkStatus(boolean mobile_status, String mobile_ip,
 			boolean wifi_status, String wifi_ip, String ssid)
 	{
-		String mobile_status_str = mobile_status ? "UP" : "DOWN";
-		String wifi_status_str = wifi_status ? "UP" : "DOWN";
-
 		// set text views
-		this.textMobileStatus.setText("Mobile: " + mobile_status_str
-				+ " with: " + mobile_ip);
-		this.textWifiStatus.setText("WiFi: " + wifi_status_str + " with: "
-				+ wifi_ip);
+		this.textMobileStatus.setText("Mobile: " + mobile_ip);
+		this.textWifiStatus.setText("Wi-Fi: " + wifi_ip + " (" + ssid + ")");
 
 		// tint image views
 		if (mobile_status)
