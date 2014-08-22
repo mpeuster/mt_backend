@@ -5,17 +5,23 @@ import java.util.ArrayList;
 import com.stericson.RootTools.RootTools;
 
 import de.upb.upbmonitor.monitoring.MonitoringService;
+import de.upb.upbmonitor.monitoring.model.UeContext;
 import de.upb.upbmonitor.network.NetworkManager;
 import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.PorterDuff.Mode;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.Switch;
@@ -30,6 +36,25 @@ public class ControlFragment extends Fragment
 	private View rootView;
 	private Switch switchMonitoringService;
 	private Switch switchDualNetworking;
+	private TextView textMobileStatus;
+	private TextView textWifiStatus;
+	private ImageView imageMobileStatus;
+	private ImageView imageWifiStatus;
+
+	private Handler mHandler = new Handler();
+
+	private Runnable updateTask = new Runnable()
+	{
+		public void run()
+		{
+			// update network status
+			NetworkManager nm = NetworkManager.getInstance();
+			updateNetworkStatus(nm.isMobileInterfaceEnabled(),
+					nm.getMobileInterfaceIp(), nm.isWiFiInterfaceEnabled(),
+					nm.getWiFiInterfaceIp(), nm.getCurrentSsid());
+			mHandler.postDelayed(updateTask, 1000);
+		}
+	};
 
 	/**
 	 * Returns a new instance of this fragment for the given section number.
@@ -43,20 +68,27 @@ public class ControlFragment extends Fragment
 
 	public ControlFragment()
 	{
-
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState)
 	{
+		// get UI resources
 		this.rootView = inflater.inflate(R.layout.fragment_control, container,
 				false);
-
 		this.switchMonitoringService = (Switch) rootView
 				.findViewById(R.id.switch_monitoringservice);
 		this.switchDualNetworking = (Switch) rootView
 				.findViewById(R.id.switch_dualnetworking);
+		this.imageMobileStatus = (ImageView) rootView
+				.findViewById(R.id.imageViewMobileStatus);
+		this.imageWifiStatus = (ImageView) rootView
+				.findViewById(R.id.imageViewWifiStatus);
+		this.textMobileStatus = (TextView) rootView
+				.findViewById(R.id.textViewMobileStatus);
+		this.textWifiStatus = (TextView) rootView
+				.findViewById(R.id.textViewWifiStatus);
 
 		// set switch states based on service state
 		this.switchMonitoringService
@@ -99,6 +131,9 @@ public class ControlFragment extends Fragment
 		this.switchDualNetworking.setEnabled(this.checkRootAvailability()
 				&& this.checkBusyBoxAvailability());
 
+		// update network status
+		mHandler.postDelayed(updateTask, 0);
+
 		return rootView;
 	}
 
@@ -128,18 +163,20 @@ public class ControlFragment extends Fragment
 		// get preferences for default WiFi
 		SharedPreferences preferences = PreferenceManager
 				.getDefaultSharedPreferences(getActivity());
-		String default_ssid = preferences.getString("pref_wifi_default_ssid", null);
-		String default_psk = preferences.getString("pref_wifi_default_psk", null);
+		String default_ssid = preferences.getString("pref_wifi_default_ssid",
+				null);
+		String default_psk = preferences.getString("pref_wifi_default_psk",
+				null);
 		// special case: use no encryption
-		if(default_psk.length() < 1 || default_psk.equals("none"))
+		if (default_psk.length() < 1 || default_psk.equals("none"))
 			default_psk = null;
-		
+
 		// get NetworkManager instance
 		NetworkManager nm = NetworkManager.getInstance();
 		// try to enable dual networking
 		nm.enableDualNetworking(default_ssid, default_psk);
 		// only keep switch on if DN was really turned on
-		//this.switchDualNetworking.setChecked(nm.isDualNetworkingEnabled());
+		// this.switchDualNetworking.setChecked(nm.isDualNetworkingEnabled());
 	}
 
 	public void stopDualNetworking()
@@ -190,6 +227,30 @@ public class ControlFragment extends Fragment
 				.show();
 		Log.e(LTAG, "Busybox is NOT available");
 		return false;
+	}
+
+	private void updateNetworkStatus(boolean mobile_status, String mobile_ip,
+			boolean wifi_status, String wifi_ip, String ssid)
+	{
+		String mobile_status_str = mobile_status ? "UP" : "DOWN";
+		String wifi_status_str = wifi_status ? "UP" : "DOWN";
+
+		// set text views
+		this.textMobileStatus.setText("Mobile: " + mobile_status_str
+				+ " with: " + mobile_ip);
+		this.textWifiStatus.setText("WiFi: " + wifi_status_str + " with: "
+				+ wifi_ip);
+
+		// tint image views
+		if (mobile_status)
+			this.imageMobileStatus.setColorFilter(Color.GREEN, Mode.MULTIPLY);
+		else
+			this.imageMobileStatus.setColorFilter(Color.GRAY, Mode.MULTIPLY);
+
+		if (wifi_status)
+			this.imageWifiStatus.setColorFilter(Color.GREEN, Mode.MULTIPLY);
+		else
+			this.imageWifiStatus.setColorFilter(Color.GRAY, Mode.MULTIPLY);
 	}
 
 }
