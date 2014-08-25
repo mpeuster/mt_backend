@@ -20,26 +20,34 @@
 	},
 	"accesspoints": [
 		{
+			"uuid": "9d7034c5008b11e4b714c8bcc8a0a80d",
 			"device_id": "AP1",
 			"location_service_id": "loc_ap1",
+			"ssid" : "WLAN1",
 			"position_x": 100,
 			"position_y": 100
 		},
 		{
+			"uuid": "5e8e61d100fd11e4bfafc8bcc8a0a80d",
 			"device_id": "AP2",
 			"location_service_id": "loc_ap2",
+			"ssid" : "WLAN2",
 			"position_x": 800,
 			"position_y": 100
 		},
 		{
+			"uuid": "57ae409e00fd11e4a3dec8bcc8a0a80d",
 			"device_id": "AP3",
 			"location_service_id": "loc_ap3",
+			"ssid" : "WLAN3",
 			"position_x": 100,
 			"position_y": 800
 		},
 		{
+			"uuid": "fee74f4f0b4711e49673c8bcc8a0a80d",
 			"device_id": "AP4",
 			"location_service_id": "loc_ap4",
+			"ssid" : "WLAN4",
 			"position_x": 800,
 			"position_y": 800
 		}

@@ -30,8 +30,7 @@ AccessPoints = {}
 def load_aps_from_config(data):
     for ap in data:
         new = accesspoint.AccessPoint(
-            ap["name"],
-            ap["ssid"],
+            ap["uuid"],
             ap["state"]
             )
         add_ap(new)

@@ -6,8 +6,7 @@ import driver
 
 AP_RESOURCE_FIELDS = {
     'uuid': fields.String,
-    'name': fields.String,
-    'ssid': fields.String,
+    'state': fields.String
 }
 
 
@@ -15,22 +14,21 @@ class AccessPoint(object):
 
     def __init__(
             self,
-            name,
-            ssid,
+            uuid,
             state="offline"):
-        # create uuid
-        self.uuid = uuid.uuid1().hex
+        # create uuid (use a fixed one, see mail with Alberto (MobiMash))
+        self.uuid = uuid  # uuid.uuid1().hex
         # set parameter
-        self.name = name
-        self.ssid = ssid
+        self.name = None  # not used
+        self.ssid = None  # not used
         self.state = state
         self._power_state = "radio_off"
         self.enabled_macs = []
         self.disabled_macs = []
 
     def __repr__(self):
-        return ("SSID=%s and UUID=%s") \
-            % (self.ssid, self.uuid)
+        return ("UUID=%s") \
+            % self.uuid
 
     def marshal(self):
         return marshal(self, AP_RESOURCE_FIELDS)

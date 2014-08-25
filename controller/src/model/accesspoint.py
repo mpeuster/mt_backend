@@ -79,17 +79,14 @@ class AccessPoint(Document):
         # remove all old access point definitions
         model.accesspoint.AccessPoint.drop_collection()
 
-        def find_ap(ssid, name):
+        def find_ap(uuid):
             """
             Helper that finds APs from configuration file.
             Matching by either name or ssid.
             """
             for ap in config_json:
-                if "device_id" in ap:
-                    if ap["device_id"] == name:
-                        return ap
-                if ssid in ap:
-                    if ap["ssid"] == ssid:
+                if "uuid" in ap:
+                    if ap["uuid"] == uuid:
                         return ap
             return None
 
@@ -97,19 +94,18 @@ class AccessPoint(Document):
         ap_lsit = []
         for apm in config_apmanger:  # only use AP definitions from manager
             if apm is not None:
-                apc = find_ap(apm["ssid"], apm["name"])
+                apc = find_ap(apm["uuid"])
                 if apc is None:
                     # no config entry for AP found: use default values
-                    logging.info("No local config for: %s" % apm["name"])
+                    logging.info("No local config for: %s" % apm["uuid"])
                     apc = {}
-                    apc["device_id"] = apm["name"]
-                    apc["location_service_id"] = apm["name"]
+                    apc["device_id"] = apm["uuid"]
+                    apc["location_service_id"] = apm["uuid"]
+                    apc["ssid"] = "test"
                     apc["position_x"] = 0
                     apc["position_y"] = 0
                 # add manager values to config entry
                 apc["uuid"] = apm["uuid"]
-                apc["ssid"] = apm["ssid"]
-                apc["name"] = apm["name"]
                 apc["power_state"] = apm["power_state"]
                 # finally create new AP from config entry
                 AccessPoint.create(apc)
