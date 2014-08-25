@@ -18,7 +18,7 @@ Test ideas:
 
 """
 
-API_BASE_URL = "http://127.0.0.1:5000"
+API_BASE_URL = "http://127.0.0.1:6680"
 
 REQUEST_DATA_1 = {
     "device_id": "device-static-1",

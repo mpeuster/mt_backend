@@ -1,4 +1,7 @@
 {
+	"api" : {
+		"port": 6680
+	},
 	"database": {
 		"host": "127.0.0.1",
 		"port": 27017,
@@ -16,7 +19,7 @@
 	},
 	"apmanager": {
 		"host": "127.0.0.1",
-		"port": 5001
+		"port": 6681
 	},
 	"accesspoints": [
 		{

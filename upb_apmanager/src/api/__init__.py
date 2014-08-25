@@ -33,18 +33,14 @@ class APIServer(object):
 
         if False:
             # default server:
-            self.app.run(debug=True, use_reloader=False)
+            self.app.run(debug=True, use_reloader=False,
+                         port=model.CONFIG["api"]["port"])
         else:
-            # gevent:
-            # from gevent.wsgi import WSGIServer
-            # http_server = WSGIServer(('', 5000), self.app)
-            # http_server.serve_forever()
-            # tornado:
             from tornado.wsgi import WSGIContainer
             from tornado.httpserver import HTTPServer
             from tornado.ioloop import IOLoop
             http_server = HTTPServer(WSGIContainer(self.app))
-            http_server.listen(5001)  # TODO add port to config
+            http_server.listen(model.CONFIG["api"]["port"])
             IOLoop.instance().start()
 
     def setup_application(self):
