@@ -42,7 +42,7 @@ This file can be used e.g. to specify the location of the network management API
 * <code>/tmp/mnt2d.log</code>
 * <code>/tmp/mnt2api.log</code>
 
-### Run the backend controller without access points
+### Run backend controller without access points
 
 1. Start management daemon: <code>$ python mnt2d.py -a start</code>
 2. Start API server: <code>$ python mnt2api.py -a start</code>
@@ -53,18 +53,18 @@ API description: https://github.com/mobimesh/GTDemo-2015/wiki/Controller-Interfa
 
 However, there are no access point definitions in the system since no access point management component is connected.
 
-### Run the backend controller with access points
+### Run backend controller with access points
 
- 1. Configure network manager API in <code>config.json</code>:
+1. Configure network manager API in <code>config.json</code>:
 
- 	e.g. for UPB's AP manager component: 
+	e.g. for UPB's AP manager component: 
 
- 	```json
- 	"apmanager": {
+	```json
+	"apmanager": {
 		"host": "127.0.0.1",
 		"port": 6681
 	},
- 	```
+	```
 
 2. Start network manager component
 	
