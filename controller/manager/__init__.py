@@ -120,6 +120,12 @@ class ResourceManager(object):
             3. TODO: Trigger notification of UE, so that it can pull the
                assignment result in order to (re)connect to the right AP.
         """
+        # fill up the assignment result with UEs not assigned to APs
+        # (we need a complete UE to update our model)
+        for ue_uuid in [ue.uuid for ue in model.ue.UE.objects]:
+            if ue_uuid not in result:
+                result[ue_uuid] = None  # add 'not assigned' entries
+
         for ue_uuid, ap_uuid in result.items():  # iterate all assignments
             try:
                 ue = model.ue.UE.objects.get(uuid=ue_uuid)
