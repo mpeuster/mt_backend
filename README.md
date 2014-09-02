@@ -70,7 +70,7 @@ However, there are no access point definitions in the system since no access poi
 	
 	e.g. UPB's AP manager: <code>$ python upb_apmanager.py -a start</code>
 
-3. Start management daemon: <code>$ python mnt2d.py -a start</code>
-4. Start API server: <code>$ python mnt2api.py -a start</code>
+3. Start management controller: <code>$ python tlnb_ctrl.py -a start</code>
+4. Start API server: <code>$ python tlnb_api.py -a start</code>
 
 
