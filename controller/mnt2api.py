@@ -1,5 +1,5 @@
 """
-    MNT2D - Mobile network testbed toolkit daemon
+    TLNB API - Two Layer Network Backend API
 
     Copyright (C) 2014 Manuel Peuster <manuel@peuster.de>
 
@@ -25,13 +25,13 @@ from daemon import DaemonBase
 import api
 
 
-class MNT2Daemon(DaemonBase):  # inherit DaemonBase to build a Unix daemon
+class TLNB_Api(DaemonBase):  # inherit DaemonBase to build a Unix daemon
 
     def __init__(self):
         '''
         Constructor
         '''
-        super(MNT2Daemon, self).__init__("/tmp/mnt2api.pid")
+        super(TLNB_Api, self).__init__("/tmp/tlnb_api.pid")
 
     def setupLogging(self, params):
         '''
@@ -47,24 +47,24 @@ class MNT2Daemon(DaemonBase):  # inherit DaemonBase to build a Unix daemon
         if params.verbose:
             logfile = None
         else:
-            logfile = "/tmp/mnt2api.log"
+            logfile = "/tmp/tlnb_api.log"
         # setup logging
         logging.basicConfig(filename=logfile, filemode="w", level=loglevel,
                             format="%(asctime)s [%(levelname)-8s] %(message)s")
-        logging.debug("MNT2 API server logging enabled with loglevel: DEBUG")
+        logging.debug("API server logging enabled with loglevel: DEBUG")
 
     def start(self, params, daemonize=True):
         '''
         Runs the server.
         '''
         self.setupLogging(params)
-        super(MNT2Daemon, self).start(params, daemonize)
+        super(TLNB_Api, self).start(params, daemonize)
 
     def run(self, params=None):
         '''
         Sets up the daemon and go into infinity loop.
         '''
-        logging.info('MNT2 API server daemon running with PID: %s'
+        logging.info('API server daemon running with PID: %s'
                      % str(self.pid))
         # Run API server instance
         apisrv = api.APIServer(params)
@@ -104,7 +104,7 @@ if __name__ == '__main__':
     params = parse_arguments()
     params.path = os.path.dirname(os.path.abspath(__file__)) + "/"
     # create daemon instance
-    s = MNT2Daemon()
+    s = TLNB_Api()
     # process command
     if params.action == 'start':
         s.start(params, daemonize=not params.verbose)
