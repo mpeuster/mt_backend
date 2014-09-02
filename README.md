@@ -7,7 +7,7 @@ Also used for GT demo.
 Contact: peuster [at] mail.upb.de
 
 #### Contents:
-* <code>ap_manager/</code>: UPB Access Point management component (same as MobiMesh's component, but only for tests)
+* <code>ap_manager/</code>: UPB Access Point management component (same as MobiMesh's component, but for UPB testbed)
 * <code>controller/</code>: Backend controller + API server
 * <code>misc/</code>: e.g. development client (e.g. for debugging)
 
@@ -16,6 +16,19 @@ Contact: peuster [at] mail.upb.de
 Tested on: Ubuntu Server 14.04 LTS
 
 Get code from: https://github.com/mpeuster/mt_backend
+
+### General
+
+The backend consists of two components, the API server and the controller which are started as Unix daemons:
+
+* <code>python tlnb_api.py -a start|restart|stop</code>: two layer network backend API
+* <code>python tlnb_ctrl.py -a start|restart|stop</code>: two layer network backend controller
+
+The API server provides the public REST API to all other components of the demo testbed. It receives status updates from UEs and stores them into a central database. It also informs the controller component about changes, by using ZeroMQ messaging. The controller components uses the current system state, stored in the database and runs an optimization algorithm, which decides what APs to switch off or on, and computes the assignment between UEs and APs. These results are then written back into the database and are accessible over the public REST API (e.g. a GET request on the UE endpoint returns to which AP a specific UE is currently assigned).
+
+The controller component also acts as a REST client and communicates with the network controller (provided by MobiMESH). It uses this connection to control the APs (e.g. black and white listing of MAC address to emulate AP switching).
+
+All backend components can run on different physical machines. However, the example configuration file in the repository assumes that all components run on the same machine. 
 
 ### Install required packages and database
 
@@ -36,16 +49,12 @@ There is a central configuration file for the management daemon and the API serv
 
 * <code>controller/config.json</code>
 
-This file can be used e.g. to specify the location of the network management API provided by e.g. MobiMesh's management component.
-
-### Log outputs:
-* <code>/tmp/mnt2d.log</code>
-* <code>/tmp/mnt2api.log</code>
+This file can be used e.g. to specify the location of the network management API provided by e.g. MobiMesh's management component. Furthermore, details about used access points (e.g. SSIDs/PSKs) can be configured in this file.
 
 ### Run backend controller without access points
 
-1. Start management daemon: <code>$ python mnt2d.py -a start</code>
-2. Start API server: <code>$ python mnt2api.py -a start</code>
+1. Start management daemon: <code>$ python tlnb_ctrl.py -a start</code>
+2. Start API server: <code>$ python tlnb_api.py -a start</code>
 
 Now the backend API will be available at http://127.0.0.1:6680/.
 
@@ -72,5 +81,9 @@ However, there are no access point definitions in the system since no access poi
 
 3. Start management controller: <code>$ python tlnb_ctrl.py -a start</code>
 4. Start API server: <code>$ python tlnb_api.py -a start</code>
+
+### Log outputs:
+* <code>/tmp/tlnb_ctrl.log</code>
+* <code>/tmp/tlnb_api.log</code>
 
 
