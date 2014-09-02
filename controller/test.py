@@ -337,10 +337,10 @@ def helper_get_ue_list():
 if __name__ == '__main__':
     if subprocess.call(
             ["python", "tlnb_api.py", "-l", "debug", "-a", "restart"]) != 0:
-        print "mnt2api.py restart failed! stopping tests."
+        print "tlnb_api.py restart failed! stopping tests."
         exit(1)
     if subprocess.call(
-            ["python", "mnt2d.py", "-l", "debug", "-a", "restart"]) != 0:
+            ["python", "tlnb_ctrl.py", "-l", "debug", "-a", "restart"]) != 0:
         print "tlnb_ctrl.py restart failed! stopping tests."
         exit(1)
     print "Waiting 1s to start tests..."
