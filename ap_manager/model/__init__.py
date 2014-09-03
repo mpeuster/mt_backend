@@ -29,9 +29,13 @@ AccessPoints = {}
 
 def load_aps_from_config(data):
     for ap in data:
+        # optional data
+        driver_info = ap["driver_info"] if "driver_info" in ap else None
+        # create AP
         new = accesspoint.AccessPoint(
             ap["uuid"],
-            ap["state"]
+            ap["state"],
+            driver_info
             )
         add_ap(new)
         logging.info("Added AP: %s" % str(new))
