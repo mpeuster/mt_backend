@@ -2,7 +2,7 @@
 	"api" : {
 		"port": 6681
 	},
-	"driver" : "dummy",
+	"driver" : "upb",
 	"accesspoints": [
 		{
 			"uuid": "9d7034c5008b11e4b714c8bcc8a0a80d",

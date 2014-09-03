@@ -25,7 +25,7 @@ class APIServer(object):
         model.load_aps_from_config(
             model.CONFIG["accesspoints"])
         # load AP driver
-        driver.load()
+        driver.load(model.CONFIG["driver"])
 
     def run(self):
         self.setup_application()

@@ -1,11 +1,11 @@
 AP_DRIVER = None
 
 
-def load():
+def load(driver_name="dummy"):
     global AP_DRIVER
-    if True:  # TODO add to config file
+    if driver_name == "dummy":
         import dummy
         AP_DRIVER = dummy.ApDriver()
-    elif False:
+    elif driver_name == "upb":
         import upbtestbed
         AP_DRIVER = upbtestbed.ApDriver()
