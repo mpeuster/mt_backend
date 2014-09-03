@@ -334,7 +334,7 @@ def helper_get_ue_list():
         return data
 
 
-if __name__ == '__main__':
+def setUpModule():
     if subprocess.call(
             ["python", "tlnb_ctrl.py", "-l", "debug", "-a", "restart"]) != 0:
         print "tlnb_ctrl.py restart failed! stopping tests."
@@ -345,4 +345,19 @@ if __name__ == '__main__':
         exit(1)
     print "Waiting 1s to start tests..."
     time.sleep(1)  # wait to start process
+
+
+def tearDownModule():
+    print ""
+    if subprocess.call(
+            ["python", "tlnb_ctrl.py", "-l", "debug", "-a", "stop"]) != 0:
+        print "tlnb_ctrl.py stop failed! stopping tests."
+        exit(1)
+    if subprocess.call(
+            ["python", "tlnb_api.py", "-l", "debug", "-a", "stop"]) != 0:
+        print "tlnb_api.py stop failed! stopping tests."
+        exit(1)
+
+
+if __name__ == '__main__':
     unittest.main()

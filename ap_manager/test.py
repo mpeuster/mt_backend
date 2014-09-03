@@ -91,13 +91,24 @@ class AccessPoint_InterfaceTest(unittest.TestCase):
         self.assertEqual(r.status_code, 204)
 
 
-if __name__ == '__main__':
+def setUpModule():
     if subprocess.call(
             ["python", "upb_apmanager.py",
                 "-l", "debug",
                 "-a", "restart"]) > 0:
-        print "upb_apmanger.py restart failed! stopping tests."
+        print "upb_apmanger.py restart failed!"
         exit(1)
     print "Waiting 0.1s to start tests..."
     time.sleep(0.1)  # wait to start process
+
+
+def tearDownModule():
+    if subprocess.call(
+            ["python", "upb_apmanager.py",
+                "-l", "debug",
+                "-a", "stop"]) > 0:
+        print "upb_apmanger.py stop failed!"
+
+
+if __name__ == '__main__':
     unittest.main()
