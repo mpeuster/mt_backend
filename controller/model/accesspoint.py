@@ -13,6 +13,7 @@ AP_RESOURCE_FIELDS = {
     'registered_at': fields.DateTime,
     'ssid': fields.String,
     'psk': fields.String,
+    'bssid': fields.String,
     'position_x': fields.Float,
     'position_y': fields.Float,
     'power_state': fields.Integer,
@@ -28,6 +29,7 @@ class AccessPoint(Document):
     registered_at = DateTimeField(default=datetime.datetime.now)
     ssid = StringField(default=None)
     psk = StringField(default=None)
+    bssid = StringField(default=None)
     position_x = FloatField(default=0)
     position_y = FloatField(default=0)
     power_state = IntField(default=0)  # 0=off, 1=on
@@ -41,6 +43,7 @@ class AccessPoint(Document):
                 location_service_id=json_data['location_service_id'])
             ap.ssid = json_data['ssid']
             ap.psk = json_data['psk']
+            ap.bssid = json_data['bssid']
             ap.position_x = json_data['position_x']
             ap.position_y = json_data['position_y']
             ap.power_state = json_data['power_state']
@@ -106,6 +109,7 @@ class AccessPoint(Document):
                     apc["location_service_id"] = apm["uuid"]
                     apc["ssid"] = "test"
                     apc["psk"] = None
+                    apc["bssid"] = None
                     apc["position_x"] = 0
                     apc["position_y"] = 0
                 # add manager values to config entry
