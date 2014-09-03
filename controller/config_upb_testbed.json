@@ -1,0 +1,63 @@
+{
+	"api" : {
+		"port": 6680
+	},
+	"database": {
+		"host": "127.0.0.1",
+		"port": 27017,
+		"user": null,
+		"password": null,
+		"db": "nmt2db"
+	},
+	"algorithm":
+	{
+		"name": "SimpleNearestApAlgorithm"
+	},
+	"zmq": {
+		"host": "localhost",
+		"port": 5557
+	},
+	"apmanager": {
+		"host": "127.0.0.1",
+		"port": 6681
+	},
+	"accesspoints": [
+		{
+			"uuid": "9d7034c5008b11e4b714c8bcc8a0a80d",
+			"device_id": "AP1",
+			"location_service_id": "loc_ap1",
+			"ssid" : "GTDemo",
+			"psk" : "GreenTouch2014",
+			"position_x": 100,
+			"position_y": 100
+		},
+		{
+			"uuid": "5e8e61d100fd11e4bfafc8bcc8a0a80d",
+			"device_id": "AP2",
+			"location_service_id": "loc_ap2",
+			"ssid" : "GTDemo",
+			"psk" : "GreenTouch2014",
+			"position_x": 800,
+			"position_y": 100
+		},
+		{
+			"uuid": "57ae409e00fd11e4a3dec8bcc8a0a80d",
+			"device_id": "AP3",
+			"location_service_id": "loc_ap3",
+			"ssid" : "GTDemo",
+			"psk" : "GreenTouch2014",
+			"position_x": 100,
+			"position_y": 800
+		},
+		{
+			"uuid": "fee74f4f0b4711e49673c8bcc8a0a80d",
+			"device_id": "AP4",
+			"location_service_id": "loc_ap4",
+			"ssid" : "GTDemo",
+			"psk" : "GreenTouch2014",
+			"position_x": 800,
+			"position_y": 800
+		}
+	]
+
+}
