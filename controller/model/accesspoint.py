@@ -12,7 +12,7 @@ AP_RESOURCE_FIELDS = {
     'location_service_id': fields.String,
     'registered_at': fields.DateTime,
     'ssid': fields.String,
-    'psk': fields.String,
+    # 'psk': fields.String,
     'bssid': fields.String,
     'position_x': fields.Float,
     'position_y': fields.Float,
