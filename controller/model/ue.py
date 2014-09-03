@@ -209,7 +209,7 @@ class UE(Document):
             assert(self.assigned_accesspoint == ap)
         except:
             # can fail if ue was deleted
-            logging.warning("Assignment update failed.")
+            logging.exception("Assignment update failed.")
 
     def remove_accesspoint(self):
         """
@@ -223,4 +223,4 @@ class UE(Document):
             assert(self.assigned_accesspoint is None)
         except:
             # can fail if ue was deleted
-            logging.warning("Assignment update failed.")
+            logging.exception("Assignment update failed.")
