@@ -17,12 +17,12 @@
 			"state": "online"
 		},
 		{
-			"uuid": "5bbd409e00fd11e4a3dec8bcc8a0a80d",
+			"uuid": "fee74f4f0b4711e49673c8bcc8a0a80d",
 			"state": "online"
 		},
 		{
-			"uuid": "fee74f4f0b4711e49673c8bcc8a0a80d",
-			"state": "online"
+			"uuid": "5bbd409e00fd11e4a3dec8bcc8a0a80d",
+			"state": "offline"
 		}
 	]
 
