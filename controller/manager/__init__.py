@@ -157,7 +157,7 @@ class ResourceManager(object):
                         ue.assign_accesspoint(ap)
                     except:
                         # can fail if ue was deleted
-                        logging.warning("Assignment update failed.")
+                        logging.exception("Assignment model update failed.")
             except:
                 # can fail if ue was deleted
-                logging.warning("Assignment update failed.")
+                logging.exception("Assignment update failed.")

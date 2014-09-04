@@ -8,10 +8,20 @@ class ApDriver():
         logging.info("[ApDriver] UpbTestbed driver loaded.")
 
     def set_mac_lists(self, ap):
+        """
+        ATTENTION: Mac blacklisting not used at the moment,
+        because hostapd disconnects all clients whenever its configuration
+        files are reloaded. A better solution for assigning UEs to specific
+        APs is using BSSIDs on the client to directly choose the target AP.
+        """
         assert(ap.driver_info is not None)
         assert("ssh_name" in ap.driver_info)
 
         logging.info("[ApDriver] Setting MAC lists for %s" % ap)
+
+        ###########################
+        return  # #### DEACTIVATED!
+        ###########################
 
         # get ssh shortcut name for AP
         ssh_name = ap.driver_info["ssh_name"]
