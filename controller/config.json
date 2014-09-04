@@ -28,7 +28,7 @@
 			"location_service_id": "loc_ap1",
 			"ssid" : "BCG2Demo",
 			"psk" : "BCG2Demo2014",
-			"bssid": "00:1d:19:91:ad:5d",
+			"bssid": "00:1e:0b:2a:05:6d",
 			"position_x": 100,
 			"position_y": 100
 		},
@@ -38,7 +38,7 @@
 			"location_service_id": "loc_ap2",
 			"ssid" : "BCG2Demo",
 			"psk" : "BCG2Demo2014",
-			"bssid": "00:1d:19:91:ad:5d",
+			"bssid": "00:1e:0b:2a:05:35",
 			"position_x": 800,
 			"position_y": 100
 		},
@@ -48,7 +48,7 @@
 			"location_service_id": "loc_ap3",
 			"ssid" : "BCG2Demo",
 			"psk" : "BCG2Demo2014",
-			"bssid": "00:1d:19:91:ad:5d",
+			"bssid": "00:1e:0b:2a:04:c8",
 			"position_x": 100,
 			"position_y": 800
 		},
@@ -58,7 +58,7 @@
 			"location_service_id": "loc_ap4",
 			"ssid" : "BCG2Demo",
 			"psk" : "BCG2Demo2014",
-			"bssid": "00:1d:19:91:ad:5d",
+			"bssid": "00:1e:0b:2a:04:b5",
 			"position_x": 800,
 			"position_y": 800
 		}
