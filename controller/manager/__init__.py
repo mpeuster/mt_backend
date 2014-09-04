@@ -129,10 +129,10 @@ class ResourceManager(object):
         for ue_uuid, ap_uuid in result.items():  # iterate all assignments
             try:
                 ue = model.ue.UE.objects.get(uuid=ue_uuid)
-
+                assigned_ap_uuid = ue.assigned_accesspoint.uuid if (
+                    ue.assigned_accesspoint is not None) else None
                 # if the assignment has changed, trigger MAC list update at AP
-                if ((ue.assigned_accesspoint is None and ap_uuid is not None)
-                        or ue.assigned_accesspoint.uuid != ap_uuid):
+                if assigned_ap_uuid != ap_uuid:
                     # list of assigned AP UUIDs
                     enable_on = [ap.uuid for ap
                                  in model.accesspoint.AccessPoint.objects
