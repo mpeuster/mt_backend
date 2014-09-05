@@ -29,6 +29,9 @@ Usable Objects / Methods:
                                         # use (uuid lists)
         * NW.enable_mac_on(mac, apidx)  # enables given mac only on AP which is
                                         # specified by its index in the AP list
+
+    - LOC is a request object providing the following helper methods:
+        * LOC.post(location_service_id, p_x, p_y) # posts location
 """
 
 API_HOST = "127.0.0.1"
@@ -149,11 +152,35 @@ class NW_Request(object):
         self.set_mac_list(mac, [l1[apidx]], l2)
 
 
+class LOC_Request(object):
+    """
+    - LOC is a request object providing the following helper methods:
+        * LOC.post(location_service_id, p_x, p_y) # posts location
+    """
+
+    def __init__(self):
+        pass
+
+    def _get_url(self):
+        return "http://%s:%s" % (API_HOST, API_PORT)
+
+    def post(self, location_service_id="node1", p_x=0.0, p_y=0.0):
+        cmd = {}
+        cmd["location_service_id"] = location_service_id
+        cmd["position_x"] = p_x
+        cmd["position_y"] = p_y
+        print cmd
+        r = requests.post(
+            self._get_url() + "/api/location",
+            data=json.dumps(cmd))
+
+
 def main():
     print DOC
     # create helper request objects
     UE = UE_Request()
     NW = NW_Request()
+    LOC = LOC_Request()
     # start interactive IPython shell
     IPython.embed()
     # force removal of all pending UEs
