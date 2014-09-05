@@ -7,8 +7,8 @@ Also used for GT demo.
 Contact: peuster [at] mail.upb.de
 
 #### Contents:
-* <code>ap_manager/</code>: UPB Access Point management component (same as MobiMesh's component, but for UPB testbed)
 * <code>controller/</code>: Backend controller + API server
+* <code>ap_manager/</code>: UPB Access Point management component (same as MobiMesh's component, but for UPB testbed)
 * <code>misc/</code>: e.g. development client (e.g. for debugging)
 
 ## User Guide
@@ -44,12 +44,19 @@ All backend components can run on different physical machines. However, the exam
   + <code>$ sudo python setup.py develop</code>
 
 
+### Install
+
+
+
+* <code>git clone git@github.com:mpeuster/mt_backend.git</code>
+* <code>cd mt_backend/controller/</code>
+
 ### Configuration
 There is a central configuration file for the management daemon and the API server:
 
 * <code>controller/config.json</code>
 
-This file can be used e.g. to specify the location of the network management API provided by e.g. MobiMesh's management component. Furthermore, details about used access points (e.g. SSIDs/PSKs) can be configured in this file.
+This file can be used e.g. to specify the location of the network management API provided by e.g. MobiMesh's management component. Furthermore, details about used access points (e.g. SSIDs/BSSIDs/Location) can be configured in this file.
 
 ### Run backend controller without access points
 
@@ -85,5 +92,27 @@ However, there are no access point definitions in the system since no access poi
 ### Log outputs:
 * <code>/tmp/tlnb_ctrl.log</code>
 * <code>/tmp/tlnb_api.log</code>
+
+### Usage
+
+When the controller and the API server are started, you can register an UE with a POST request in the system. After this you can update it's status (context) with PUT requests. During this, the controller will always compute the AP with the smallest distance to the UE and assign this AP to the UE. You can receive this assignment with a GET request on the UE endpoint. At the end the UE can be removed from the system with a DELETE request.
+
+For detailed API documentation see: https://github.com/mobimesh/GTDemo-2015/wiki/Controller-Interface-Description
+
+If something breaks (e.g. a UE is registered and can not be removed) you should simply restart the control daemon:
+
+* <code>$ python tlnb_ctrl.py -a restart</code>
+
+This will <b> clear the complete database </b> and the whole system is in an empty state again.
+
+### Tests
+
+You can run the API test suite with:
+
+* <code>$ python test.py</code>
+
+This will test most of the API's functionalities. It automatically starts the API and control component and stops them afterwards. However, if you run the system without a connected access point manager, and thus without access point definitions, one of the test cases will fail (assignment test). 
+
+
 
 
