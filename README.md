@@ -19,7 +19,7 @@ Get code from: https://github.com/mpeuster/mt_backend
 
 ### General
 
-The backend consists of two components, the API server and the controller which are started as Unix daemons:
+The backend consists of two components, the API server and the controller which are started as Unix daemons (both are placed in the 'controller/' directory):
 
 * <code>python tlnb_api.py -a start|restart|stop</code>: two layer network backend API
 * <code>python tlnb_ctrl.py -a start|restart|stop</code>: two layer network backend controller
