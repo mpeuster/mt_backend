@@ -20,6 +20,9 @@ def check_required_fields(data, required_keys):
 ZMQ_SENDER = None
 
 
+CORS_HEADER = {'Access-Control-Allow-Origin': '*'}
+
+
 def setup_zmq():
     context = zmq.Context()
     api.ZMQ_SENDER = context.socket(zmq.PUSH)

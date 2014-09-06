@@ -38,4 +38,9 @@ class Location(restful.Resource):
                 set__position_x=loc.position_x,
                 set__position_y=loc.position_y
                 )
-        return None, 201
+        return None, 201, api.CORS_HEADER
+
+    def options(self):
+        return ({'Allow': 'POST'}, 200,
+                {'Access-Control-Allow-Origin': '*',
+                 'Access-Control-Allow-Methods': 'POST'})

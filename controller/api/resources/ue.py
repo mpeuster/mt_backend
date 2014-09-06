@@ -20,7 +20,7 @@ class UEList(restful.Resource):
     def get(self):
         l = ["%s" % ue.uri
              for ue in model.ue.UE.objects]
-        return l
+        return l, 200, api.CORS_HEADER
 
     def post(self):
         try:
@@ -35,7 +35,12 @@ class UEList(restful.Resource):
         # send update signal
         api.zmq_send(json.dumps({"action": "post", "ue": new_ue.uuid}))
         # return URL of new UE with HTTP code 201: Created
-        return ["%s" % new_ue.uri], 201
+        return ["%s" % new_ue.uri], 201, api.CORS_HEADER
+
+    def options(self):
+        return ({'Allow': 'POST,GET'}, 200,
+                {'Access-Control-Allow-Origin': '*',
+                 'Access-Control-Allow-Methods': 'POST,GET'})
 
 
 class UE(restful.Resource):
@@ -44,7 +49,7 @@ class UE(restful.Resource):
         ue = model.ue.UE.get(uuid)
         json_data = ue.marshal()
         logging.debug("GET UE response body: %s", str(json_data))
-        return json_data
+        return json_data, 200, api.CORS_HEADER
 
     def put(self, uuid):
         try:
@@ -59,13 +64,18 @@ class UE(restful.Resource):
         model.ue.UE.add_context(uuid, json_data)
         # send update signal
         api.zmq_send(json.dumps({"action": "put", "ue": uuid}))
-        return None, 204
+        return None, 204, api.CORS_HEADER
 
     def delete(self, uuid):
         model.ue.UE.get(uuid).delete()
         # send update signal
         api.zmq_send(json.dumps({"action": "delete", "ue": uuid}))
-        return None, 204
+        return None, 204, api.CORS_HEADER
+
+    def options(self):
+        return ({'Allow': 'PUT,GET,DELETE'}, 200,
+                {'Access-Control-Allow-Origin': '*',
+                 'Access-Control-Allow-Methods': 'PUT,GET,DELETE'})
 
 
 class ContextList(restful.Resource):
