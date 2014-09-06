@@ -113,6 +113,15 @@ class UE_Request(object):
             d["position_y"] = random.uniform(0, 1000)
             self.register(data=d)
 
+    def helper_remove_all(self):
+        """
+        Helper. Removes all UEs, which are currently registered
+        in the backend.
+        """
+        l = self.list()
+        for url in l:
+            self.remove(url)
+
 
 class NW_Request(object):
     """
@@ -200,6 +209,7 @@ def main():
     for url in UE.ue_list:
         UE.remove(url)
         print "Removed UE: %s" % url
+    UE.helper_remove_all()
 
 if __name__ == '__main__':
     main()
