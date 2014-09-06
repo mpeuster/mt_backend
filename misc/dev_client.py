@@ -1,6 +1,7 @@
 import IPython
 import requests
 import json
+import random
 
 DOC = """
 This is a interactive client to interact with the network controller
@@ -41,7 +42,7 @@ NETWORK_API_HOST = "127.0.0.1"
 NETWORK_API_PORT = "6681"
 
 UEDATA = {
-    "device_id": "test-client-ue1",
+    "device_id": "Test UE",
     "location_service_id": "tcnode1",
     "position_x": 0,
     "position_y": 0,
@@ -98,7 +99,19 @@ class UE_Request(object):
         assert(r.status_code == 200)
         return r.json()
 
-# TODO: Add Helper class, providing methods like: register_n(n, data=UEDATA)
+    def helper_register_n(self, n=5, data=UEDATA):
+        """
+        Helper. Registers n UEs at random positions.
+        Helpful e.g. to test GUIs, which rely on data received
+        from the backend's API.
+        """
+        for i in range(0, n):
+            d = UEDATA.copy()
+            # adapt UE values
+            d["device_id"] += " " + str(i)
+            d["position_x"] = random.uniform(0, 1000)
+            d["position_y"] = random.uniform(0, 1000)
+            self.register(data=d)
 
 
 class NW_Request(object):
