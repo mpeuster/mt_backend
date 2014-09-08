@@ -2,6 +2,7 @@ import IPython
 import requests
 import json
 import random
+import time
 
 DOC = """
 This is a interactive client to interact with the network controller
@@ -197,12 +198,72 @@ class LOC_Request(object):
             data=json.dumps(cmd))
 
 
+class Random_Updater(object):
+    """
+    Randomly updates UEs.
+    Used to test GUI.
+    """
+
+    def __init__(self):
+        self.UE = UE_Request()
+
+    def random_select_ue(self):
+        ue_list = self.UE.list()
+        if len(ue_list) < 1:
+            return None
+        random.shuffle(ue_list)
+        return ue_list[0]
+
+    def random_update_ue(self, ue_url):
+        if ue_url is None:
+            return
+        d = self.UE.get(ue_url)
+        # update data randomly:
+        d["position_x"] = random.uniform(0, 1000)
+        d["position_y"] = random.uniform(0, 1000)
+        d["display_state"] = 0 if random.uniform(0, 100) < 40 else 1
+
+        d["active_application_activity"] = random.sample(
+            ['com.google.android.apps.youtube.app.WatchWhileActivity',
+             'com.google.browser.Main'],  1)[0]
+        d["active_application_package"] = random.sample(
+            ['com.google.android.apps.youtube',
+             'com.google.browser'],  1)[0]
+
+        d["rx_mobile_bytes"] += random.uniform(0, 10000)
+        d["rx_wifi_bytes"] += random.uniform(0, 10000)
+        d["rx_total_bytes"] += random.uniform(0, 10000)
+        d["rx_mobile_bytes_per_second"] = random.uniform(0, 1000)
+        d["rx_wifi_bytes_per_second"] = random.uniform(0, 1000)
+        d["rx_total_bytes_per_second"] = random.uniform(0, 1000)
+
+        d["tx_mobile_bytes"] += random.uniform(0, 10000)
+        d["tx_wifi_bytes"] += random.uniform(0, 10000)
+        d["tx_total_bytes"] += random.uniform(0, 10000)
+        d["tx_mobile_bytes_per_second"] = random.uniform(0, 1000)
+        d["tx_wifi_bytes_per_second"] = random.uniform(0, 1000)
+        d["tx_total_bytes_per_second"] = random.uniform(0, 1000)
+
+        # send update request
+        print "Updating UE: %s" % d["device_id"]
+        self.UE.update(ue_url, data=d)
+
+    def run(self):
+        print "Starting continuous random updates (quit with ctrl+c)"
+        while(1):
+            ue_url = self.random_select_ue()
+            self.random_update_ue(ue_url)
+            time.sleep(2)
+
+
 def main():
     print DOC
     # create helper request objects
     UE = UE_Request()
     NW = NW_Request()
     LOC = LOC_Request()
+    # helper for random updates
+    RU = Random_Updater()
     # start interactive IPython shell
     IPython.embed()
     # force removal of all pending UEs

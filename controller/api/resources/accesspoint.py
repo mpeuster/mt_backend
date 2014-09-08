@@ -27,7 +27,7 @@ class AP(restful.Resource):
         logging.debug("GET AP response body: %s", str(json_data))
         return json_data, 200, api.api.CORS_HEADER
 
-    def options(self):
+    def options(self, uuid):
         return ({'Allow': 'GET'}, 200,
                 {'Access-Control-Allow-Origin': '*',
                  'Access-Control-Allow-Methods': 'GET'})

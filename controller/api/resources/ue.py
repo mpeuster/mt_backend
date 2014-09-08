@@ -72,7 +72,7 @@ class UE(restful.Resource):
         api.zmq_send(json.dumps({"action": "delete", "ue": uuid}))
         return None, 204, api.CORS_HEADER
 
-    def options(self):
+    def options(self, uuid):
         return ({'Allow': 'PUT,GET,DELETE'}, 200,
                 {'Access-Control-Allow-Origin': '*',
                  'Access-Control-Allow-Methods': 'PUT,GET,DELETE'})
