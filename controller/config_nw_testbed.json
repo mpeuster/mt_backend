@@ -28,7 +28,7 @@
 			"location_service_id": "loc_ap1",
 			"ssid" : "BCG2Demo",
 			"psk" : "BCG2Demo2014",
-			"bssid": "00:1a:70:9f:91:dd",
+			"bssid": "00:1a:70:9f:91:dc",
 			"position_x": 300,
 			"position_y": 500
 		},
@@ -38,7 +38,7 @@
 			"location_service_id": "loc_ap2",
 			"ssid" : "BCG2Demo",
 			"psk" : "BCG2Demo2014",
-			"bssid": "00:1a:70:9f:89:ad",
+			"bssid": "00:1a:70:9f:89:ac",
 			"position_x": 800,
 			"position_y": 500
 		}
