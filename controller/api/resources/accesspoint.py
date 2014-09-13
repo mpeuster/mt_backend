@@ -11,7 +11,7 @@ class APList(restful.Resource):
     def get(self):
         l = ["%s" % ap.uri
              for ap in model.accesspoint.AccessPoint.objects]
-        return l, 200, api.api.CORS_HEADER
+        return l, 200, api.CORS_HEADER
 
     def options(self):
         return ({'Allow': 'GET'}, 200,
@@ -25,7 +25,7 @@ class AP(restful.Resource):
         ap = model.accesspoint.AccessPoint.get(uuid)
         json_data = ap.marshal()
         logging.debug("GET AP response body: %s", str(json_data))
-        return json_data, 200, api.api.CORS_HEADER
+        return json_data, 200, api.CORS_HEADER
 
     def options(self, uuid):
         return ({'Allow': 'GET'}, 200,

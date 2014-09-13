@@ -27,8 +27,8 @@ class Location(restful.Resource):
         # update location entry in db
         (loc, _) = model.location.Location.objects.get_or_create(
             location_service_id=json_data["location_service_id"])
-        loc.position_x = json_data["position_x"]
-        loc.position_y = json_data["position_y"]
+        loc.position_x = float(json_data["position_x"])
+        loc.position_y = float(json_data["position_y"])
         loc.save()
         # ATTENTION: Location is only updated in UE context,
         # if the UE performs an update action!
@@ -41,6 +41,7 @@ class Location(restful.Resource):
         return None, 201, api.CORS_HEADER
 
     def options(self):
-        return ({'Allow': 'POST'}, 200,
+        return ({'Allow': 'POST,PUT,GET,DELETE'}, 200,
                 {'Access-Control-Allow-Origin': '*',
-                 'Access-Control-Allow-Methods': 'POST'})
+                 'Access-Control-Allow-Methods': 'POST,PUT,GET,DELETE',
+                 'Access-Control-Allow-Headers': 'Content-Type'})
