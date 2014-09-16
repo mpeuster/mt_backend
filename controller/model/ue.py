@@ -163,6 +163,8 @@ class UE(Document):
                     location_service_id=json_data["location_service_id"])
                 new_c.position_x = loc.position_x
                 new_c.position_y = loc.position_y
+                logging.debug("Used location service data with id: %s"
+                              % json_data["location_service_id"])
             except:
                 logging.debug("Could not find location info for %s."
                               % json_data["location_service_id"])

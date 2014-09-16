@@ -219,10 +219,10 @@ class Location_InterfaceTest(unittest.TestCase):
                           data=json.dumps(data))
         self.assertEqual(r.status_code, 201)
         # send update request to ue, to create new context with new location
-        ue_data = helper_get_ue(self.ue_url)
+        # ue_data = helper_get_ue(self.ue_url)
         # update requests to create more than one context
-        r = requests.put(API_BASE_URL + self.ue_url,
-                         data=json.dumps(ue_data))
+        # r = requests.put(API_BASE_URL + self.ue_url,
+        #                 data=json.dumps(ue_data))
         # check if the position is available at UE
         ue = helper_get_ue(self.ue_url)
         self.assertEqual(ue["position_x"], 200.01)

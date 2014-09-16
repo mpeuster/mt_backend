@@ -24,15 +24,19 @@ class Location(restful.Resource):
         logging.debug("POST location request body: %s" % str(json_data))
         # validate data
         api.check_required_fields(json_data, REQUIRED_FIELDS)
-        # update location entry in db
+        # update location entry in location db
         (loc, _) = model.location.Location.objects.get_or_create(
             location_service_id=json_data["location_service_id"])
         loc.position_x = float(json_data["position_x"])
         loc.position_y = float(json_data["position_y"])
         loc.save()
-        # ATTENTION: Location is only updated in UE context,
-        # if the UE performs an update action!
+        # trigger location update on UE
+        # (copy latest context and insert new one to use new location)
+        for ue in model.ue.UE.objects(
+                location_service_id=loc.location_service_id):
+            model.ue.UE.add_context(ue.uuid, ue.marshal())
         # trigger location update in all matching AP model entries
+        # (can be done directly for the APs)
         model.accesspoint.AccessPoint.objects(
             location_service_id=loc.location_service_id).update(
                 set__position_x=loc.position_x,
