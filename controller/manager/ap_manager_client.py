@@ -3,6 +3,8 @@ import json
 import model
 import logging
 
+RHEADER = {"content-type": "application/json"}
+
 
 def get_connection():
     return ("http://%s:%d") % (model.CONFIG["apmanager"]["host"],
@@ -11,7 +13,8 @@ def get_connection():
 
 def get_uuid_list(online_only=True):
     try:
-        r = requests.get(get_connection() + "/api/network/accesspoint")
+        r = requests.get(
+            get_connection() + "/api/network/accesspoint", headers=RHEADER)
         uuid_list = r.json()
         if online_only:
             return uuid_list["online"]
@@ -25,12 +28,14 @@ def get_uuid_list(online_only=True):
 def get_accesspoint(uuid, include_power_state=False):
     try:
         r = requests.get(
-            get_connection() + "/api/network/accesspoint/%s" % uuid)
+            get_connection() + "/api/network/accesspoint/%s" % uuid,
+            headers=RHEADER)
         ap = r.json()
         if include_power_state:
             r = requests.get(
                 get_connection()
-                + "/api/network/accesspoint/%s/power_state" % uuid)
+                + "/api/network/accesspoint/%s/power_state" % uuid,
+                headers=RHEADER)
             ps = r.json()["power_state"]
             if ps == "radio_on":
                 ap["power_state"] = 1
@@ -59,7 +64,9 @@ def set_power_state(uuid, power_state):
         cmd = {"power_state": state}
         r = requests.put(
             get_connection() + "/api/network/accesspoint/"
-            + uuid + "/power_state", data=json.dumps(cmd))
+            + uuid + "/power_state",
+            data=json.dumps(cmd),
+            headers=RHEADER)
         return r.status_code
     except:
         logging.exception("Connection to AccessPointManager not possible.")
@@ -75,7 +82,8 @@ def set_mac_list(mac, enable_on, disable_on):
         cmd["disable_on"] = disable_on
         r = requests.put(
             get_connection() + "/api/network/client/" + str(mac),
-            data=json.dumps(cmd))
+            data=json.dumps(cmd),
+            headers=RHEADER)
     except:
         logging.exception("Connection to AccessPointManager not possible.")
         return None
