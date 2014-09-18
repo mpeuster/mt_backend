@@ -2,6 +2,7 @@ import requests
 import json
 import model
 import logging
+import urllib
 
 RHEADER = {"content-type": "application/json"}
 
@@ -81,7 +82,7 @@ def set_mac_list(mac, enable_on, disable_on):
         cmd["enable_on"] = enable_on
         cmd["disable_on"] = disable_on
         r = requests.put(
-            get_connection() + "/api/network/client/" + str(mac),
+            get_connection() + "/api/network/client/" + urllib.quote_plus(mac),
             data=json.dumps(cmd),
             headers=RHEADER)
     except:
