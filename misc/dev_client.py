@@ -7,7 +7,7 @@ import time
 DOC = """
 This is a interactive client to interact with the network controller
 component. It opens a IPython shell and provides helper functions
-to do UE or Network requests to the controller API.
+to do UE, AP, location, or Network requests to the controller API.
 
 Usable Objects / Methods:
     - API_HOST: API host address
@@ -23,6 +23,13 @@ Usable Objects / Methods:
         * UE.list()                     # returns list of all UE urls
         * UE.get(url)                   # gets specific UE data
 
+    - AP is a request object providing the following helper methods:
+        * AP.list()                     # returns list of all AP urls
+        * AP.get(url)                   # gets specific AP data
+
+    - LOC is a request object providing the following helper methods:
+        * LOC.post(location_service_id, p_x, p_y) # posts location
+
     - NW is a request object providing the following helper methods:
         * NW.list()                     # returns list of all AP uuids
         * NW.get(uuid)                  # gets specific AP data (NW.get(_[0]))
@@ -32,8 +39,6 @@ Usable Objects / Methods:
         * NW.enable_mac_on(mac, apidx)  # enables given mac only on AP which is
                                         # specified by its index in the AP list
 
-    - LOC is a request object providing the following helper methods:
-        * LOC.post(location_service_id, p_x, p_y) # posts location
 """
 
 API_HOST = "127.0.0.1"
@@ -122,6 +127,30 @@ class UE_Request(object):
         l = self.list()
         for url in l:
             self.remove(url)
+
+
+class AP_Request(object):
+    """
+    - AP is a request object providing the following helper methods:
+        * AP.list()                     # returns list of all AP urls
+        * AP.get(url)                   # gets specific AP data
+    """
+
+    def __init__(self):
+        pass
+
+    def _get_url(self):
+        return "http://%s:%s" % (API_HOST, API_PORT)
+
+    def list(self):
+        r = requests.get(self._get_url() + "/api/accesspoint")
+        assert(r.status_code == 200)
+        return r.json()
+
+    def get(self, url):
+        r = requests.get(self._get_url() + url)
+        assert(r.status_code == 200)
+        return r.json()
 
 
 class NW_Request(object):
@@ -260,6 +289,7 @@ def main():
     print DOC
     # create helper request objects
     UE = UE_Request()
+    AP = AP_Request()
     NW = NW_Request()
     LOC = LOC_Request()
     # helper for random updates
