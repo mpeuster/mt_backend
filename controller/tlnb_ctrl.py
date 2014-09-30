@@ -52,6 +52,9 @@ class TLNB_Ctrl(DaemonBase):  # inherit DaemonBase to build a Unix daemon
         logging.basicConfig(filename=logfile, filemode="w", level=loglevel,
                             format="%(asctime)s [%(levelname)-8s] %(message)s")
         logging.debug("Ctrl logging enabled with loglevel: DEBUG")
+        # disable debug logs of requests module
+        requests_log = logging.getLogger("requests")
+        requests_log.setLevel(logging.WARNING)
 
     def start(self, params, daemonize=True):
         '''
