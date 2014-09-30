@@ -74,6 +74,32 @@ def set_power_state(uuid, power_state):
         return None
 
 
+def get_accesspoint_info(uuid):
+    try:
+        r = requests.get(
+            get_connection()
+            + "/api/network/accesspoint/%s/info" % uuid,
+            headers=RHEADER)
+        ap = r.json()
+        return ap
+    except:
+        logging.error("Connection to AccessPointManager not possible.")
+        return None
+
+
+def get_accesspoint_stats(uuid):
+    try:
+        r = requests.get(
+            get_connection()
+            + "/api/network/accesspoint/%s/stats" % uuid,
+            headers=RHEADER)
+        ap = r.json()
+        return ap
+    except:
+        logging.error("Connection to AccessPointManager not possible.")
+        return None
+
+
 def set_mac_list(mac, enable_on, disable_on):
     try:
         assert(isinstance(enable_on, list))

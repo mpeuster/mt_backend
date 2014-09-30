@@ -5,6 +5,7 @@ import json
 import model
 import plugin
 import ap_manager_client
+import updater
 from api.errors import *
 
 
@@ -35,6 +36,9 @@ class ResourceManager(object):
             model.CONFIG["accesspoints"], ap_manager_client.get_accesspoints())
         # load management algorithm
         plugin.load_algorithm(model.CONFIG["algorithm"]["name"])
+        # kick of AP state fetcher thread
+        self.apFetcherThread = updater.AccessPointStateFetcher()
+        self.apFetcherThread.start()
 
     def setup_zmq(self):
         context = zmq.Context()

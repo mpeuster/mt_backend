@@ -118,6 +118,21 @@ class AccessPoint(Document):
                 # finally create new AP from config entry
                 AccessPoint.create(apc)
 
+    @staticmethod
+    def updata_info(uuid, ap_info):
+        """
+        Updates info data returned by the AP manager.
+        """
+        pass
+
+    @staticmethod
+    def update_stats(uuid, ap_stats):
+        """
+        Updates and calculates network statistics returned
+        by the AP manger.
+        """
+        pass
+
     @property
     def uri(self):
         return "%s/%s" % ("/api/accesspoint", self.uuid)
