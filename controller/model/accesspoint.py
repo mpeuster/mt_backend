@@ -19,6 +19,7 @@ AP_RESOURCE_FIELDS = {
     'power_state': fields.Integer,
     'assigned_ue_list': fields.List(fields.String),
     'uri': fields.String,
+    'serial': fields.String,
     'rx_bytes': fields.Integer,
     'tx_bytes': fields.Integer,
     'rx_bytes_per_second': fields.Float,
