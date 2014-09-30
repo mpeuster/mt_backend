@@ -6,6 +6,8 @@
 	"accesspoints": [
 		{
 			"uuid": "9d7034c5008b11e4b714c8bcc8a0a80d",
+			"name": "AP-1",
+			"serial" : "00156195a7c1",
 			"state": "online",
 			"driver_info": {
 				"ssh_name" : "pgsp-ap1"
@@ -13,6 +15,8 @@
 		},
 		{
 			"uuid": "5e8e61d100fd11e4bfafc8bcc8a0a80d",
+			"name": "AP-2",
+			"serial" : "00156195a7c2",
 			"state": "online",
 			"driver_info": {
 				"ssh_name" : "pgsp-ap2"
@@ -20,6 +24,8 @@
 		},
 		{
 			"uuid": "57ae409e00fd11e4a3dec8bcc8a0a80d",
+			"name": "AP-3",
+			"serial" : "00156195a7c3",
 			"state": "offline",
 			"driver_info": {
 				"ssh_name" : "pgsp-ap3"
@@ -27,6 +33,8 @@
 		},
 		{
 			"uuid": "5bbd409e00fd11e4a3dec8bcc8a0a80d",
+			"name": "AP-4",
+			"serial" : "00156195a7c4",
 			"state": "offline",
 			"driver_info": {
 				"ssh_name" : "pgsp-ap4"
@@ -34,6 +42,8 @@
 		},
 		{
 			"uuid": "fee74f4f0b4711e49673c8bcc8a0a80d",
+			"name": "AP-5",
+			"serial" : "00156195a7c5",
 			"state": "offline"
 		}
 	]

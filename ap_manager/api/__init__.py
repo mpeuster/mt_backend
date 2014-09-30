@@ -62,6 +62,14 @@ class APIServer(object):
             "/api/network/accesspoint/<string:uuid>/power_state",
             endpoint="accesspoint_power_state")
         self.api.add_resource(
+            resources.Info,
+            "/api/network/accesspoint/<string:uuid>/info",
+            endpoint="accesspoint_info")
+        self.api.add_resource(
+            resources.Stats,
+            "/api/network/accesspoint/<string:uuid>/stats",
+            endpoint="accesspoint_stats")
+        self.api.add_resource(
             resources.Client,
             "/api/network/client/<string:mac>",
             endpoint="client_mac")

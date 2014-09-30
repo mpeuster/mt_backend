@@ -65,6 +65,32 @@ class PowerState(restful.Resource):
         return None, 204
 
 
+class Info(restful.Resource):
+
+    def get(self, uuid):
+        """
+        Return general info about access point. Serial, name, etc.
+        """
+        if uuid in model.AccessPoints:
+            return model.AccessPoints[uuid].marshal()
+        else:
+            raise ResourceNotFoundError
+
+
+class Stats(restful.Resource):
+
+    def get(self, uuid):
+        """
+        Return network statistics of access point.
+        May have some delay, since it first calls the AP and requests
+        current data by using the driver layer.
+        """
+        if uuid in model.AccessPoints:
+            return model.AccessPoints[uuid].get_network_stats()
+        else:
+            raise ResourceNotFoundError
+
+
 class Client(restful.Resource):
 
     def put(self, mac):

@@ -1,5 +1,6 @@
 import logging
 import subprocess
+import time
 
 
 class ApDriver():
@@ -54,3 +55,14 @@ class ApDriver():
         logging.info("[ApDriver] Getting power state for %s" % ap)
         # ATTENTION: Never called!
         return "radio_on"
+
+    def get_network_stats(self, ap):
+        logging.info("[ApDriver] Getting networks stats for %s" % ap)
+        return {"aps": [
+                {"name": "vap0",
+                 "rxbyte": 1234,
+                 "rxpkt": 123,
+                 "txbyte": 6789,
+                 "txpkt": 678,
+                 "timestamp": time.time()
+                 }]}

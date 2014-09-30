@@ -6,7 +6,9 @@ import driver
 
 AP_RESOURCE_FIELDS = {
     'uuid': fields.String,
-    'state': fields.String
+    'state': fields.String,
+    'name': fields.String,
+    'serial': fields.String
 }
 
 
@@ -15,13 +17,16 @@ class AccessPoint(object):
     def __init__(
             self,
             uuid,
+            name,
+            serial,
             state="offline",
             driver_info=None):
         # create uuid (use a fixed one, see mail with Alberto (MobiMash))
         self.uuid = uuid  # uuid.uuid1().hex
         # set parameter
-        self.name = None  # not used
+        self.name = name  # not used
         self.ssid = None  # not used
+        self.serial = serial
         self.driver_info = driver_info  # dict, containing info. for driver
         self.state = state
         self._power_state = "radio_off"
@@ -53,3 +58,8 @@ class AccessPoint(object):
         # run the AP driver
         if self.state == "online":
             driver.AP_DRIVER.set_mac_lists(self)
+
+    def get_network_stats(self):
+        # run the AP driver
+        if self.state == "online":
+            return driver.AP_DRIVER.get_network_stats(self)

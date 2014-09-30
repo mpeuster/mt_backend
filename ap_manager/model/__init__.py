@@ -34,6 +34,8 @@ def load_aps_from_config(data):
         # create AP
         new = accesspoint.AccessPoint(
             ap["uuid"],
+            ap["name"],
+            ap["serial"],
             ap["state"],
             driver_info
             )

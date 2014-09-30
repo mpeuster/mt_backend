@@ -90,6 +90,50 @@ class AccessPoint_InterfaceTest(unittest.TestCase):
             data=json.dumps(cmd))
         self.assertEqual(r.status_code, 204)
 
+    def test_get_info(self):
+        print "#" * 20
+        r = requests.get(API_BASE_URL + "/api/network/accesspoint")
+        self.assertEqual(r.status_code, 200)
+        data = r.json()
+        self.assertIsInstance(data, dict)
+        print data
+        for uuid in data["online"]:
+            # check accesspoint endpoint get
+            r_ap = requests.get(
+                API_BASE_URL + "/api/network/accesspoint/" + uuid + "/info")
+            self.assertEqual(r_ap.status_code, 200)
+            data = r_ap.json()
+            print data
+            self.assertIsInstance(data, dict)
+            self.assertTrue("name" in data)
+            self.assertTrue("serial" in data)
+            self.assertTrue("uuid" in data)
+
+    def test_get_stats(self):
+        r = requests.get(API_BASE_URL + "/api/network/accesspoint")
+        self.assertEqual(r.status_code, 200)
+        data = r.json()
+        self.assertIsInstance(data, dict)
+        print data
+        for uuid in data["online"]:
+            # check accesspoint endpoint get
+            r_ap = requests.get(
+                API_BASE_URL + "/api/network/accesspoint/" + uuid + "/stats")
+            self.assertEqual(r_ap.status_code, 200)
+            data = r_ap.json()
+            print data
+            self.assertIsInstance(data, dict)
+            self.assertIsInstance(data["aps"], list)
+            self.assertTrue(len(data["aps"]) > 0)
+            for stats in data["aps"]:
+                self.assertIsInstance(stats, dict)
+                self.assertTrue("rxbyte" in stats)
+                self.assertTrue("rxpkt" in stats)
+                self.assertTrue("txbyte" in stats)
+                self.assertTrue("txpkt" in stats)
+                self.assertTrue("name" in stats)
+                self.assertTrue("timestamp" in stats)
+
 
 def setUpModule():
     if subprocess.call(
