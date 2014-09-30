@@ -18,7 +18,11 @@ AP_RESOURCE_FIELDS = {
     'position_y': fields.Float,
     'power_state': fields.Integer,
     'assigned_ue_list': fields.List(fields.String),
-    'uri': fields.String
+    'uri': fields.String,
+    'rx_bytes': fields.Integer,
+    'tx_bytes': fields.Integer,
+    'rx_bytes_per_second': fields.Float,
+    'tx_bytes_per_second': fields.Float
 }
 
 
@@ -154,6 +158,8 @@ class AccessPoint(Document):
                 ap.tx_bytes_per_second = stats["tx_bytes_per_second"]
                 ap.last_stats_timestamp = stats["timestamp"]
                 ap.save()
+                logging.debug("AccessPoint %s: rx_bytes=%d tx_bytes=%d" %
+                              (ap.device_id, ap.rx_bytes, ap.tx_bytes))
 
     @property
     def uri(self):
