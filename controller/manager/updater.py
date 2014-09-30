@@ -17,13 +17,13 @@ class AccessPointStateFetcher(threading.Thread):
                      for ap in model.accesspoint.AccessPoint.objects]
         for uuid in uuid_list:
                 ap_info = ap_manager_client.get_accesspoint_info(uuid)
-                model.accesspoint.AccessPoint.updata_info(uuid, ap_info)
+                model.accesspoint.AccessPoint.update_info(uuid, ap_info)
 
         while True:
             # periodically fetch network stats and write them to model
             logging.debug("Receiving access point updates")
             for uuid in uuid_list:
                 ap_stats = ap_manager_client.get_accesspoint_stats(uuid)
-                model.accesspoint.AccessPoint.updata_info(uuid, ap_stats)
+                model.accesspoint.AccessPoint.update_stats(uuid, ap_stats)
             # wait for next update
             time.sleep(1)

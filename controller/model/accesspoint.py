@@ -33,6 +33,12 @@ class AccessPoint(Document):
     position_x = FloatField(default=0)
     position_y = FloatField(default=0)
     power_state = IntField(default=0)  # 0=off, 1=on
+    serial = StringField(default=None)
+    rx_bytes = IntField(default=0)
+    tx_bytes = IntField(default=0)
+    rx_bytes_per_second = FloatField(default=0.0)
+    tx_bytes_per_second = FloatField(default=0.0)
+    last_stats_timestamp = FloatField(default=0.0)
 
     @staticmethod
     def create(json_data):
@@ -119,11 +125,17 @@ class AccessPoint(Document):
                 AccessPoint.create(apc)
 
     @staticmethod
-    def updata_info(uuid, ap_info):
+    def update_info(uuid, ap_info):
         """
         Updates info data returned by the AP manager.
         """
-        pass
+        ap = AccessPoint.get(uuid)
+        if ap is not None:
+            if "name" in ap_info:
+                ap.device_id = ap_info["name"]
+            if "serial" in ap_info:
+                ap.serial = ap_info["serial"]
+            ap.save()
 
     @staticmethod
     def update_stats(uuid, ap_stats):
@@ -131,7 +143,17 @@ class AccessPoint(Document):
         Updates and calculates network statistics returned
         by the AP manger.
         """
-        pass
+        ap = AccessPoint.get(uuid)
+        if ap is not None:
+            if "aps" in ap_stats:
+                stats = ap.calculate_network_stats(ap_stats["aps"])
+                # update model
+                ap.rx_bytes = stats["rx_bytes"]
+                ap.tx_bytes = stats["tx_bytes"]
+                ap.rx_bytes_per_second = stats["rx_bytes_per_second"]
+                ap.tx_bytes_per_second = stats["tx_bytes_per_second"]
+                ap.last_stats_timestamp = stats["timestamp"]
+                ap.save()
 
     @property
     def uri(self):
@@ -147,3 +169,34 @@ class AccessPoint(Document):
     def get_assigned_UE_list(self):
         return [ue for ue in model.ue.UE.objects
                 if ue.assigned_accesspoint == self]
+
+    def calculate_network_stats(self, stats_list):
+        """
+        Calculate and aggregate network states of all available
+        radio interfaces of this access point.
+        """
+        new_timestamp = max([s["timestamp"] for s in stats_list])
+        new_rx_bytes = sum([s["rxbyte"] for s in stats_list])
+        new_tx_bytes = sum([s["txbyte"] for s in stats_list])
+        new_rx_bytes_per_second = 0.0
+        new_tx_bytes_per_second = 0.0
+
+        if self.rx_bytes > 0:  # skip first run
+            new_rx_bytes_per_second = (abs(new_rx_bytes - self.rx_bytes)
+                                       / abs(new_timestamp
+                                       - self.last_stats_timestamp))
+
+        if self.tx_bytes > 0:  # skip first run
+            new_tx_bytes_per_second = (abs(new_tx_bytes - self.tx_bytes)
+                                       / abs(new_timestamp
+                                       - self.last_stats_timestamp))
+
+        # build result
+        result = {
+            "timestamp": new_timestamp,
+            "rx_bytes": new_rx_bytes,
+            "tx_bytes": new_tx_bytes,
+            "rx_bytes_per_second": new_rx_bytes_per_second,
+            "tx_bytes_per_second": new_tx_bytes_per_second
+        }
+        return result
