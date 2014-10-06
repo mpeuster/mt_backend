@@ -4,7 +4,7 @@ import math
 from collections import deque
 
 
-class TrafficThresholdNearestApAlgorithm(base.BaseAlgorithm):
+class TrafficThresholdNearestAp(base.BaseAlgorithm):
 
     def __init__(self):
         """
@@ -72,3 +72,16 @@ class TrafficThresholdNearestApAlgorithm(base.BaseAlgorithm):
 
         # return({}, {})
         return (power_states_dict, assignment_dict)
+
+
+class TrafficThresholdNearestApSwtichCooldown(TrafficThresholdNearestAp):
+
+    def compute(self, ue_list, ap_list, requesting_ue):
+        COOLDOWN = 30  # AP switch of cooldown (seconds)
+
+        # call original compute method
+        p, a = super(self.__class__, self).compute(ue_list,
+                                                   ap_list,
+                                                   requesting_ue)
+        # TODO apply constraints and manipulate result
+        return (p, a)

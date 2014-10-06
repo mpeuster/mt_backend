@@ -3,7 +3,12 @@ import logging
 import math
 
 
-class SimpleNearestApAlgorithm(base.BaseAlgorithm):
+class SimpleNearestAp(base.BaseAlgorithm):
+    """
+    This simple algorithm assigns each UE to its closest AP if the
+    display_state of the UE != 0.
+    All APs which have at least one UE assigned are switched on.
+    """
 
     def __init__(self):
         """
@@ -26,11 +31,6 @@ class SimpleNearestApAlgorithm(base.BaseAlgorithm):
                 e.g. {"ap_uuid": True, "ap_uuid2": False}
             - assignment_dict: UE uuid -> AP uuid / None
                 e.g. {"ue_uuid1": "ap_uuid2", "ue_uuid2": None}
-
-        What it does:
-            This simple algorithm assigns each UE to its closest AP if the
-            display_state of the UE != 0.
-            All APs which have at least one UE assigned are switched on.
         """
         logging.info("Running %s..." % str(self.__class__.__name__))
 
@@ -53,3 +53,16 @@ class SimpleNearestApAlgorithm(base.BaseAlgorithm):
 
         # return({}, {})
         return (power_states_dict, assignment_dict)
+
+
+class SimpleNearestApSwtichCooldown(SimpleNearestAp):
+
+    def compute(self, ue_list, ap_list, requesting_ue):
+        COOLDOWN = 30  # AP switch of cooldown (seconds)
+
+        # call original compute method
+        p, a = super(self.__class__, self).compute(ue_list,
+                                                   ap_list,
+                                                   requesting_ue)
+        # TODO apply constraints and manipulate result
+        return (p, a)
