@@ -1,4 +1,5 @@
 import logging
+import math
 
 
 class BaseAlgorithm(object):
@@ -8,6 +9,31 @@ class BaseAlgorithm(object):
         Initialization work
         """
         pass
+
+    def find_closest_ap(self, ue, ap_list):
+        """
+        Returns the AP with the minimum distance to the
+        given UE. (Helper)
+        """
+
+        def distance(ue, ap):
+            ue_x = ue["position_x"]
+            ue_y = ue["position_y"]
+            ap_x = ap["position_x"]
+            ap_y = ap["position_y"]
+            return math.sqrt(math.pow(abs(ue_x - ap_x), 2)
+                             + math.pow(abs(ue_y - ap_y), 2))
+
+        min_distance = float("inf")
+        min_ap = None
+        for ap in ap_list:
+            if distance(ue, ap) < min_distance:
+                min_distance = distance(ue, ap)
+                min_ap = ap
+
+        logging.debug("[ALGO] Closest AP for UE: %s is: %s"
+                      % (ue["device_id"], min_ap["device_id"]))
+        return min_ap
 
     def compute(self, ue_list, ap_list, requesting_ue):
         """
