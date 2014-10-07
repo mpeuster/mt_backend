@@ -6,14 +6,14 @@ def load_algorithm(name):
     if name == "SimpleNearestAp" or name == "SimpleNearestApAlgorithm":
         import simple
         algorithm = simple.SimpleNearestAp()
-    elif name == "SimpleNearestApSwtichCooldown":
+    elif name == "SimpleNearestApSwitchCooldown":
         import simple
-        algorithm = simple.SimpleNearestApSwtichCooldown()
+        algorithm = simple.SimpleNearestApSwitchCooldown()
     elif name == "TrafficThresholdNearestAp":
         import traffic
         algorithm = traffic.TrafficThresholdNearestAp()
-    elif name == "TrafficThresholdNearestApSwtichCooldown":
+    elif name == "TrafficThresholdNearestApSwitchCooldown":
         import traffic
-        algorithm = traffic.TrafficThresholdNearestApSwtichCooldown()
+        algorithm = traffic.TrafficThresholdNearestApSwitchCooldown()
     else:
         algorithm = None

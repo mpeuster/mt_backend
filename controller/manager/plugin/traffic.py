@@ -10,6 +10,7 @@ class TrafficThresholdNearestAp(base.BaseAlgorithm):
         """
         Initialization work
         """
+        super(TrafficThresholdNearestAp, self).__init__()
         logging.info("Loaded algorithm: %s" % str(self.__class__.__name__))
         self.ue_traffic_data = {}
 
@@ -74,14 +75,15 @@ class TrafficThresholdNearestAp(base.BaseAlgorithm):
         return (power_states_dict, assignment_dict)
 
 
-class TrafficThresholdNearestApSwtichCooldown(TrafficThresholdNearestAp):
+class TrafficThresholdNearestApSwitchCooldown(TrafficThresholdNearestAp):
 
     def compute(self, ue_list, ap_list, requesting_ue):
-        COOLDOWN = 30  # AP switch of cooldown (seconds)
+        COOLDOWN = 20  # AP switch of cooldown (seconds)
 
         # call original compute method
         p, a = super(self.__class__, self).compute(ue_list,
                                                    ap_list,
                                                    requesting_ue)
-        # TODO apply constraints and manipulate result
+        # apply constraints and manipulate result
+        p2 = self.apply_switch_off_cooldown(p, COOLDOWN)
         return (p, a)

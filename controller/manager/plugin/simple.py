@@ -14,6 +14,7 @@ class SimpleNearestAp(base.BaseAlgorithm):
         """
         Initialization work
         """
+        super(SimpleNearestAp, self).__init__()
         logging.info("Loaded algorithm: %s" % str(self.__class__.__name__))
 
     def compute(self, ue_list, ap_list, requesting_ue):
@@ -55,14 +56,15 @@ class SimpleNearestAp(base.BaseAlgorithm):
         return (power_states_dict, assignment_dict)
 
 
-class SimpleNearestApSwtichCooldown(SimpleNearestAp):
+class SimpleNearestApSwitchCooldown(SimpleNearestAp):
 
     def compute(self, ue_list, ap_list, requesting_ue):
-        COOLDOWN = 30  # AP switch of cooldown (seconds)
+        COOLDOWN = 20  # AP switch of cooldown (seconds)
 
         # call original compute method
         p, a = super(self.__class__, self).compute(ue_list,
                                                    ap_list,
                                                    requesting_ue)
-        # TODO apply constraints and manipulate result
-        return (p, a)
+        # apply constraints and manipulate result
+        p2 = self.apply_switch_off_cooldown(p, COOLDOWN)
+        return (p2, a)

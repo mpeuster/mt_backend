@@ -1,5 +1,6 @@
 import logging
 import math
+import time
 
 
 class BaseAlgorithm(object):
@@ -8,10 +9,11 @@ class BaseAlgorithm(object):
         """
         Initialization work
         """
-        pass
+        self.ap_switch_on_timestamps = {}
 
     def find_closest_ap(self, ue, ap_list):
         """
+        Helper:
         Returns the AP with the minimum distance to the
         given UE. (Helper)
         """
@@ -34,6 +36,37 @@ class BaseAlgorithm(object):
         logging.debug("[ALGO] Closest AP for UE: %s is: %s"
                       % (ue["device_id"], min_ap["device_id"]))
         return min_ap
+
+    def apply_switch_off_cooldown(self, power_states_dict, cooldown=30):
+        """
+        Helper
+        Only switches of an access point if it was already switched on
+        for at least the defined cooldown time.
+
+        Timestamps dict: uuid -> ts (-1 = not switched on yet)
+        """
+        for uuid in power_states_dict:
+            if uuid not in self.ap_switch_on_timestamps:
+                self.ap_switch_on_timestamps[uuid] = -1
+            if power_states_dict[uuid]:
+                # AP should be switched on
+                # update switch on timestamps
+                self.ap_switch_on_timestamps[uuid] = time.time()
+            else:
+                # AP should be switched off
+                if self.ap_switch_on_timestamps[uuid] > 0:
+                    # AP is currently on, test if switch of is ok?
+                    if (abs(time.time() - self.ap_switch_on_timestamps[uuid])
+                            > cooldown):
+                        # switch off action is ok, reset timestamp
+                        self.ap_switch_on_timestamps[uuid] = -1
+                    else:
+                        # switch off action is too early, abort switch action
+                        power_states_dict[uuid] = True
+                        logging.info("Switch off canceled for %s cooldown: %f"
+                                     % (uuid, abs(time.time()
+                                        - self.ap_switch_on_timestamps[uuid])))
+        return power_states_dict
 
     def compute(self, ue_list, ap_list, requesting_ue):
         """
