@@ -16,7 +16,7 @@ class TrafficThresholdNearestAp(base.BaseAlgorithm):
 
         # configuration:
         self.MAVG_WINDOW_SIZE = 10
-        self.THRESHOLD = 500  # bytes/s
+        self.THRESHOLD = 10000  # bytes/s
 
     def monitor_traffic(self, ue_list):
         """
