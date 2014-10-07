@@ -9,7 +9,7 @@ import updater
 from api.errors import *
 
 
-UPDATE_ACTIONS = ["post", "put", "delete"]
+UPDATE_ACTIONS = ["post", "put", "delete", "periodic_update"]
 
 
 class ResourceManager(object):
@@ -55,7 +55,7 @@ class ResourceManager(object):
         while True:
             r = self.zmqreceiver.recv()
             data = json.loads(r)
-            logging.debug("Received: %s" % str(data))
+            logging.info("Received: %s" % str(data))
             if "action" in data:
                 if data["action"] in UPDATE_ACTIONS:
                     self.dispatch_update_notification(data)
@@ -69,6 +69,11 @@ class ResourceManager(object):
             a) Power management: Which APs are on or off?
             b) Assignment: Which UE connects to which AP?
         """
+        # fetch data from request
+        req_ue = None
+        if "ue" in data:
+            req_ue = data["ue"]
+
         # fetch data from DB
         ue_list = [ue.marshal().copy() for ue in model.ue.UE.objects]
         ap_list = [ap.marshal().copy()
@@ -78,7 +83,7 @@ class ResourceManager(object):
         # run algorithm
         if plugin.algorithm is None:
             raise Exception("No resource management algorithm loaded.")
-        result = plugin.algorithm.compute(ue_list, ap_list, data["ue"])
+        result = plugin.algorithm.compute(ue_list, ap_list, req_ue)
         assert(len(result) > 1)
         logging.info("=" * 40)
         logging.info("Result: power control: %s" % str(result[0]))

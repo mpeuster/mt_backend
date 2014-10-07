@@ -1,5 +1,8 @@
 import api
 import logging
+import threading
+import time
+import json
 import zmq
 from flask import Flask
 from flask.ext import restful
@@ -38,6 +41,26 @@ def zmq_send(data):
         api.ZMQ_SENDER.send(data)
 
 
+class PeriodicUpdater(threading.Thread):
+    """
+    Thread that sends periodic update signal to controller.
+    Used to ensure that the controller runs from time to time
+    and checks the testbed's system state.
+    """
+
+    def __init__(self):
+        threading.Thread.__init__(self)
+        self.daemon = True
+        self.INTERVAL = 20
+
+    def run(self):
+        while True:
+            # send update notification over ZMQ
+            api.zmq_send(json.dumps({"action": "periodic_update"}))
+            # wait for next periodic update
+            time.sleep(self.INTERVAL)
+
+
 class APIServer(object):
 
     def __init__(self, params):
@@ -50,9 +73,13 @@ class APIServer(object):
         api.setup_zmq()
 
     def run(self):
+        # setups
         self.setup_application()
         self.setup_api()
-
+        # start periodic update thread
+        pa = api.PeriodicUpdater()
+        pa.start()
+        # start API server
         if False:
             # default server:
             self.app.run(debug=True, use_reloader=False,
