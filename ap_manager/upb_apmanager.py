@@ -42,6 +42,8 @@ class UPB_APM(DaemonBase):  # inherit DaemonBase to build a Unix daemon
             return
         if params.loglevel == "debug" or params.verbose:
             loglevel = logging.DEBUG
+        elif params.loglevel == "warning":
+            loglevel = logging.WARNING
         else:
             loglevel = logging.INFO
         if params.verbose:
@@ -51,7 +53,7 @@ class UPB_APM(DaemonBase):  # inherit DaemonBase to build a Unix daemon
         # setup logging
         logging.basicConfig(filename=logfile, filemode="w", level=loglevel,
                             format="%(asctime)s [%(levelname)-8s] %(message)s")
-        logging.debug("UPB-APN API logging enabled with loglevel: DEBUG")
+        logging.warning("UPB-APN API logging enabled.")
 
     def start(self, params, daemonize=True):
         '''
@@ -88,7 +90,7 @@ def parse_arguments():
                         action="store_true",
                         help="Triggers dummy mode.")
     parser.add_argument("-l", "--loglevel", dest="loglevel",
-                        choices=['debug', 'info'],
+                        choices=['debug', 'info', 'warning'],
                         help="Defines the used logging level.")
     parser.add_argument("-a", "--action", dest="action",
                         choices=['start', 'stop', 'restart', 'status'],

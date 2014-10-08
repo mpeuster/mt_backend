@@ -42,6 +42,8 @@ class TLNB_Ctrl(DaemonBase):  # inherit DaemonBase to build a Unix daemon
             return
         if params.loglevel == "debug" or params.verbose:
             loglevel = logging.DEBUG
+        elif params.loglevel == "warning":
+            loglevel = logging.WARNING
         else:
             loglevel = logging.INFO
         if params.verbose:
@@ -51,7 +53,7 @@ class TLNB_Ctrl(DaemonBase):  # inherit DaemonBase to build a Unix daemon
         # setup logging
         logging.basicConfig(filename=logfile, filemode="w", level=loglevel,
                             format="%(asctime)s [%(levelname)-8s] %(message)s")
-        logging.debug("Ctrl logging enabled with loglevel: DEBUG")
+        logging.warning("Ctrl logging enabled.")
         # disable debug logs of requests module
         requests_log = logging.getLogger("requests")
         requests_log.setLevel(logging.WARNING)
@@ -91,7 +93,7 @@ def parse_arguments():
                         action="store_true",
                         help="Triggers dummy mode.")
     parser.add_argument("-l", "--loglevel", dest="loglevel",
-                        choices=['debug', 'info'],
+                        choices=['debug', 'info', 'warning'],
                         help="Defines the used logging level.")
     parser.add_argument("-a", "--action", dest="action",
                         choices=['start', 'stop', 'restart', 'status'],
