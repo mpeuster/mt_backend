@@ -11,7 +11,7 @@
 	},
 	"algorithm":
 	{
-		"name": "TrafficThresholdNearestApSwitchCooldown"
+		"name": "SimpleNearestAp"
 	},
 	"zmq": {
 		"host": "localhost",
