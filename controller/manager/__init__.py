@@ -52,13 +52,22 @@ class ResourceManager(object):
         run endless ZMQ receiver loop and react on incoming update messages
         """
         logging.info("Running ResourceManager instance...")
+        last_message = None
         while True:
-            r = self.zmqreceiver.recv()
-            data = json.loads(r)
-            logging.info("Received: %s" % str(data))
-            if "action" in data:
-                if data["action"] in UPDATE_ACTIONS:
-                    self.dispatch_update_notification(data)
+            # try to receive ALL pending ZMQ messages
+            try:
+                last_message = self.zmqreceiver.recv(flags=zmq.NOBLOCK)
+                continue
+            except:
+                time.sleep(0.5)
+            # there was at least one ZMQ message, process it
+            if last_message is not None:
+                data = json.loads(last_message)
+                last_message = None
+                logging.info("Received: %s" % str(data))
+                if "action" in data:
+                    if data["action"] in UPDATE_ACTIONS:
+                        self.dispatch_update_notification(data)
 
     def dispatch_update_notification(self, data):
         """
