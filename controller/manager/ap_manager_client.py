@@ -29,7 +29,7 @@ def get_uuid_list(online_only=True):
 def get_accesspoint(uuid, include_power_state=False):
     try:
         r = requests.get(
-            get_connection() + "/api/network/accesspoint/%s" % uuid,
+            get_connection() + "/api/network/accesspoint/%s/info" % uuid,
             headers=RHEADER)
         ap = r.json()
         if include_power_state:
