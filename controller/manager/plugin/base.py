@@ -11,31 +11,55 @@ class BaseAlgorithm(object):
         """
         self.ap_switch_on_timestamps = {}
 
+    def distance(self, ue, ap):
+        ue_x = ue["position_x"]
+        ue_y = ue["position_y"]
+        ap_x = ap["position_x"]
+        ap_y = ap["position_y"]
+        return math.sqrt(math.pow(abs(ue_x - ap_x), 2)
+                         + math.pow(abs(ue_y - ap_y), 2))
+
     def find_closest_ap(self, ue, ap_list):
         """
         Helper:
         Returns the AP with the minimum distance to the
-        given UE. (Helper)
+        given UE.
         """
-
-        def distance(ue, ap):
-            ue_x = ue["position_x"]
-            ue_y = ue["position_y"]
-            ap_x = ap["position_x"]
-            ap_y = ap["position_y"]
-            return math.sqrt(math.pow(abs(ue_x - ap_x), 2)
-                             + math.pow(abs(ue_y - ap_y), 2))
-
         min_distance = float("inf")
         min_ap = None
         for ap in ap_list:
-            if distance(ue, ap) < min_distance:
-                min_distance = distance(ue, ap)
+            if self.distance(ue, ap) < min_distance:
+                min_distance = self.distance(ue, ap)
                 min_ap = ap
 
         logging.debug("[ALGO] Closest AP for UE: %s is: %s"
                       % (ue["device_id"], min_ap["device_id"]))
         return min_ap
+
+    def find_farthest_ue(self, ap, ue_list):
+        """
+        Helper:
+        Returns the UE with the maximum distance to the
+        given AP.
+        """
+        max_distance = -1.0
+        max_ue = None
+        for ue_uri in ap["assigned_ue_list"]:
+            ue = self.get_ue(ue_uri, ue_list)
+            if ue is None:
+                continue
+            if self.distance(ue, ap) > max_distance:
+                max_distance = self.distance(ue, ap)
+                max_ue = ue
+        return max_ue
+
+    def get_ue(self, uri, ue_list):
+        for ue in ue_list:
+            if uri == ue["uri"]:
+                return ue
+            if uri == ue["uuid"]:
+                return ue
+            return None
 
     def apply_switch_off_cooldown(self, power_states_dict, cooldown=30):
         """

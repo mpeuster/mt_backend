@@ -15,5 +15,8 @@ def load_algorithm(name):
     elif name == "TrafficThresholdNearestApSwitchCooldown":
         import traffic
         algorithm = traffic.TrafficThresholdNearestApSwitchCooldown()
+    elif name == "ApTrafficThresholdNearestAp":
+        import traffic
+        algorithm = traffic.ApTrafficThresholdNearestAp()
     else:
         algorithm = None
