@@ -57,6 +57,9 @@ class ResourceManager(object):
             # try to receive ALL pending ZMQ messages
             try:
                 last_message = self.zmqreceiver.recv(flags=zmq.NOBLOCK)
+                # do not miss special messages
+                if json.loads(last_message).get("action") == "delete":
+                    raise Exception
                 continue
             except:
                 time.sleep(0.5)
@@ -87,6 +90,20 @@ class ResourceManager(object):
         ue_list = [ue.marshal().copy() for ue in model.ue.UE.objects]
         ap_list = [ap.marshal().copy()
                    for ap in model.accesspoint.AccessPoint.objects]
+
+        # special case, remove mac address from network manager if
+        # the request is a delete request and the UE is not present anymore
+        if data["action"] == "delete":
+            remove_mac = data.get("mac")
+            if remove_mac is not None:
+                # trigger AP manager component
+                ap_manager_client.set_mac_list(
+                    remove_mac,
+                    [],
+                    [ap.get("uuid") for ap in ap_list])
+                logging.info("UE deleted. Removing MAC: %s from APs: %s"
+                             % (remove_mac,
+                                [ap.get("uuid") for ap in ap_list]))
 
         #######################################################################
         # run algorithm

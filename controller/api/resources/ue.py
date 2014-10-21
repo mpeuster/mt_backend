@@ -67,9 +67,11 @@ class UE(restful.Resource):
         return None, 204, api.CORS_HEADER
 
     def delete(self, uuid):
+        ue = model.ue.UE.get(uuid)
         model.ue.UE.get(uuid).delete()
         # send update signal
-        api.zmq_send(json.dumps({"action": "delete", "ue": uuid}))
+        api.zmq_send(json.dumps({"action": "delete",
+                                "ue": uuid, "mac": ue.wifi_mac}))
         return None, 204, api.CORS_HEADER
 
     def options(self, uuid):
