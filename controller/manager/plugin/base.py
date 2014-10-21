@@ -10,6 +10,7 @@ class BaseAlgorithm(object):
         Initialization work
         """
         self.ap_switch_on_timestamps = {}
+        self.last_assignment = {}
 
     def distance(self, ue, ap):
         ue_x = ue["position_x"]
@@ -19,11 +20,13 @@ class BaseAlgorithm(object):
         return math.sqrt(math.pow(abs(ue_x - ap_x), 2)
                          + math.pow(abs(ue_y - ap_y), 2))
 
-    def find_closest_ap(self, ue, ap_list):
+    def find_closest_ap(self, ue, ap_list, threshold=0):
         """
         Helper:
         Returns the AP with the minimum distance to the
         given UE.
+        Threshold in distance units which has to be exceeded to
+        switch to the next AP.
         """
         min_distance = float("inf")
         min_ap = None
@@ -34,6 +37,21 @@ class BaseAlgorithm(object):
 
         logging.debug("[ALGO] Closest AP for UE: %s is: %s"
                       % (ue["device_id"], min_ap["device_id"]))
+
+        # check for switch threshold between old and new closest AP
+        if threshold > 0:
+            last_ap = self.get_ap(self.last_assignment.get(ue["uuid"]),
+                                  ap_list)
+            if last_ap is not None:
+                logging.info("Checking for threshold with last AP: %s"
+                             % str(last_ap.get("uri")))
+                if (self.distance(ue, min_ap) + threshold
+                        >= self.distance(ue, last_ap)):
+                    # threshold not yet exceeded, keep old AP
+                    logging.info("Threshold not exceeded. Keeping old AP.")
+                    return last_ap
+                else:
+                    logging.info("Threshold exceeded using new closest AP.")
         return min_ap
 
     def find_farthest_ue(self, ap, ue_list):
@@ -55,10 +73,18 @@ class BaseAlgorithm(object):
 
     def get_ue(self, uri, ue_list):
         for ue in ue_list:
-            if uri == ue["uri"]:
+            if uri == ue.get("uri"):
                 return ue
-            if uri == ue["uuid"]:
+            if uri == ue.get("uuid"):
                 return ue
+            return None
+
+    def get_ap(self, uri, ap_list):
+        for ap in ap_list:
+            if uri == ap.get("uri"):
+                return ap
+            if uri == ap.get("uuid"):
+                return ap
             return None
 
     def apply_switch_off_cooldown(self, power_states_dict, cooldown=30):

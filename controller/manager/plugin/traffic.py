@@ -3,6 +3,10 @@ import logging
 import math
 from collections import deque
 
+# this threshold must be exceeded when the distance
+# from a single UE to two APs is nearly the same
+DISTANCE_THRESHOLD = 5
+
 
 class TrafficThresholdNearestAp(base.BaseAlgorithm):
 
@@ -60,7 +64,8 @@ class TrafficThresholdNearestAp(base.BaseAlgorithm):
         # the predefined threshold value
         for ue in ue_list:
             if self.get_avg_traffic(ue["uri"]) > self.THRESHOLD:
-                closest_ap = self.find_closest_ap(ue, ap_list)
+                closest_ap = self.find_closest_ap(ue, ap_list,
+                                                  threshold=DISTANCE_THRESHOLD)
                 if closest_ap is not None:
                     assignment_dict[ue["uuid"]] = closest_ap["uuid"]
 
@@ -70,7 +75,8 @@ class TrafficThresholdNearestAp(base.BaseAlgorithm):
                 power_states_dict[ap["uuid"]] = True
             else:  # turn off all unassigned APs
                 power_states_dict[ap["uuid"]] = False
-
+        # store this assignment for the next run
+        self.last_assignment = assignment_dict.copy()
         # return({}, {})
         return (power_states_dict, assignment_dict)
 
@@ -145,7 +151,8 @@ class ApTrafficThresholdNearestAp(base.BaseAlgorithm):
         # as starting point: assign all UEs to APs which have display_state!=0
         for ue in ue_list:
             if ue["display_state"] != 0:
-                closest_ap = self.find_closest_ap(ue, ap_list)
+                closest_ap = self.find_closest_ap(ue, ap_list,
+                                                  threshold=DISTANCE_THRESHOLD)
                 if closest_ap is not None:
                     assignment_dict[ue["uuid"]] = closest_ap["uuid"]
 
@@ -175,6 +182,7 @@ class ApTrafficThresholdNearestAp(base.BaseAlgorithm):
                 power_states_dict[ap["uuid"]] = True
             else:  # turn off all unassigned APs
                 power_states_dict[ap["uuid"]] = False
-
+        # store this assignment for the next run
+        self.last_assignment = assignment_dict.copy()
         # return({}, {})
         return (power_states_dict, assignment_dict)
