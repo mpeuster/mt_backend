@@ -40,10 +40,12 @@ class TLNB_Ctrl(DaemonBase):  # inherit DaemonBase to build a Unix daemon
         if params is None:
             raise Exception("Missing arguments for logging setup.")
             return
-        if params.loglevel == "debug" or params.verbose:
+        if params.loglevel == "debug":
             loglevel = logging.DEBUG
         elif params.loglevel == "warning":
             loglevel = logging.WARNING
+        elif params.loglevel == "error":
+            loglevel = logging.ERROR
         else:
             loglevel = logging.INFO
         if params.verbose:
@@ -93,7 +95,7 @@ def parse_arguments():
                         action="store_true",
                         help="Triggers dummy mode.")
     parser.add_argument("-l", "--loglevel", dest="loglevel",
-                        choices=['debug', 'info', 'warning'],
+                        choices=['debug', 'info', 'warning', 'error'],
                         help="Defines the used logging level.")
     parser.add_argument("-a", "--action", dest="action",
                         choices=['start', 'stop', 'restart', 'status'],
