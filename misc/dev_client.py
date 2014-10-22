@@ -3,6 +3,7 @@ import requests
 import json
 import random
 import time
+import sys
 
 DOC = """
 This is a interactive client to interact with the network controller
@@ -286,6 +287,17 @@ class Random_Updater(object):
 
 
 def main():
+    global API_HOST
+    global NETWORK_API_HOST
+    global API_PORT
+    global NETWORK_API_PORT
+    if len(sys.argv) > 1:
+        API_HOST = sys.argv[1]
+        NETWORK_API_HOST = sys.argv[1]
+    if len(sys.argv) > 2:
+        API_PORT = sys.argv[2]
+        NETWORK_API_PORT = sys.argv[2]
+    # print help text
     print DOC
     # create helper request objects
     UE = UE_Request()
