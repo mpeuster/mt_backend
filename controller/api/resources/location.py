@@ -29,12 +29,12 @@ class Location(restful.Resource):
             location_service_id=json_data["location_service_id"])
         loc.position_x = float(json_data["position_x"])
         loc.position_y = float(json_data["position_y"])
-        loc.save()
+        loc.save(validate=False)
         # trigger location update on UE
         # (copy latest context and insert new one to use new location)
         for ue in model.ue.UE.objects(
                 location_service_id=loc.location_service_id):
-            model.ue.UE.add_context(ue.uuid, ue.marshal())
+            model.ue.UE.update(ue.uuid, ue.marshal())
         # trigger location update in all matching AP model entries
         # (can be done directly for the APs)
         model.accesspoint.AccessPoint.objects(

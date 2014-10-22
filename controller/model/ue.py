@@ -77,8 +77,28 @@ class UE(Document):
     device_id = StringField(required=True, unique=True)
     location_service_id = StringField(default=None)
     wifi_mac = StringField(default=None)
+    #####
+    # system fields
+    updated_at = DateTimeField(default=datetime.datetime.now)
+    # user fields
+    position_x = FloatField(default=-1)
+    position_y = FloatField(default=-1)
+    display_state = IntField(default=0)
+    active_application_package = StringField(default=None)
+    active_application_activity = StringField(default=None)
+    rx_total_bytes = IntField(default=-1)
+    tx_total_bytes = IntField(default=-1)
+    rx_mobile_bytes = IntField(default=-1)
+    tx_mobile_bytes = IntField(default=-1)
+    rx_wifi_bytes = IntField(default=-1)
+    tx_wifi_bytes = IntField(default=-1)
+    rx_total_bytes_per_second = FloatField(default=-1)
+    tx_total_bytes_per_second = FloatField(default=-1)
+    rx_mobile_bytes_per_second = FloatField(default=-1)
+    tx_mobile_bytes_per_second = FloatField(default=-1)
+    rx_wifi_bytes_per_second = FloatField(default=-1)
+    tx_wifi_bytes_per_second = FloatField(default=-1)
     # references
-    context_list = SortedListField(EmbeddedDocumentField(Context))
     assigned_accesspoint = ReferenceField(
         model.accesspoint.AccessPoint, default=None)
 
@@ -90,8 +110,6 @@ class UE(Document):
                     device_id=json_data['device_id'])
             ue.save()
             UE.update(new_uuid, json_data)
-            UE.add_context(new_uuid, json_data)
-
         except NotUniqueError:
             logging.exception("Error:")
             raise ResourceAlreadyExistsError("UE with this device_id exists.")
@@ -114,65 +132,56 @@ class UE(Document):
             UE.objects(uuid=uuid).update_one(
                 set__device_id=json_data["device_id"],
                 set__location_service_id=json_data["location_service_id"],
-                set__wifi_mac=json_data["wifi_mac"]
+                set__wifi_mac=json_data["wifi_mac"],
+                set__position_x=model.try_get(
+                    json_data, "position_x", -1),
+                set__position_y=model.try_get(
+                    json_data, "position_y", -1),
+                set__display_state=model.try_get(
+                    json_data, "display_state", -1),
+                set__active_application_package=model.try_get(
+                    json_data, "active_application_package", None),
+                set__active_application_activity=model.try_get(
+                    json_data, "active_application_activity", None),
+                set__rx_total_bytes=model.try_get(
+                    json_data, "rx_total_bytes", -1),
+                set__tx_total_bytes=model.try_get(
+                    json_data, "tx_total_bytes", -1),
+                set__rx_mobile_bytes=model.try_get(
+                    json_data, "rx_mobile_bytes", -1),
+                set__tx_mobile_bytes=model.try_get(
+                    json_data, "tx_mobile_bytes", -1),
+                set__rx_wifi_bytes=model.try_get(
+                    json_data, "rx_wifi_bytes", -1),
+                set__tx_wifi_bytes=model.try_get(
+                    json_data, "tx_wifi_bytes", -1),
+                set__rx_total_bytes_per_second=model.try_get(
+                    json_data, "rx_total_bytes_per_second", -1),
+                set__tx_total_bytes_per_second=model.try_get(
+                    json_data, "tx_total_bytes_per_second", -1),
+                set__rx_mobile_bytes_per_second=model.try_get(
+                    json_data, "rx_mobile_bytes_per_second", -1),
+                set__tx_mobile_bytes_per_second=model.try_get(
+                    json_data, "tx_mobile_bytes_per_second", -1),
+                set__rx_wifi_bytes_per_second=model.try_get(
+                    json_data, "rx_wifi_bytes_per_second", -1),
+                set__tx_wifi_bytes_per_second=model.try_get(
+                    json_data, "tx_wifi_bytes_per_second", -1)
                 )
-        except:
-            raise RequestError("Error during update.")
 
-    @staticmethod
-    def add_context(uuid, json_data):
-        try:
-            new_c = Context()
-            new_c.position_x = model.try_get(
-                json_data, "position_x", -1)
-            new_c.position_y = model.try_get(
-                json_data, "position_y", -1)
-            new_c.display_state = model.try_get(
-                json_data, "display_state", -1)
-            new_c.active_application_package = model.try_get(
-                json_data, "active_application_package", None)
-            new_c.active_application_activity = model.try_get(
-                json_data, "active_application_activity", None)
-            new_c.rx_total_bytes = model.try_get(
-                json_data, "rx_total_bytes", -1)
-            new_c.tx_total_bytes = model.try_get(
-                json_data, "tx_total_bytes", -1)
-            new_c.rx_mobile_bytes = model.try_get(
-                json_data, "rx_mobile_bytes", -1)
-            new_c.tx_mobile_bytes = model.try_get(
-                json_data, "tx_mobile_bytes", -1)
-            new_c.rx_wifi_bytes = model.try_get(
-                json_data, "rx_wifi_bytes", -1)
-            new_c.tx_wifi_bytes = model.try_get(
-                json_data, "tx_wifi_bytes", -1)
-            new_c.rx_total_bytes_per_second = model.try_get(
-                json_data, "rx_total_bytes_per_second", -1)
-            new_c.tx_total_bytes_per_second = model.try_get(
-                json_data, "tx_total_bytes_per_second", -1)
-            new_c.rx_mobile_bytes_per_second = model.try_get(
-                json_data, "rx_mobile_bytes_per_second", -1)
-            new_c.tx_mobile_bytes_per_second = model.try_get(
-                json_data, "tx_mobile_bytes_per_second", -1)
-            new_c.rx_wifi_bytes_per_second = model.try_get(
-                json_data, "rx_wifi_bytes_per_second", -1)
-            new_c.tx_wifi_bytes_per_second = model.try_get(
-                json_data, "tx_wifi_bytes_per_second", -1)
             # try to use third party location if available
             try:
                 loc = model.location.Location.objects.get(
                     location_service_id=json_data["location_service_id"])
-                new_c.position_x = loc.position_x
-                new_c.position_y = loc.position_y
+                UE.objects(uuid=uuid).update_one(
+                    set__position_x=loc.position_x,
+                    set__position_y=loc.position_y)
                 logging.debug("Used location service data with id: %s"
                               % json_data["location_service_id"])
             except:
                 logging.debug("Could not find location info for %s."
                               % json_data["location_service_id"])
-            # atomic update of ue entry
-            UE.objects(uuid=uuid).update_one(
-                push__context_list=new_c)
         except:
-            logging.exception("Error:")
             raise RequestError("Error during update.")
 
     @property
@@ -187,12 +196,6 @@ class UE(Document):
         res = {}
         for k, v in self.__dict__["_data"].items():
             res[k] = v
-        if len(self.context_list) > 0:
-            context = self.context_list[cid]
-            for k, v in context.__dict__["_data"].items():
-                res[k] = v
-        else:
-            logging.error("UE without context marshaled")
         res['uri'] = self.uri
         # rewrite assigned_accesspoint to URI
         res["assigned_accesspoint"] = self.assigned_accesspoint.uri if \

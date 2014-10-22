@@ -115,26 +115,6 @@ class UE_InterfaceTest(unittest.TestCase):
         r = helper_create_ue("test_duplicate")
         self.assertEqual(r.status_code, 409)
 
-    def test_context_list(self):
-        # create test ue
-        r = helper_create_ue()
-        url = r.json()[0]
-        # make update to create second context
-        r = requests.put(API_BASE_URL + url,
-                         data=json.dumps(self.request_data2))
-        # get context list
-        r = requests.get(API_BASE_URL + url + "/context")
-        clist = r.json()
-        self.assertGreaterEqual(len(clist), 2)
-        for curl in clist:
-            r = requests.get(API_BASE_URL + curl)
-            data = r.json()
-            # check response
-            self.assertEqual(r.status_code, 200)
-            # check if new data is valid and included in response
-            for k, v in self.request_data2.items():
-                self.assertTrue(k in data)
-
     def test_ue_assignment(self):
         """
         Test if new UE is assigned to an existing
@@ -336,11 +316,11 @@ def helper_get_ue_list():
 
 def setUpModule():
     if subprocess.call(
-            ["python", "tlnb_ctrl.py", "-l", "debug", "-a", "restart"]) != 0:
+            ["python", "tlnb_ctrl.py", "-l", "debug", "-a", "restart", "-l", "error"]) != 0:
         print "tlnb_ctrl.py restart failed! stopping tests."
         exit(1)
     if subprocess.call(
-            ["python", "tlnb_api.py", "-l", "debug", "-a", "restart"]) != 0:
+            ["python", "tlnb_api.py", "-l", "debug", "-a", "restart", "-l", "error"]) != 0:
         print "tlnb_api.py restart failed! stopping tests."
         exit(1)
     print "Waiting 1s to start tests..."

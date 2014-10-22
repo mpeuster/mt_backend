@@ -82,9 +82,18 @@ class APIServer(object):
         # start API server
         if False:
             # default server:
-            self.app.run(debug=True, use_reloader=False,
+            logging.info("API Server: Pure Flask")
+            self.app.run(debug=False, use_reloader=False,
                          port=model.CONFIG["api"]["port"])
+        elif False:
+            logging.info("API Server: Gevent")
+            from gevent.wsgi import WSGIServer
+            http_server = WSGIServer(('',
+                                     model.CONFIG["api"]["port"]),
+                                     self.app)
+            http_server.serve_forever()
         else:
+            logging.info("API Server: Tornado")
             from tornado.wsgi import WSGIContainer
             from tornado.httpserver import HTTPServer
             from tornado.ioloop import IOLoop
@@ -102,13 +111,6 @@ class APIServer(object):
                               "/api/ue", endpoint="ue_list")
         self.api.add_resource(resources.ue.UE,
                               "/api/ue/<string:uuid>", endpoint="ue")
-        # UE contexts
-        self.api.add_resource(resources.ue.ContextList,
-                              "/api/ue/<string:uuid>/context",
-                              endpoint="context_list")
-        self.api.add_resource(resources.ue.Context,
-                              "/api/ue/<string:uuid>/context/<int:cid>",
-                              endpoint="context")
         # location
         self.api.add_resource(resources.location.Location,
                               "/api/location", endpoint="location")

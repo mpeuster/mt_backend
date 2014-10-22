@@ -61,7 +61,6 @@ class UE(restful.Resource):
         api.check_required_fields(json_data, REQUIRED_FIELDS)
         # update model
         model.ue.UE.update(uuid, json_data)
-        model.ue.UE.add_context(uuid, json_data)
         # send update signal
         api.zmq_send(json.dumps({"action": "put", "ue": uuid}))
         return None, 204, api.CORS_HEADER
@@ -78,21 +77,3 @@ class UE(restful.Resource):
         return ({'Allow': 'PUT,GET,DELETE'}, 200,
                 {'Access-Control-Allow-Origin': '*',
                  'Access-Control-Allow-Methods': 'PUT,GET,DELETE'})
-
-
-class ContextList(restful.Resource):
-
-    def get(self, uuid):
-        ue = model.ue.UE.get(uuid)
-        l = ["%s" % context.uri
-             for context in ue.context_list]
-        return l
-
-
-class Context(restful.Resource):
-
-    def get(self, uuid, cid):
-        ue = model.ue.UE.get(uuid)
-        json_data = ue.marshal(cid)
-        logging.debug("GET UE/context response body: %s", str(json_data))
-        return json_data
