@@ -15,8 +15,8 @@ def load_algorithm(name):
     elif name == "TrafficThresholdNearestApSwitchCooldown":
         import traffic
         algorithm = traffic.TrafficThresholdNearestApSwitchCooldown()
-    elif name == "ApTrafficThresholdNearestAp":
-        import traffic
-        algorithm = traffic.ApTrafficThresholdNearestAp()
+    elif name == "GreedyMinActiveApsFullCoverage":
+        import bcgdemo
+        algorithm = bcgdemo.GreedyMinActiveApsFullCoverage()
     else:
         algorithm = None

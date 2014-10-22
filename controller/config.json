@@ -11,7 +11,7 @@
 	},
 	"algorithm":
 	{
-		"name": "SimpleNearestApAlgorithm"
+		"name": "GreedyMinActiveApsFullCoverage"
 	},
 	"zmq": {
 		"host": "localhost",

@@ -108,14 +108,15 @@ class ResourceManager(object):
 
         #######################################################################
         # run algorithm
+        logging.info("=" * 15 + " START " + "=" * 15)
         if plugin.algorithm is None:
             raise Exception("No resource management algorithm loaded.")
         result = plugin.algorithm.compute(ue_list, ap_list, req_ue)
         assert(len(result) > 1)
-        logging.info("=" * 40)
+        logging.info("=" * 15 + " RESULT " + "=" * 15)
         logging.info("Result: power control: %s" % str(result[0]))
         logging.info("Result: Assignment: %s" % str(result[1]))
-        logging.info("=" * 40)
+        logging.info("=" * 15 + " END " + "=" * 15)
         #######################################################################
         # trigger ap manager and update model with results and store them
         self.apply_power_control_result(result[0])
