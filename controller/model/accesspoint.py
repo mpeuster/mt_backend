@@ -2,6 +2,7 @@ import logging
 import datetime
 import uuid
 import model
+import time
 from api.errors import *
 from mongoengine import *
 from flask.ext.restful import fields, marshal
@@ -182,7 +183,7 @@ class AccessPoint(Document):
         Calculate and aggregate network states of all available
         radio interfaces of this access point.
         """
-        new_timestamp = max([s["timestamp"] for s in stats_list])
+        new_timestamp = time.time()  # max([s["timestamp"] for s in stats_list])
         new_rx_bytes = sum([s["rxbyte"] for s in stats_list])
         new_tx_bytes = sum([s["txbyte"] for s in stats_list])
         new_rx_bytes_per_second = 0.0
