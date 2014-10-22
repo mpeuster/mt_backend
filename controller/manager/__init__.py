@@ -62,7 +62,8 @@ class ResourceManager(object):
                     raise Exception
                 continue
             except:
-                time.sleep(0.5)
+                if last_message is None:
+                    time.sleep(0.1)
             # there was at least one ZMQ message, process it
             if last_message is not None:
                 data = json.loads(last_message)
