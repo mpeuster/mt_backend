@@ -22,9 +22,9 @@ class GreedyMinActiveApsFullCoverage(base.BaseAlgorithm):
         super(GreedyMinActiveApsFullCoverage, self).__init__()
         logging.info("Loaded algorithm: %s" % str(self.__class__.__name__))
         self.coverage_ranges = {
-            "open-space1": 1,
-            "open-space1": 1,
-            "open-space1": 1,
+            "open-space-1": 10,
+            "open-space-2": 10,
+            "open-space-3": 10,
             "AP-1": 700,
             "AP-2": 400,
             "AP-3": 700,
