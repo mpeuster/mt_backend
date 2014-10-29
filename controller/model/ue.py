@@ -35,40 +35,6 @@ UE_RESOURCE_FIELDS = {
 }
 
 
-class Context(EmbeddedDocument):
-    # system fields
-    updated_at = DateTimeField(default=datetime.datetime.now)
-    # user fields
-    position_x = FloatField(default=-1)
-    position_y = FloatField(default=-1)
-    display_state = IntField(default=0)
-    active_application_package = StringField(default=None)
-    active_application_activity = StringField(default=None)
-    rx_total_bytes = IntField(default=-1)
-    tx_total_bytes = IntField(default=-1)
-    rx_mobile_bytes = IntField(default=-1)
-    tx_mobile_bytes = IntField(default=-1)
-    rx_wifi_bytes = IntField(default=-1)
-    tx_wifi_bytes = IntField(default=-1)
-    rx_total_bytes_per_second = FloatField(default=-1)
-    tx_total_bytes_per_second = FloatField(default=-1)
-    rx_mobile_bytes_per_second = FloatField(default=-1)
-    tx_mobile_bytes_per_second = FloatField(default=-1)
-    rx_wifi_bytes_per_second = FloatField(default=-1)
-    tx_wifi_bytes_per_second = FloatField(default=-1)
-
-    def get_parent_ue(self):
-        for ue in UE.objects:
-            if self in ue.context_list:
-                return ue
-
-    @property
-    def uri(self):
-        ue = self.get_parent_ue()
-        return "%s/%s/context/%s" % ("/api/ue",
-                                     ue.uuid, ue.context_list.index(self))
-
-
 class UE(Document):
     # system fields
     uuid = StringField(required=True, unique=True, primary_key=True)
@@ -188,10 +154,9 @@ class UE(Document):
     def uri(self):
         return "%s/%s" % ("/api/ue", self.uuid)
 
-    def marshal(self, cid=-1):
+    def marshal(self):
         """
-        Builds the json representation of a UE with the selected context.
-        If cid = -1 the latest context is returned.
+        Builds the json representation of a UE.
         """
         res = {}
         for k, v in self.__dict__["_data"].items():
