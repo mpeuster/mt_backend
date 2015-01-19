@@ -11,7 +11,11 @@
 	},
 	"algorithm":
 	{
-		"name": "SimpleNearestAp"
+		"default": "SimpleNearestAp",
+		"available": [
+			"SimpleNearestAp",
+			"GreedyMinActiveApsFullCoverage"
+		]
 	},
 	"zmq": {
 		"host": "localhost",

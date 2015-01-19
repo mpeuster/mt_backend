@@ -35,7 +35,9 @@ class ResourceManager(object):
         model.accesspoint.AccessPoint.refresh(
             model.CONFIG["accesspoints"], ap_manager_client.get_accesspoints())
         # load management algorithm
-        plugin.load_algorithm(model.CONFIG["algorithm"]["name"])
+        plugin.load_algorithms(
+            model.CONFIG["algorithm"]["available"],
+            model.CONFIG["algorithm"]["default"])
         # kick of AP state fetcher thread
         self.apFetcherThread = updater.AccessPointStateFetcher()
         self.apFetcherThread.start()
@@ -107,16 +109,29 @@ class ResourceManager(object):
                                 [ap.get("uuid") for ap in ap_list]))
 
         #######################################################################
-        # run algorithm
-        logging.info("=" * 15 + " START " + "=" * 15)
-        if plugin.algorithm is None:
+        # run algorithms
+        if len(plugin.algorithm_list) < 1:
             raise Exception("No resource management algorithm loaded.")
-        result = plugin.algorithm.compute(ue_list, ap_list, req_ue)
-        assert(len(result) > 1)
+        # always run all available algorithms and only use the result of the selected afterwards
+        results = {}
+        for algorithm in plugin.algorithm_list:
+            logging.info("=" * 15 + " START " + "=" * 15)
+            if algorithm is None:
+                raise Exception("Executed algorithm is None")
+            results[algorithm.name] = algorithm.compute(ue_list, ap_list, req_ue)
+            assert(len(results[algorithm.name]) > 1)
+            logging.info("=" * 15 + " END " + "=" * 15)
+
+        if plugin.selected_algorithm is None:
+            raise Exception("No algorithm selected")
+        if plugin.selected_algorithm not in results:
+            raise Exception("Result of selected algorithm is not available")
+        # use result of currently selected algorithm
+        result = results[plugin.selected_algorithm]
         logging.info("=" * 15 + " RESULT " + "=" * 15)
+        logging.info("Using result from: %s" % str(plugin.selected_algorithm))
         logging.info("Result: power control: %s" % str(result[0]))
         logging.info("Result: Assignment: %s" % str(result[1]))
-        logging.info("=" * 15 + " END " + "=" * 15)
         #######################################################################
         # trigger ap manager and update model with results and store them
         self.apply_power_control_result(result[0])
@@ -127,7 +142,7 @@ class ResourceManager(object):
         Apply power control result:
             1. Trigger the AP manager in order to change the power state
                of the corresponding access point.
-               (Only done if a pwoer_state has changed)
+               (Only done if a power_state has changed)
             2. Apply changes to model and store it in the DB.
         """
         for uuid, state in result.items():  # iterate all power states

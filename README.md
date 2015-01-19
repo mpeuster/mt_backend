@@ -36,6 +36,7 @@ All backend components can run on different physical machines. However, the exam
 * Python PIP: <code>$ sudo apt-get install python-pip</code>
 * ZeroMQ: <code>$ sudo apt-get install python-zmq</code>
 * MongoEngine: <code>$ sudo pip install mongoengine</code>
+* Requests: <code>$ sudo pip install requests</code>
 * Tornado: <code>$ sudo pip install tornado</code>
 * Flask: <code>$ sudo pip install flask</code>
 * FlaskRestful (installed from sources):

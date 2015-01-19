@@ -12,6 +12,10 @@ class BaseAlgorithm(object):
         self.ap_switch_on_timestamps = {}
         self.last_assignment = {}
 
+    @property
+    def name(self):
+        return self.__class__.__name__
+
     def distance(self, ue, ap):
         ue_x = ue["position_x"]
         ue_y = ue["position_y"]
