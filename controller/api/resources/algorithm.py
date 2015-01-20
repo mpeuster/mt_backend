@@ -45,7 +45,8 @@ class SelectedAlgorithm(restful.Resource):
         api.zmq_send(json.dumps({"action": "switch_algorithm", "algorithm": json_data["selected"]}))
         return None, 204, api.CORS_HEADER
 
-    def options(self, uuid):
-        return ({'Allow': 'GET'}, 200,
+    def options(self):
+        return ({'Allow': 'POST,PUT,GET,DELETE'}, 200,
                 {'Access-Control-Allow-Origin': '*',
-                 'Access-Control-Allow-Methods': 'GET'})
+                 'Access-Control-Allow-Methods': 'POST,PUT,GET,DELETE',
+                 'Access-Control-Allow-Headers': 'Content-Type'})
