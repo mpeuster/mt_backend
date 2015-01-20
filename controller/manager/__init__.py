@@ -120,12 +120,16 @@ class ResourceManager(object):
         # always run all available algorithms and only use the result of the selected afterwards
         results = {}
         for algorithm in plugin.algorithm_list:
-            logging.info("=" * 15 + " START " + "=" * 15)
-            if algorithm is None:
-                raise Exception("Executed algorithm is None")
-            results[algorithm.name] = algorithm.compute(ue_list, ap_list, req_ue)
-            assert(len(results[algorithm.name]) > 1)
-            logging.info("=" * 15 + " END " + "=" * 15)
+            try:
+                logging.info("=" * 15 + " START " + "=" * 15)
+                if algorithm is None:
+                    raise Exception("Executed algorithm is None")
+                results[algorithm.name] = algorithm.compute(ue_list, ap_list, req_ue)
+                assert(len(results[algorithm.name]) > 1)
+                logging.info("=" * 15 + " END " + "=" * 15)
+            except:
+                logging.exception("Error in decision algorithm: %s" % algorithm.name)
+                del results[algorithm.name]
 
         if plugin.selected_algorithm is None:
             raise Exception("No algorithm selected")
