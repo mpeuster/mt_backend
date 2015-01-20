@@ -9,6 +9,7 @@ from flask.ext import restful
 import resources.ue
 import resources.location
 import resources.accesspoint
+import resources.algorithm
 import model
 import api
 import errors
@@ -120,3 +121,8 @@ class APIServer(object):
         self.api.add_resource(resources.accesspoint.AP,
                               "/api/accesspoint/<string:uuid>",
                               endpoint="accesspoint")
+        # algorithm
+        self.api.add_resource(resources.algorithm.AlgorithmList,
+                              "/api/algorithm", endpoint="algorithm_list")
+        self.api.add_resource(resources.algorithm.SelectedAlgorithm,
+                              "/api/algorithm/selected", endpoint="algorithm_selected")

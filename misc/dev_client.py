@@ -228,6 +228,35 @@ class LOC_Request(object):
             data=json.dumps(cmd))
 
 
+class Algorithm_Request(object):
+    """
+    - ALG is a request object providing the following helper methods:
+        * ALG.list() # lists available algorithms
+        * ALG.get_selected() # returns currently selected algorithm
+        * ALG.selected(name) # switch selected algorithm
+    """
+    def __init__(self):
+        pass
+
+    def _get_url(self):
+        return "http://%s:%s" % (API_HOST, API_PORT)
+
+    def list(self):
+        r = requests.get(self._get_url() + "/api/algorithm")
+        assert(r.status_code == 200)
+        return r.json()
+
+    def get_selected(self):
+        r = requests.get(self._get_url() + "/api/algorithm/selected")
+        assert(r.status_code == 200)
+        return r.json()
+
+    def selected(self, name):
+        r = requests.put(self._get_url() + "/api/algorithm/selected",
+                         data=json.dumps({"selected": name}))
+        assert(r.status_code == 204)
+
+
 class Random_Updater(object):
     """
     Randomly updates UEs.
@@ -304,6 +333,7 @@ def main():
     AP = AP_Request()
     NW = NW_Request()
     LOC = LOC_Request()
+    ALG = Algorithm_Request()
     # helper for random updates
     RU = Random_Updater()
     # start interactive IPython shell
