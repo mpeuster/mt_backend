@@ -41,7 +41,8 @@ class SelectedAlgorithm(restful.Resource):
             raise RequestDataError
         # request is valid, change model
         model.CONFIG["algorithm"]["default"] = json_data["selected"]
-        # TODO notify controller component
+        # send update signal
+        api.zmq_send(json.dumps({"action": "switch_algorithm", "algorithm": json_data["selected"]}))
         return None, 204, api.CORS_HEADER
 
     def options(self, uuid):

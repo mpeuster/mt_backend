@@ -72,8 +72,13 @@ class ResourceManager(object):
                 last_message = None
                 logging.info("Received: %s" % str(data))
                 if "action" in data:
+                    # process UE related update
                     if data["action"] in UPDATE_ACTIONS:
                         self.dispatch_update_notification(data)
+                    # process algorithm switch
+                    if data["action"] == "switch_algorithm":
+                        if "algorithm" in data:
+                            plugin.switch_algorithm(data["algorithm"])
 
     def dispatch_update_notification(self, data):
         """
