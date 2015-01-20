@@ -41,6 +41,12 @@ class ResourceManager(object):
         # kick of AP state fetcher thread
         self.apFetcherThread = updater.AccessPointStateFetcher()
         self.apFetcherThread.start()
+        # enable "always_on_macs" on all access points
+        if "always_on_macs" in model.CONFIG:
+            for mac in model.CONFIG["always_on_macs"].itervalues():
+                ap_manager_client.set_mac_list(
+                    mac, [ap.uuid for ap in model.accesspoint.AccessPoint.objects], [])
+                logging.info("Enabled MAC %s on all APs." % str(mac))
 
     def setup_zmq(self):
         context = zmq.Context()

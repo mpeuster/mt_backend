@@ -25,6 +25,9 @@
 		"host": "127.0.0.1",
 		"port": 6681
 	},
+	"always_on_macs": {
+		"LEDCTRL": "ac:cf:23:28:a3:f2"
+	},
 	"accesspoints": [
 		{
 			"uuid": "9d7034c5008b11e4b714c8bcc8a0a80d",

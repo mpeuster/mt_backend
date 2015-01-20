@@ -111,6 +111,7 @@ def set_mac_list(mac, enable_on, disable_on):
             get_connection() + "/api/network/client/" + urllib.quote_plus(mac),
             data=json.dumps(cmd),
             headers=RHEADER)
+        logging.debug("Send mac list to AP manager for MAC: %s List: %s" % (mac, str(cmd)))
     except:
         logging.exception("Connection to AccessPointManager not possible.")
         return None
