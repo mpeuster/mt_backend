@@ -2,6 +2,7 @@
 import socket
 import time
 import argparse
+import logging
 
 BRIDGE_IP = "10.10.10.199"
 BRDIGE_PORT = 8899

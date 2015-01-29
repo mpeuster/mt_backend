@@ -86,7 +86,7 @@ class DaemonBase(object):
             sys.stderr.write("Start failed. Daemon is already running?\n")
             sys.exit(1)
         # Start the daemon
-        print "Starting daemon..."
+        print "Starting daemon: " + str(self.__class__.__name__)
         if daemonize:
             self.fork_process()
         self.run(params)
@@ -105,7 +105,7 @@ class DaemonBase(object):
             sys.stderr.write("Stop failed. Daemon not running?\n")
             return
         # kill daemon process
-        print "Stopping daemon..."
+        print "Stopping daemon: " + str(self.__class__.__name__)
         try:
             while 1:
                 os.kill(pid, SIGTERM)
