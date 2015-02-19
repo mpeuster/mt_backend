@@ -20,7 +20,7 @@ class TrafficThresholdNearestAp(base.BaseAlgorithm):
 
         # configuration:
         self.MAVG_WINDOW_SIZE = 10
-        self.THRESHOLD = 10000  # bytes/s
+        self.THRESHOLD = 32000  # bytes/s
 
     def monitor_traffic(self, ue_list):
         """
@@ -84,7 +84,7 @@ class TrafficThresholdNearestAp(base.BaseAlgorithm):
 class TrafficThresholdNearestApSwitchCooldown(TrafficThresholdNearestAp):
 
     def compute(self, ue_list, ap_list, requesting_ue):
-        COOLDOWN = 20  # AP switch of cooldown (seconds)
+        COOLDOWN = 5  # AP switch of cooldown (seconds)
 
         # call original compute method
         p, a = super(self.__class__, self).compute(ue_list,
