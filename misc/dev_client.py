@@ -42,7 +42,7 @@ Usable Objects / Methods:
 
 """
 
-API_HOST = "127.0.0.1"
+API_HOST = "192.168.123.1"
 API_PORT = "6680"
 
 NETWORK_API_HOST = "127.0.0.1"

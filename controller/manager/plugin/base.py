@@ -10,7 +10,7 @@ class BaseAlgorithm(object):
         Initialization work
         """
         self.ap_switch_on_timestamps = {}
-        self.last_assignment = {}
+        self.last_assignment = {}  # ue_uuid -> ap_uuid
 
     @property
     def name(self):
