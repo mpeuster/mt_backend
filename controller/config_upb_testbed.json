@@ -14,7 +14,9 @@
 		"default": "SimpleNearestAp",
 		"available": [
 			"SimpleNearestAp",
-			"GreedyMinActiveApsFullCoverage"
+			"GreedyMinActiveApsFullCoverage",
+			"TrafficThresholdNearestAp",
+			"TrafficThresholdNearestApSwitchCooldown"
 		]
 	},
 	"zmq": {
