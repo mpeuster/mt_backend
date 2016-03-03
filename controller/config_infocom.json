@@ -1,0 +1,61 @@
+{
+	"api" : {
+		"port": 6680
+	},
+	"database": {
+		"host": "127.0.0.1",
+		"port": 27017,
+		"user": null,
+		"password": null,
+		"db": "nmt2db"
+	},
+	"algorithm":
+	{
+		"default": "SimpleNearestAp",
+		"available": [
+			"SimpleNearestAp",
+			"GreedyMinActiveApsFullCoverage"
+		]
+	},
+	"zmq": {
+		"host": "localhost",
+		"port": 5557
+	},
+	"apmanager": {
+		"host": "127.0.0.1",
+		"port": 6682
+	},
+	"accesspoints": [
+		{
+    		"uuid": "e60db822c51d330bbf6954f306941678",
+    		"device_id": "green01", 
+			"location_service_id": "loc_ap1",
+			"ssid" : "BCG2Demo",
+   		    "bssid": "64:70:02:1a:cf:e4", 
+			"psk" : "gr33ntouch",
+			"position_x": 2,
+			"position_y": 9.12
+		},
+		{
+			"uuid": "c3b4a156913a37bf8e11e0bf756fcd9f",
+			"device_id": "green02",
+			"location_service_id": "loc_ap2",
+			"ssid" : "BCG2Demo",
+			"psk" : "gr33ntouch",
+			"bssid": "64:70:02:18:7c:60",
+			"position_x": 7.5,
+			"position_y": 22.2
+		},
+		{
+			"uuid": "dd8a05d9212131dcbb531ffc5cdd3979",
+			"device_id": "green03",
+			"location_service_id": "loc_ap3",
+			"ssid" : "BCG2Demo",
+			"psk" : "gr33ntouch",
+			"bssid": "64:70:02:0f:f4:a0",
+			"position_x": 13,
+			"position_y": 1.33
+		}
+	]
+
+}
