@@ -6,10 +6,10 @@
 function execute()
 {
 	echo "Executing" $1
-	cd ap_manager
-	python upb_apmanager.py -a $1 -c $2
-	sleep 1
-	cd ../controller
+	#cd ap_manager
+	#python upb_apmanager.py -a $1 -c $2
+	#sleep 1
+	cd controller
 	python tlnb_ctrl.py -a $1 -c $2
 	python tlnb_api.py -a $1 -c $2
 	sleep 2

@@ -42,6 +42,8 @@ class Location(restful.Resource):
                 set__position_x=loc.position_x,
                 set__position_y=loc.position_y
                 )
+	# send update signal to controller process
+        api.zmq_send(json.dumps({"action": "put", "ue": "location_service"}))
         return None, 201, api.CORS_HEADER
 
     def options(self):

@@ -62,7 +62,7 @@ class UE(restful.Resource):
         # update model
         model.ue.UE.update(uuid, json_data)
         # send update signal
-        api.zmq_send(json.dumps({"action": "put", "ue": uuid}))
+        #api.zmq_send(json.dumps({"action": "put", "ue": uuid}))
         return None, 204, api.CORS_HEADER
 
     def delete(self, uuid):

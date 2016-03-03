@@ -4,7 +4,7 @@ import time
 import argparse
 import logging
 
-BRIDGE_IP = "10.10.10.199"
+BRIDGE_IP = "192.168.123.101"
 BRDIGE_PORT = 8899
 
 COMMANDS = {

@@ -5,7 +5,7 @@ from collections import deque
 
 # this threshold must be exceeded when the distance
 # from a single UE to two APs is nearly the same
-DISTANCE_THRESHOLD = 5
+DISTANCE_THRESHOLD = 2
 
 
 class TrafficThresholdNearestAp(base.BaseAlgorithm):

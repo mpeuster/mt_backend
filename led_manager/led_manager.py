@@ -16,9 +16,9 @@ API_HOST = "127.0.0.1"
 API_PORT = "6680"
 
 AP_LED_MAP = {
-    "9d7034c5008b11e4b714c8bcc8a0a80d": 1,
-    "5e8e61d100fd11e4bfafc8bcc8a0a80d": 2,
-    "57ae409e00fd11e4a3dec8bcc8a0a80d": 3,
+    "e60db822c51d330bbf6954f306941678": 1,
+    "c3b4a156913a37bf8e11e0bf756fcd9f": 2,
+    "dd8a05d9212131dcbb531ffc5cdd3979": 3,
     "5bbd409e00fd11e4a3dec8bcc8a0a80d": 4
 }
 
@@ -83,12 +83,20 @@ class LED_Manager(DaemonBase):  # inherit DaemonBase to build a Unix daemon
         libledbulbs.turn_group_on(0)
         time.sleep(1.0)
         libledbulbs.set_group_color(1, "blue")
-        time.sleep(0.5)
+        time.sleep(0.2)
         libledbulbs.set_group_color(2, "blue")
-        time.sleep(0.5)
+        time.sleep(0.2)
         libledbulbs.set_group_color(3, "blue")
-        time.sleep(0.5)
+        time.sleep(0.2)
         libledbulbs.set_group_color(4, "blue")
+	time.sleep(0.5)
+        libledbulbs.set_group_color(1, "pink")
+        time.sleep(0.2)
+        libledbulbs.set_group_color(2, "pink")
+        time.sleep(0.2)
+        libledbulbs.set_group_color(3, "pink")
+        time.sleep(0.2)
+        libledbulbs.set_group_color(4, "pink")
         time.sleep(1.0)
         libledbulbs.turn_group_off(0)
         time.sleep(1.0)
@@ -112,7 +120,8 @@ class LED_Manager(DaemonBase):  # inherit DaemonBase to build a Unix daemon
                 for url in apl:
                     ap = AP.get(url)
                     led_id = AP_LED_MAP.get(ap["uuid"])
-                    color = "green" if ap["power_state"] == 1 else "red"
+                    color = "blue" if ap["power_state"] == 1 else "green"
+                    logging.info("SWITCH led_id:%s color:%s" % (str(led_id), str(color)))
                     if led_id is not None:
                         libledbulbs.set_group_color(led_id, color)
             except:
