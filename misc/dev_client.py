@@ -59,6 +59,9 @@ UEDATA = {
 }
 
 
+def help():
+   print DOC
+
 class UE_Request(object):
     """
     - UE is a request object providing the following helper methods:
