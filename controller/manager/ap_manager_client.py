@@ -4,6 +4,9 @@ import model
 import logging
 import urllib
 
+logging.getLogger("requests").setLevel(logging.WARNING)
+logging.getLogger("urllib3").setLevel(logging.WARNING)
+
 RHEADER = {"content-type": "application/json"}
 
 

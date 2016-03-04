@@ -1,6 +1,6 @@
 {
 	"api" : {
-		"port": 6681
+		"port": 6682
 	},
 	"driver" : "dummy",
 	"accesspoints": [
