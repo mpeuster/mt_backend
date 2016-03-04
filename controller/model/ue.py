@@ -148,6 +148,7 @@ class UE(Document):
                 logging.debug("Could not find location info for %s."
                               % json_data["location_service_id"])
         except:
+            logging.exception("Update error:")
             raise RequestError("Error during update.")
 
     @property
@@ -159,7 +160,8 @@ class UE(Document):
         Builds the json representation of a UE.
         """
         res = {}
-        for k, v in self.__dict__["_data"].items():
+        # for k, v in self.__dict__["_data"].items():
+        for k, v in self._data.items():
             res[k] = v
         res['uri'] = self.uri
         # rewrite assigned_accesspoint to URI
