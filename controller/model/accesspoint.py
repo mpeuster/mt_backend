@@ -168,7 +168,8 @@ class AccessPoint(Document):
         return "%s/%s" % ("/api/accesspoint", self.uuid)
 
     def marshal(self):
-        res = marshal(self.__dict__["_data"], AP_RESOURCE_FIELDS)
+        #res = marshal(self.__dict__["_data"], AP_RESOURCE_FIELDS)
+        res = marshal(self.__dict__, AP_RESOURCE_FIELDS)
         res['assigned_ue_list'] = [ue.uri
                                    for ue in self.get_assigned_UE_list()]
         res['uri'] = self.uri
