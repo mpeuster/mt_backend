@@ -31,10 +31,10 @@
     		"device_id": "green01", 
 			"location_service_id": "green01",
 			"ssid" : "BCG2Demo",
-   		    "bssid": "b8:27:eb:70:6d:75", 
+   		    "bssid": "64:70:02:1a:cf:e4", 
 			"psk" : "gr33ntouch",
-			"position_x": 1.61,
-			"position_y": 2.16
+			"position_x": 1,
+			"position_y": 3
 		},
 		{
 			"uuid": "c3b4a156913a37bf8e11e0bf756fcd9f",
@@ -42,9 +42,9 @@
 			"location_service_id": "green02",
 			"ssid" : "BCG2Demo",
 			"psk" : "gr33ntouch",
-			"bssid": "b8:27:eb:ee:b5:df",
-			"position_x": 6.58,
-			"position_y": 3.5
+			"bssid": "64:70:02:18:7c:60",
+			"position_x": 6,
+			"position_y": 3
 		},
 		{
 			"uuid": "dd8a05d9212131dcbb531ffc5cdd3979",
@@ -52,9 +52,9 @@
 			"location_service_id": "green03",
 			"ssid" : "BCG2Demo",
 			"psk" : "gr33ntouch",
-			"bssid": "b8:27:eb:fe:dd:24",
-			"position_x": 10.66,
-			"position_y": 1.97
+			"bssid": "64:70:02:0f:f4:a0",
+			"position_x": 11,
+			"position_y": 3
 		}
 	]
 

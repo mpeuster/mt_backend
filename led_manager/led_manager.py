@@ -18,8 +18,8 @@ API_PORT = "6680"
 AP_LED_MAP = {
     "e60db822c51d330bbf6954f306941678": 1,
     "c3b4a156913a37bf8e11e0bf756fcd9f": 2,
-    "dd8a05d9212131dcbb531ffc5cdd3979": 3,
-    "5bbd409e00fd11e4a3dec8bcc8a0a80d": 4
+    "dd8a05d9212131dcbb531ffc5cdd3979": 3#,
+    #"5bbd409e00fd11e4a3dec8bcc8a0a80d": 4
 }
 
 

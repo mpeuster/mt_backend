@@ -52,7 +52,7 @@ class PeriodicUpdater(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
         self.daemon = True
-        self.INTERVAL = 20
+        self.INTERVAL = 8
 
     def run(self):
         while True:

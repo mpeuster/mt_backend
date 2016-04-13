@@ -25,8 +25,14 @@ class Location(restful.Resource):
         # validate data
         api.check_required_fields(json_data, REQUIRED_FIELDS)
         # update location entry in location db
-        (loc, _) = model.location.Location.objects.get_or_create(
-            location_service_id=json_data["location_service_id"])
+        #(loc, _) = model.location.Location.objects.get_or_create(
+        #    location_service_id=json_data["location_service_id"])
+
+        try:
+            loc = model.location.Location.objects(location_service_id=json_data["location_service_id"])[0]
+        except:
+            loc = model.location.Location(location_service_id=json_data["location_service_id"])
+
         loc.position_x = float(json_data["position_x"])
         loc.position_y = float(json_data["position_y"])
         loc.save(validate=False)
